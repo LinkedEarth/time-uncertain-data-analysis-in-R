@@ -1,0 +1,12 @@
+book_filename: "geochronr-tutorial"
+delete_merged_file: true
+language:
+  ui:
+    chapter_name: "Chapter "
+rmd_files: [
+  "index.Rmd",
+  "intro.Rmd",
+  "TBD.Rmd",
+  "TBD2.Rmd",
+]
+output_dir: "docs"
