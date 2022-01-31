@@ -1,5 +1,5 @@
 --- 
-title: "geoChronR Tutroial"
+title: "Time-uncertain data analysis in R"
 author: "Nick McKay"
 date: "Last updated: `r Sys.Date()`"
 site: bookdown::bookdown_site
@@ -8,7 +8,7 @@ bibliography: [book.bib, packages.bib]
 biblio-style: apalike
 link-citations: yes
 github-repo: linkedearth/geochronr-tutorial
-description: "This is the tutorial book for geoChronR"
+description: "This book covers time-uncertain data analysis in R, primarily relying on the geoChronR package"
 ---
 
 # Welcome!

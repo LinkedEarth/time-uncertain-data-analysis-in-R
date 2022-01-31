@@ -1,0 +1,15 @@
+welcome
+inputs
+lipdr
+exercise-2
+exercise-3
+exercise-1.1
+exr:unlabeled-div-1
+loading-a-lipd-file
+loading-multiple-lipd-datasets
+age-uncertain-correlation
+the-corens-function
+plotting-the-results
+significance-testing-options
+judging-the-overall-significance-of-an-age-uncertain-correlation
+conclusions

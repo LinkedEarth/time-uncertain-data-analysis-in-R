@@ -1,0 +1,65 @@
+# Data in geoChronR {#inputs}
+
+geoChronR was designed for data structured in the [LiPD format](http://lipd.net). 
+Actually, much of the LiPD framework was developed to accommodate the needs of geoChronR, so by far, you'll find it easiest to work with data in the structured, metadata-rich LiPD format. 
+All of the examples and exercises in this book will use LiPD datasets. 
+If you have data you want to analyze in geoChronR, the best and easiest way to get those data into the LiPD format is at the [LiPD playground](http://lipd.net/playground).
+It takes some time to learn the structure, and some time to annotate your data, but it will save you time down the road. 
+If you **really** don't want to lipdify your data, we are working on ways to take advantage of geoChronR tools with simpler data structures. 
+This will mean more work in geoChronR, since you'll have to specify a lot information that would normally be included in a LiPD file, but there are times when this makes sense. 
+Once this functionality is operable, we'll add a module demonstrating how this works. 
+
+## Loading a LiPD file
+
+The `lipdR` package is your gateway to working with LiPD data. To install `lipdR`, you'll need the remotes package if you don't already have it.
+
+```{r, echo=TRUE, eval=FALSE}
+install.packages("remotes")
+remotes::install_github("nickmckay/lipdR")
+```
+
+Now you can load the lipdR library, and load some data. 
+
+```{r}
+library(lipdR)
+L <- readLipd("https://lipdverse.org/Temp12k/current_version/GEOFAR_KF16_MgCa.Repschlager.2016.lpd")
+```
+
+You can load a LiPD file from the web, as shown above, or locally on your computer. If you leave the input blank (e.g. `L <- readLipd()`), you can interactively choose a file on your computer. 
+
+
+:::: {.blackbox data-latex=""}
+::: {.exercise name="Loading LiPD data"}
+
+Explore [the Temp12k collection on lipdverse.org](https://lipdverse.org/Temp12k/current_version), and load a file into R using lipdR with two different approaches: a) directly using the url as above, and b) download the file to your computer, and load it interactively. 
+:::
+::::
+<details>
+  <summary>Click for Answer to 1.1a</summary>
+   We'll use [this dataset](https://lipdverse.org/Temp12k/current_version/HeshangCave.Wang.2018.html).
+   
+   a. First we'll get it directly from the web like this:
+
+```{r, echo=TRUE, eval=TRUE}
+    lipd <- readLipd("https://lipdverse.org/Temp12k/current_version/HeshangCave.Wang.2018.lpd")
+```
+
+note that the extension is ".lpd" not ".html"
+</details> 
+
+<details>
+  <summary>Click for Answer to 1.1b</summary>
+   b. This time, just go to [the dataset](https://lipdverse.org/Temp12k/current_version/HeshangCave.Wang.2018.html) and download the data to your computer, then run 
+
+```{r, echo=FALSE, eval=FALSE}
+    lipd <- readLipd()
+```
+
+and select the file interactively. 
+</details> 
+
+
+## Loading multiple LiPD datasets
+
+
+

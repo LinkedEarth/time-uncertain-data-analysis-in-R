@@ -1,12 +1,28 @@
-book_filename: "geochronr-tutorial"
+book_filename: "Time-uncertain data analysis in R"
 delete_merged_file: true
 language:
   ui:
     chapter_name: "Chapter "
+  label:
+    fig: 'Figure '
+    tab: 'Table '
+    eq: 'Equation '
+    thm: 'Theorem '
+    lem: 'Lemma '
+    cor: 'Corollary '
+    prp: 'Proposition '
+    cnj: 'Conjecture '
+    def: 'Definition '
+    exm: 'Example '
+    exr: 'Exercise '
+    hyp: 'Hypothesis '
+    proof: 'Proof. '
+    remark: 'Remark. '
+    solution: 'Solution. '
 rmd_files: [
   "index.Rmd",
-  "intro.Rmd",
-  "TBD.Rmd",
-  "TBD2.Rmd",
+  "data.Rmd",
+  "correlation.Rmd",
+  "regression.Rmd",
 ]
 output_dir: "docs"
