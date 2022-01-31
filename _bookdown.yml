@@ -25,5 +25,7 @@ rmd_files: [
   "data.Rmd",
   "correlation.Rmd",
   "regression.Rmd",
+  "spectral.Rmd",
+  "pca.Rmd"
 ]
 output_dir: "docs"
