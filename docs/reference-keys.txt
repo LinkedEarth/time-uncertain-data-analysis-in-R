@@ -13,3 +13,5 @@ plotting-the-results
 significance-testing-options
 judging-the-overall-significance-of-an-age-uncertain-correlation
 conclusions
+installation
+loading-a-lipd-file-1

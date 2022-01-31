@@ -21,6 +21,7 @@ language:
     solution: 'Solution. '
 rmd_files: [
   "index.Rmd",
+  "installation.Rmd",
   "data.Rmd",
   "correlation.Rmd",
   "regression.Rmd",
