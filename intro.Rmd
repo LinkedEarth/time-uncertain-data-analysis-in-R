@@ -3,4 +3,33 @@
 First exercise, getting data into geoChronR
 
 
+In this book, we will use collapsible sections to show answers. Let's see if we can make one work. 
 
+
+
+<details>
+  <summary>Click for Answer</summary>
+  To solve this, we do x, y and z. Here's how it looks
+  
+```{r, echo=FALSE, eval=TRUE}
+    hist(1:10)
+```
+
+  
+
+</details> 
+
+
+Alternatively, if you want the code block outside, and just the answer inside:
+
+
+    ```{r, echo=TRUE, eval=FALSE}
+    hist(1:10)
+    ```
+<details>
+  <summary>Click for Answer</summary>
+  
+    ```{r, echo=FALSE, eval=TRUE}
+    hist(1:10)
+    ```
+</details> 
