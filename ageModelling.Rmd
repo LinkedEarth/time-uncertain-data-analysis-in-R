@@ -1,0 +1,279 @@
+# Age modelling in geoChronR
+
+geoChronR quantifies the uncertainties due to time uncertainty by taking advantage of ensembles of plausible age histories for one or more datasets.
+This means that often an early step in the geoChronR workflow is generating age ensembles. 
+Most modern age modelling approaches quantify uncertainties using methods that rely on ensembles, however preserving, extracting, and storing those uncertainties for subsequent analysis can be challenging. 
+geoChronR helps with this!
+In this chapter, we'll go through the workflow of generating age models with four methods that are integrated into geoChronR
+<!-- add note about importing age models from other approaches -->
+
+```{r}
+library(lipdR)
+library(geoChronR)
+library(ggplot2)
+library(magrittr)
+
+tana <- readLipd("https://lipdverse.org/Temp12k/1_0_2/TanaLake.Loomis.2015.lpd")
+```
+
+
+## Bacon
+
+```{r,message=FALSE,results='hide',cache=TRUE}
+tana <- runBacon(tana,
+                 lab.id.var = 'LabID', 
+                 age.14c.var = 'age14C',
+                 age.14c.uncertainty.var = 'age14CUnc', 
+                 age.var = 'age', 
+                 age.uncertainty.var = '1SD', 
+                 depth.var = 'depth', 
+                 reservoir.age.14c.var = NULL, 
+                 reservoir.age.14c.uncertainty.var = NULL, 
+                 rejected.ages.var = NULL,
+                 accept.suggestions = TRUE)
+```
+Great! If all went well Bacon ran, and geoChronR grabbed the ensembles for future use. What kind of future use? Well, let's start with plotting. 
+
+
+
+The `plotChronEns()` function is great for making, quick, but pretty nice, figures to show an age model ensemble. It has a lot of options for customization (check out `?plotChronEns`). Lastly, what it returns is a ggplot2 object, meaning that you can further customize it! Let's see how it goes!
+
+```{r}
+plotChronEns(tana) + ggtitle("Tana Lake - default Bacon model")
+```
+That was easy! But you'll have to explore the options to fully customize your figure. 
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #exploreplotChronEns}
+Explore the parameter choices in plotChronEns. Can you a) change the confidence interval colors and b) quantiles? c) Change the type of distribution plotted for the dates d) and their color and transparency? e) what does truncate.dist do?
+:::
+::::
+
+
+## Bchron
+
+```{r, cache=TRUE, results = 'hide',cache=TRUE}
+tana <- runBchron(tana,
+                 iter = 10000,
+                 model.num = 2,
+                 lab.id.var = 'LabID', 
+                 age.14c.var = 'age14C',
+                 age.14c.uncertainty.var = 'age14CUnc', 
+                 age.var = 'age', 
+                 age.uncertainty.var = '1SD', 
+                 depth.var = 'depth', 
+                 reservoir.age.14c.var = NULL, 
+                 reservoir.age.14c.uncertainty.var = NULL, 
+                 rejected.ages.var = NULL)
+```
+```{r}
+plotChronEns(tana,model.num = 2,truncate.dist = .0001) + ggtitle("Tana Lake - default Bchron model")
+```
+
+## Oxcal
+
+```{r,cache=TRUE}
+tana <- runOxcal(tana,model.num = 3,
+                 lab.id.var = 'LabID', 
+                 age.14c.var = 'age14C',
+                 age.14c.uncertainty.var = 'age14CUnc', 
+                 age.var = 'age', 
+                 age.uncertainty.var = '1SD', 
+                 depth.var = 'depth', 
+                 reservoir.age.14c.var = NULL, 
+                 reservoir.age.14c.uncertainty.var = NULL, 
+                 rejected.ages.var = NULL,
+                 events.per.unit.length = .05,
+                 depth.interval = 20)
+```
+```{r}
+plotChronEns(tana,model.num = 3,truncate.dist = .0001) + ggtitle("Tana Lake - Oxcal model")
+```
+
+### Let's compare these models. 
+First, lets use `selectData()` to pull the depth and ageEnsemble variables for each model. The `selectData()` function is introduced in section \ref{#selectData} .
+
+
+```{r,warning=FALSE,results = 'hide',message = FALSE}
+ensBacon <- selectData(tana,
+                       var.name = "ageEnsemble",
+                       paleo.or.chron = "chronData",
+                       model.num = 1,
+                       table.type = "ensemble")
+
+depthBacon <- selectData(tana,
+                       var.name = "depth",
+                       paleo.or.chron = "chronData",
+                       model.num = 1,
+                       table.type = "ensemble")
+
+ensBchron <- selectData(tana,
+                       var.name = "ageEnsemble",
+                       paleo.or.chron = "chronData",
+                       model.num = 2,
+                       table.type = "ensemble")
+
+depthBchron <- selectData(tana,
+                       var.name = "depth",
+                       paleo.or.chron = "chronData",
+                       model.num = 2,
+                       table.type = "ensemble")
+
+ensOxcal <- selectData(tana,
+                       var.name = "ageEnsemble",
+                       paleo.or.chron = "chronData",
+                       model.num = 3,
+                       table.type = "ensemble")
+
+depthOxcal <- selectData(tana,
+                       var.name = "depth",
+                       paleo.or.chron = "chronData",
+                       model.num = 3,
+                       table.type = "ensemble")
+
+```
+
+
+Now that we have all the data extracted, we can use the `plotTimeseriesEnsRibbons()` function to plot each of the modeled age-depth relationships and their uncertainties. We will use the `magrittr` "pipe" function or `%>%` to pass the output of one plot into the next to build up a complex figure. We'll also use different colors and transparencies so we can distinguish the different models.  
+
+```{r,message=FALSE}
+plotTimeseriesEnsRibbons(X = ensBacon,Y = depthBacon) %>% 
+  plotTimeseriesEnsRibbons(X = ensBchron,Y = depthBchron,
+                           alp = .7,
+                           color.high = "DarkGreen",
+                           color.line = "Green") %>% 
+plotTimeseriesEnsRibbons(X = ensOxcal,Y = depthOxcal,
+                         alp = .7,
+                         color.high = "DarkBlue",
+                         color.line = "Blue") %>% 
+  plotModelDistributions(tana,add.to.plot = .) + #here we use the ggplot 
+  scale_y_reverse()
+```
+All geoChronR plotting functions return ggplot2 objects, so we can modify the scale by adding a layer using `+` using the ggplot2 model. 
+
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #compareChronModels}
+Where do the models agree? Where do they differ? Do you think one is better than the others?
+
+<details>
+  <summary>After you've answered, click for next step</summary>
+   The OxCal model is considerably more flexible than the Bacon model, which leaves outliers off the main trend. If you wanted to make the OxCal model less flexible, which parameter(s) would you change? Alternatively, if you wanted to make the Bacon model more flexible, which parameter(s) would you change in the Bacon model?  
+   
+   Try making a change to parameters in either Bacon or OxCal to make the models more similar (note, Bacon runs much faster, so I'd probably try that one first)
+   
+   Finally, how should you decide whether a more or less flexible model is better?
+</details> 
+:::
+::::
+
+
+
+### Creating a multimodel ensemble
+
+Sometimes, there are good reason to believe that because of it's design, or underlying assumptions, one model may be superior to the others, in which case you should choose that model. However, frequently, it's unclear which model to choose, or to objectively pick on model over another. In this case, you might want to create a multimodel ensemble that incorporates model structural uncertainty into your uncertainty structure. This is pretty straightforward in geoChronR.
+
+Here, we'll create a fourth model that combines these three into a "Grand Ensemble" using `createMultiModelEnsemble`
+
+```{r}
+tana <- createMultiModelEnsemble(tana,
+                                 models.to.combine = 1:3,
+                                 depth.interval =10,
+                                 n.ens = 1000)
+```
+:::: {.blackbox data-latex=""}
+::: {.exercise #plotGrandEnsemble}
+Use plotChronEns() and plotModelDistributions() to visualize your multi-model age model.  
+<details>
+<summary>Hint #1</summary>
+  First plot the chronEns, then use the "add.to.plot" parameter to add in the distributions.
+</details> 
+<details>
+  <summary>Hint #2</summary>
+  Something with this structure is what you're looking for
+```{r,eval = FALSE}
+plotChronEns() %>% plotModelDistributions()
+```
+</details> 
+</details> 
+:::
+::::
+
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #exploreMultiModelEnsemble}
+Now that you've got plotting working, try changing the choices made in createMultiModelEnsemble. Specifically, what is the impact of changing, depth.interval, n.ens, or depth.sequence? Use the documentation for help!
+:::
+::::
+
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #plotAllFour}
+Add your final multi model ensemble to the figure that showed the three original age models above. Does it look like a combination of the three?
+:::
+::::
+
+
+### Mapping the age ensemble to the paleoData measurements
+
+Great, our LiPD file now has an age ensemble (actually 4 age ensembles!) that we can use in subsequent analysis. We could write out our LiPD file right now using `lipdR::writeLipd(tana)`, for future work, or share with a colleague, and when we load it back in, all of our ensembles will be there, ready to go!
+
+But for now, let's think about the next step in our analysis. We want to look at our paleoenvironmental data in the context of the age uncertainties. So let's take a look at the paleoData!
+
+```{r}
+#First, create a tibble from the paleoata
+paleo <- extractTs(tana) %>% ts2tibble()
+
+#Now you can explore that much more easily - here are all the variable names.
+paleo$paleoData_variableName
+```
+ It looks like depth in this dataset is "Composite_depth", and the median age vector is here, but the age ensemble is not! Why not? Well, the ensemble chronology in a model may or may not have values corresponding to the paleoclimatic or paleoenvironmental measurements in paleoData. Each of our models have different depth scales, and they're all different than our paleoclimate data. So we need to "map" the model ensemble values to a measurement table in paleoData, so we can estimate the age uncertainty on each value. To do this we use the `mapAgeEnsembleToPaleoData()` function.
+
+
+```{r , results = 'hide'}
+tana <- mapAgeEnsembleToPaleoData(tana,model.num = 4,paleo.depth.var = "Composite_depth", age.var = "ageEnsemble")
+```
+Now let's look at the paleoData again:
+
+```{r}
+paleo <- extractTs(tana) %>% ts2tibble()
+
+paleo$paleoData_variableName
+```
+
+Great, now we have an ageEnsemble variable in our paleoData (and our tibble!)
+
+
+### Creating a timeseries plot as a spaghetti plot of lines
+
+Let's visualize the reconstructed temperature with age uncertainties. 
+
+First, we'll use `selectData()` again to get our mapped ensemble and temperature data:
+```{r}
+tana.ae <- selectData(tana,var.name = "ageEnsemble")
+tana.temp <- selectData(tana,var.name = "temperature")
+```
+
+OK, we're ready to plot it. There are a few ways to visualize ensemble data. The simplest is to just plot multiple instances of the line. Here we will just plot the temperature data against 50 random ensemble members.   
+```{r,results = 'hide',warning = FALSE,message = FALSE}
+tana.ts.plot <-  plotTimeseriesEnsLines(X = tana.ae,Y = tana.temp,alp = 0.05,n.ens.plot = 50,color = "blue")
+print(tana.ts.plot)
+```
+
+### Creating a timeseries plot with a ribbon confidence intervals
+
+We can also plot this as a ribbon plot of quantiles
+
+```{r,results = 'hide',warning=FALSE,message = FALSE}
+#hulu.ts.plot <- plotTimeseriesEnsRibbons(X = hulu.ae,Y = hulu.d18O,n.bins = 1000)+xlim(c(35000,75000))
+#print(hulu.ts.plot)
+```
+
+### Combining the two kinds of timeseries plots
+
+Or a combination of the two with the "add.to.plot option"
+
+```{r,results = 'hide',warning = FALSE,message = FALSE}
+#hulu.ts.plot <- plotTimeseriesEnsLines(X = hulu.ae,Y = hulu.d18O,alp = 0.1,n.ens.plot = 10,color = "red",add.to.plot = hulu.ts.plot)+ggtitle("Hulu Cave d18O")
+#print(hulu.ts.plot)
+```

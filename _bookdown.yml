@@ -1,4 +1,4 @@
-book_filename: "Time-uncertain data analysis in R"
+book_filename: "Time-uncertain-data-analysis-in-R"
 delete_merged_file: true
 language:
   ui:
@@ -23,6 +23,7 @@ rmd_files: [
   "index.Rmd",
   "installation.Rmd",
   "data.Rmd",
+  "ageModelling.Rmd",
   "correlation.Rmd",
   "regression.Rmd",
   "spectral.Rmd",

@@ -4,21 +4,21 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 2 Data in geoChronR | geoChronR Tutroial</title>
-  <meta name="description" content="This is the tutorial book for geoChronR" />
+  <title>Chapter 3 Data in geoChronR | Time-uncertain data analysis in R</title>
+  <meta name="description" content="This book covers time-uncertain data analysis in R, primarily relying on the geoChronR package" />
   <meta name="generator" content="bookdown 0.22 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 2 Data in geoChronR | geoChronR Tutroial" />
+  <meta property="og:title" content="Chapter 3 Data in geoChronR | Time-uncertain data analysis in R" />
   <meta property="og:type" content="book" />
   
   
-  <meta property="og:description" content="This is the tutorial book for geoChronR" />
-  <meta name="github-repo" content="linkedearth/geochronr-tutorial" />
+  <meta property="og:description" content="This book covers time-uncertain data analysis in R, primarily relying on the geoChronR package" />
+  <meta name="github-repo" content="linkedearth/time-uncertain-data-analysis-in-R" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 2 Data in geoChronR | geoChronR Tutroial" />
+  <meta name="twitter:title" content="Chapter 3 Data in geoChronR | Time-uncertain data analysis in R" />
   
-  <meta name="twitter:description" content="This is the tutorial book for geoChronR" />
+  <meta name="twitter:description" content="This book covers time-uncertain data analysis in R, primarily relying on the geoChronR package" />
   
 
 <meta name="author" content="Nick McKay" />
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="index.html"/>
-<link rel="next" href="exercise-2.html"/>
+<link rel="prev" href="installation.html"/>
+<link rel="next" href="age-uncertain-correlation.html"/>
 <script src="libs/header-attrs-2.9/header-attrs.js"></script>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -138,12 +138,63 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Welcome!</a></li>
-<li class="chapter" data-level="2" data-path="inputs.html"><a href="inputs.html"><i class="fa fa-check"></i><b>2</b> Data in geoChronR</a>
+<li class="chapter" data-level="2" data-path="installation.html"><a href="installation.html"><i class="fa fa-check"></i><b>2</b> Installing the software you need</a>
 <ul>
-<li class="chapter" data-level="2.1" data-path="inputs.html"><a href="inputs.html#lipdr"><i class="fa fa-check"></i><b>2.1</b> lipdR</a></li>
+<li class="chapter" data-level="2.1" data-path="installation.html"><a href="installation.html#loading-a-lipd-file"><i class="fa fa-check"></i><b>2.1</b> Loading a LiPD file</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="exercise-2.html"><a href="exercise-2.html"><i class="fa fa-check"></i><b>3</b> Exercise 2</a></li>
-<li class="chapter" data-level="4" data-path="exercise-3.html"><a href="exercise-3.html"><i class="fa fa-check"></i><b>4</b> Exercise 3</a></li>
+<li class="chapter" data-level="3" data-path="inputs.html"><a href="inputs.html"><i class="fa fa-check"></i><b>3</b> Data in geoChronR</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="inputs.html"><a href="inputs.html#loading-a-lipd-file-1"><i class="fa fa-check"></i><b>3.1</b> Loading a LiPD file</a></li>
+<li class="chapter" data-level="3.2" data-path="inputs.html"><a href="inputs.html#loading-multiple-lipd-datasets"><i class="fa fa-check"></i><b>3.2</b> Loading multiple LiPD datasets</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="age-uncertain-correlation.html"><a href="age-uncertain-correlation.html"><i class="fa fa-check"></i><b>4</b> Age-uncertain correlation</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="age-uncertain-correlation.html"><a href="age-uncertain-correlation.html#the-corens-function"><i class="fa fa-check"></i><b>4.1</b> The corEns() function</a></li>
+<li class="chapter" data-level="4.2" data-path="age-uncertain-correlation.html"><a href="age-uncertain-correlation.html#plotting-the-results"><i class="fa fa-check"></i><b>4.2</b> Plotting the results</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="age-uncertain-correlation.html"><a href="age-uncertain-correlation.html#significance-testing-options"><i class="fa fa-check"></i><b>4.2.1</b> Significance testing options</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="age-uncertain-correlation.html"><a href="age-uncertain-correlation.html#judging-the-overall-significance-of-an-age-uncertain-correlation"><i class="fa fa-check"></i><b>4.3</b> Judging the overall significance of an age-uncertain correlation</a></li>
+<li class="chapter" data-level="4.4" data-path="age-uncertain-correlation.html"><a href="age-uncertain-correlation.html#conclusions"><i class="fa fa-check"></i><b>4.4</b> Conclusions</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html"><i class="fa fa-check"></i><b>5</b> Regression and Calibration-in-time</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#load-the-lipd-file"><i class="fa fa-check"></i><b>5.1</b> Load the LiPD file</a></li>
+<li class="chapter" data-level="5.2" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#check-out-the-contents"><i class="fa fa-check"></i><b>5.2</b> Check out the contents</a></li>
+<li class="chapter" data-level="5.3" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#create-an-age-model-with-bacon"><i class="fa fa-check"></i><b>5.3</b> Create an age model with Bacon</a></li>
+<li class="chapter" data-level="5.4" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-ensemble-output"><i class="fa fa-check"></i><b>5.4</b> And plot the ensemble output</a></li>
+<li class="chapter" data-level="5.5" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#map-the-age-ensemble-to-the-paleodata-table"><i class="fa fa-check"></i><b>5.5</b> Map the age ensemble to the paleodata table</a></li>
+<li class="chapter" data-level="5.6" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#select-the-paleodata-age-ensemble-and-rabd-data-that-wed-like-to-regress-and-calibrate"><i class="fa fa-check"></i><b>5.6</b> Select the paleodata age ensemble, and RABD data that we’d like to regress and calibrate</a></li>
+<li class="chapter" data-level="5.7" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#now-load-in-the-instrumental-data-we-want-to-correlate-and-regress-agains"><i class="fa fa-check"></i><b>5.7</b> Now load in the instrumental data we want to correlate and regress agains</a></li>
+<li class="chapter" data-level="5.8" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#check-agetime-units-before-proceeding"><i class="fa fa-check"></i><b>5.8</b> Check age/time units before proceeding</a></li>
+<li class="chapter" data-level="5.9" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#create-a-variable-list-for-the-instrumental-data"><i class="fa fa-check"></i><b>5.9</b> Create a “variable list” for the instrumental data</a></li>
+<li class="chapter" data-level="5.10" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#calculate-an-ensmeble-correlation-between-the-rabd-and-local-summer-temperature-data"><i class="fa fa-check"></i><b>5.10</b> Calculate an ensmeble correlation between the RABD and local summer temperature data</a></li>
+<li class="chapter" data-level="5.11" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-output"><i class="fa fa-check"></i><b>5.11</b> And plot the output</a></li>
+<li class="chapter" data-level="5.12" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#perform-ensemble-regression"><i class="fa fa-check"></i><b>5.12</b> Perform ensemble regression</a></li>
+<li class="chapter" data-level="5.13" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-output-1"><i class="fa fa-check"></i><b>5.13</b> And plot the output</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="spectral-analysis.html"><a href="spectral-analysis.html"><i class="fa fa-check"></i><b>6</b> Spectral Analysis</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="spectral-analysis.html"><a href="spectral-analysis.html#time-certain-spectral-analysis"><i class="fa fa-check"></i><b>6.1</b> Time-certain spectral analysis</a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="spectral-analysis.html"><a href="spectral-analysis.html#lomb-scargle-periodogram"><i class="fa fa-check"></i><b>6.1.1</b> Lomb-Scargle periodogram</a></li>
+<li class="chapter" data-level="6.1.2" data-path="spectral-analysis.html"><a href="spectral-analysis.html#multi-taper-method"><i class="fa fa-check"></i><b>6.1.2</b> Multi-taper Method</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="spectral-analysis.html"><a href="spectral-analysis.html#time-uncertain-spectral-analysis"><i class="fa fa-check"></i><b>6.2</b> Time-uncertain spectral analysis</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="principal-components-analysis.html"><a href="principal-components-analysis.html"><i class="fa fa-check"></i><b>7</b> Principal Components Analysis</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="principal-components-analysis.html"><a href="principal-components-analysis.html#make-a-map"><i class="fa fa-check"></i><b>7.1</b> Make a map</a></li>
+<li class="chapter" data-level="7.2" data-path="principal-components-analysis.html"><a href="principal-components-analysis.html#prepare-the-data-for-pca"><i class="fa fa-check"></i><b>7.2</b> Prepare the data for PCA</a>
+<ul>
+<li class="chapter" data-level="7.2.1" data-path="principal-components-analysis.html"><a href="principal-components-analysis.html#grab-the-age-ensembles-for-each-record."><i class="fa fa-check"></i><b>7.2.1</b> Grab the age ensembles for each record.</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="principal-components-analysis.html"><a href="principal-components-analysis.html#calculate-the-ensemble-pca"><i class="fa fa-check"></i><b>7.3</b> Calculate the ensemble PCA</a>
+<ul>
+<li class="chapter" data-level="7.3.1" data-path="principal-components-analysis.html"><a href="principal-components-analysis.html#plot-the-ensemble-pca-results"><i class="fa fa-check"></i><b>7.3.1</b> Plot the ensemble PCA results</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="principal-components-analysis.html"><a href="principal-components-analysis.html#ensemble-pca-take-two---using-a-covariance-matrix."><i class="fa fa-check"></i><b>7.4</b> Ensemble PCA take two - using a covariance matrix.</a></li>
+</ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 
@@ -156,7 +207,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">geoChronR Tutroial</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Time-uncertain data analysis in R</a>
           </h1>
         </div>
 
@@ -164,8 +215,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="inputs" class="section level1" number="2">
-<h1><span class="header-section-number">Chapter 2</span> Data in geoChronR</h1>
+<div id="inputs" class="section level1" number="3">
+<h1><span class="header-section-number">Chapter 3</span> Data in geoChronR</h1>
 <p>geoChronR was designed for data structured in the <a href="http://lipd.net">LiPD format</a>.
 Actually, much of the LiPD framework was developed to accommodate the needs of geoChronR, so by far, you’ll find it easiest to work with data in the structured, metadata-rich LiPD format.
 All of the examples and exercises in this book will use LiPD datasets.
@@ -174,30 +225,30 @@ It takes some time to learn the structure, and some time to annotate your data, 
 If you <strong>really</strong> don’t want to lipdify your data, we are working on ways to take advantage of geoChronR tools with simpler data structures.
 This will mean more work in geoChronR, since you’ll have to specify a lot information that would normally be included in a LiPD file, but there are times when this makes sense.
 Once this functionality is operable, we’ll add a module demonstrating how this works.</p>
-<div id="lipdr" class="section level2" number="2.1">
-<h2><span class="header-section-number">2.1</span> lipdR</h2>
-<p>The <code>lipdR</code> package is your gateway to working with lipd data. To install <code>lipdR</code>, you’ll need the remotes package if you don’t already have it.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="inputs.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;remotes&quot;</span>)</span>
-<span id="cb1-2"><a href="inputs.html#cb1-2" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;nickmckay/lipdR&quot;</span>)</span></code></pre></div>
+<div id="loading-a-lipd-file-1" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Loading a LiPD file</h2>
+<p>The <code>lipdR</code> package is your gateway to working with LiPD data. To install <code>lipdR</code>, you’ll need the remotes package if you don’t already have it.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="inputs.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;remotes&quot;</span>)</span>
+<span id="cb2-2"><a href="inputs.html#cb2-2" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;nickmckay/lipdR&quot;</span>)</span></code></pre></div>
 <p>Now you can load the lipdR library, and load some data.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="inputs.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lipdR)</span>
-<span id="cb2-2"><a href="inputs.html#cb2-2" aria-hidden="true" tabindex="-1"></a>L <span class="ot">&lt;-</span> <span class="fu">readLipd</span>(<span class="st">&quot;https://lipdverse.org/Temp12k/current_version/GEOFAR_KF16_MgCa.Repschlager.2016.lpd&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="inputs.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lipdR)</span>
+<span id="cb3-2"><a href="inputs.html#cb3-2" aria-hidden="true" tabindex="-1"></a>L <span class="ot">&lt;-</span> <span class="fu">readLipd</span>(<span class="st">&quot;https://lipdverse.org/Temp12k/current_version/GEOFAR_KF16_MgCa.Repschlager.2016.lpd&quot;</span>)</span></code></pre></div>
 <pre><code>## [1] &quot;reading: GEOFAR_KF16_MgCa.Repschlager.2016.lpd&quot;</code></pre>
 <p>You can load a LiPD file from the web, as shown above, or locally on your computer. If you leave the input blank (e.g. <code>L &lt;- readLipd()</code>), you can interactively choose a file on your computer.</p>
 <div class="blackbox">
 <div class="exercise">
-<p><span id="exr:unlabeled-div-1" class="exercise"><strong>Exercise 2.1  (Loading LiPD data) </strong></span>Explore <a href="https://lipdverse.org/Temp12k/current_version">the Temp12k collection on lipdverse.org</a>, and load a file into R using lipdR with two different approaches: a) directly using the url as above, and b) download the file to your computer, and load it interactively.</p>
+<p><span id="exr:LoadingLipdData" class="exercise"><strong>Exercise 3.1  </strong></span>Explore <a href="https://lipdverse.org/Temp12k/current_version">the Temp12k collection on lipdverse.org</a>, and load a file into R using lipdR with two different approaches: a) directly using the url as above, and b) download the file to your computer, and load it interactively.</p>
 </div>
 </div>
 <details>
 <summary>
-Click for Answer to 1.1a
+Click for Answer to <a href="inputs.html#exr:LoadingLipdData">3.1</a>a
 </summary>
 <p>We’ll use <a href="https://lipdverse.org/Temp12k/current_version/HeshangCave.Wang.2018.html">this dataset</a>.</p>
 <ol style="list-style-type: lower-alpha">
 <li>First we’ll get it directly from the web like this:</li>
 </ol>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="inputs.html#cb4-1" aria-hidden="true" tabindex="-1"></a>    lipd <span class="ot">&lt;-</span> <span class="fu">readLipd</span>(<span class="st">&quot;https://lipdverse.org/Temp12k/current_version/HeshangCave.Wang.2018.lpd&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="inputs.html#cb5-1" aria-hidden="true" tabindex="-1"></a>    lipd <span class="ot">&lt;-</span> <span class="fu">readLipd</span>(<span class="st">&quot;https://lipdverse.org/Temp12k/current_version/HeshangCave.Wang.2018.lpd&quot;</span>)</span></code></pre></div>
 <pre><code>## [1] &quot;reading: HeshangCave.Wang.2018.lpd&quot;</code></pre>
 note that the extension is “.lpd” not “.html”
 </details>
@@ -208,8 +259,12 @@ Click for Answer to 1.1b
 <ol start="2" style="list-style-type: lower-alpha">
 <li>This time, just go to <a href="https://lipdverse.org/Temp12k/current_version/HeshangCave.Wang.2018.html">the dataset</a> and download the data to your computer, then run</li>
 </ol>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="inputs.html#cb7-1" aria-hidden="true" tabindex="-1"></a>    lipd <span class="ot">&lt;-</span> <span class="fu">readLipd</span>()</span></code></pre></div>
 and select the file interactively.
 </details>
+</div>
+<div id="loading-multiple-lipd-datasets" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> Loading multiple LiPD datasets</h2>
 
 </div>
 </div>
@@ -218,8 +273,8 @@ and select the file interactively.
           </div>
         </div>
       </div>
-<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="exercise-2.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="installation.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="age-uncertain-correlation.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -262,7 +317,7 @@ gitbook.start({
 "link": null,
 "text": null
 },
-"download": ["geochronr-tutorial.pdf"],
+"download": ["Time-uncertain data analysis in R.pdf"],
 "toc": {
 "collapse": "subsection"
 }

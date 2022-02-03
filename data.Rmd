@@ -1,4 +1,4 @@
-# Data in geoChronR {#inputs}
+# Data in geoChronR {#data}
 
 geoChronR was designed for data structured in the [LiPD format](http://lipd.net). 
 Actually, much of the LiPD framework was developed to accommodate the needs of geoChronR, so by far, you'll find it easiest to work with data in the structured, metadata-rich LiPD format. 
@@ -11,17 +11,15 @@ Once this functionality is operable, we'll add a module demonstrating how this w
 
 ## Loading a LiPD file
 
-The `lipdR` package is your gateway to working with LiPD data. To install `lipdR`, you'll need the remotes package if you don't already have it.
-
-```{r, echo=TRUE, eval=FALSE}
-install.packages("remotes")
-remotes::install_github("nickmckay/lipdR")
-```
 
 Now you can load the lipdR library, and load some data. 
 
 ```{r}
 library(lipdR)
+library(geoChronR)
+```
+
+```{r}
 L <- readLipd("https://lipdverse.org/Temp12k/current_version/GEOFAR_KF16_MgCa.Repschlager.2016.lpd")
 ```
 
@@ -29,13 +27,13 @@ You can load a LiPD file from the web, as shown above, or locally on your comput
 
 
 :::: {.blackbox data-latex=""}
-::: {.exercise name="Loading LiPD data"}
+::: {.exercise #LoadingLipdData}
 
 Explore [the Temp12k collection on lipdverse.org](https://lipdverse.org/Temp12k/current_version), and load a file into R using lipdR with two different approaches: a) directly using the url as above, and b) download the file to your computer, and load it interactively. 
 :::
 ::::
 <details>
-  <summary>Click for Answer to 1.1a</summary>
+  <summary>Click for Answer to \@ref(exr:LoadingLipdData)a</summary>
    We'll use [this dataset](https://lipdverse.org/Temp12k/current_version/HeshangCave.Wang.2018.html).
    
    a. First we'll get it directly from the web like this:
@@ -48,16 +46,40 @@ note that the extension is ".lpd" not ".html"
 </details> 
 
 <details>
-  <summary>Click for Answer to 1.1b</summary>
+  <summary>Click for Answer to \@ref(exr:LoadingLipdData)b</summary>
    b. This time, just go to [the dataset](https://lipdverse.org/Temp12k/current_version/HeshangCave.Wang.2018.html) and download the data to your computer, then run 
 
-```{r, echo=FALSE, eval=FALSE}
+```{r, echo=TRUE, eval=FALSE}
     lipd <- readLipd()
 ```
 
 and select the file interactively. 
 </details> 
 
+
+Once you have a LiPD object loaded in R, there are a few things you can do. First, if you want a quick and dirty visualization of what's inside the dataset, use `plotLipd()`.
+
+If you know what the variables are you want to plot beforehand, you can specify them like this:
+```{r}
+plotSummary(lipd,paleo.data.var = "temperature",chron.age.var = "age",chron.age.14c.var = NULL)
+```
+
+But most of the time, you'll just run it in interactive mode and select what you want. 
+```{r,eval=FALSE}
+plotSummary(lipd)
+```
+
+One of the components of `plotSummary()` is a site map, which is created with the function `mapLipd()`.
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #mapLipd}
+Check out the documentation for `mapLipd()` (type `?mapLipd`), and tinker with the options to produce different types of maps. 
+:::
+::::
+
+
+
+### Extract a variable from a LiPD object {#selectData}
 
 ## Loading multiple LiPD datasets
 
