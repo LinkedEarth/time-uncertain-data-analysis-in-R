@@ -61,7 +61,7 @@ Once you have a LiPD object loaded in R, there are a few things you can do. Firs
 
 If you know what the variables are you want to plot beforehand, you can specify them like this:
 ```{r}
-plotSummary(lipd,paleo.data.var = "temperature",chron.age.var = "age",chron.age.14c.var = NULL)
+plotSummary(L,paleo.data.var = "temperature",chron.age.var = "age",chron.depth.var = "depthMid",chron.age.14c.var = NULL)
 ```
 
 But most of the time, you'll just run it in interactive mode and select what you want. 
@@ -77,11 +77,136 @@ Check out the documentation for `mapLipd()` (type `?mapLipd`), and tinker with t
 :::
 ::::
 
-
-
 ### Extract a variable from a LiPD object {#selectData}
 
+In geoChronR, it is often useful to extract one or two variables from a LiPD object and then use them for subsequent analysis and visualization. The key function for this is `selectData()`. Typically, you'll use it interactive mode to find the variable your looking for, either in the paleoData or chronData sections of the LiPD file. 
+
+```{r, eval = FALSE}
+#grab the calibrated temperature record
+temp <- selectData(L,paleo.or.chron = "paleoData")
+
+#grab the original dates from the chronData
+c14 <- selectData(L,paleo.or.chron = "chronData")
+```
+
+If there's a lot of variables in the file, and you kinda know what you're looking for, you can add a `var.name` guess and it will narrow it down to options that seem likely, or select one automatically if it's close. 
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #mapLipd}
+Enter "d18o" as the var.name in selectData() and see how it narrows down your options.
+:::
+::::
+
+Of course, you can also specify all of the options in `selectData()`, and then get exactly what you want non interactively. This includes data from model ensembleTables or summaryTables, in addition to the measurementTables you use more frequently. For example:
+
+```{r}
+mgCa  <- selectData(L,var.name = "mg/ca",paleo.or.chron = "paleoData",table.type = "meas",meas.table.num = 1)
+```
+
 ## Loading multiple LiPD datasets
+In addition to loading single files, `readLipd()` can also load a whole directory, or a url that points to a zip file full of files.
+
+```{r}
+eur <- readLipd("https://lipdverse.org/geoChronR-examples/euro/Euro2k.zip")
+```
+If you load multiple files, it will create an object called a "multi-lipd", which is just a list of lipd objects. And we can use some of the same functions. 
+
+For example, let's make a map of our multi-lipd object:
+
+```{r}
+mapLipd(eur,projection = "mollweide",global = TRUE)
+```
+These multi-lipd objects are convenient for getting a lot of data into R, but trying to work with the data inside can get pretty tricky pretty fast. When working with multiple datasets, you'll almost always want to create a timeseries (TS) object, or formally a "lipd-ts" object. You can do that using the 'extractTs()' function or 'as.lipdTs()` from the lipdR package.
+
+
+```{r}
+TS <- extractTs(eur)
+TS <- as.lipdTs(eur)
+```
+
+
+The LiPD-TS object is a "flattened" version of the dataset, it's much less hierarchical and each entry corresponds to a column in a table. By default, `extractTs()` will get all the variables in measurementTables in paleoData objects, but you can also get variables from other tables and from the chronData objects by changing the options. See `?extractTs` for details. 
+
+
+Now we can use the TS version of plotSummary to summarize the whole collection of data. 
+```{r}
+summ <- plotSummaryTs(TS,age.var = "year")
+```
+:::: {.blackbox data-latex=""}
+::: {.exercise #plotSummaryTs}
+Explore the options in plotSummary. Create a new version that colors the dots and availability plot by PAGES 2k Region (the variable name is geo_pages2kRegion)
+:::
+::::
+
+Although LiPD-TS objects are more convenient to work with, they're still list-based and difficult to explore visually. If you're used to working in the [tidyverse](http://tidyverse.org) framework, you'll likely find it useful to convert the data into a tibble (a type of data.frame). In lipdR, this is a "lipd-ts-tibble" object, but it's also just a tibble, so it unlocks many, many options in RStudio and tidyverse. 
+
+To do so, use the `ts2tibble()` or `as.lipdTsTibble()` functions to create tibble. 
+
+
+```{r}
+ts.tib <- ts2tibble(TS)
+```
+
+
+If you're in RStudio, you can now explore the contents of the object grapically. This produces a large tibble, so it's still a little unwieldy. Importantly, some of the columns are nested (depth, age, year, paleoData_values), so all of the timeseries data are included in each row, for each timeseries. You can learn more about [nested tibbles here](https://tidyr.tidyverse.org/articles/nest.html).
+
+As the tidyverse has grown, we've increasingly moved our lipdR and geoChronR workflows into this model. Take a look at how this unlocks some pretty efficient workflows.
+
+#### Filtering
+
+It's often the case that the a collection of LiPD files includes far more data than we actually need. Let's use `dplyr` to get just the data we need. Let's say that we only want variables that are European tree ring data that were used in Pages2k. You can explore the variables in the data.frame, and the values in each field, and then compose an expression:
+
+```{r}
+library(dplyr)
+filtered.tib <- ts.tib %>% 
+   filter(between(geo_latitude,30,80) & between(geo_longitude,-30,60)) %>% #restrict the coordinates to just Europe
+   filter(archiveType == "tree") %>% 
+   filter(paleoData_useInGlobalTemperatureAnalysis == TRUE)
+```
+
+
+Let's take a look at the result!
+
+
+```{r}
+nTS <- as.lipdTs(filtered.tib) #convert it back (for now)
+plotSummaryTs(nTS,age.var = "year",f = .1)
+```
+
+Great, it looks like our filtering worked! It looks like most of the data go back about 1000 years, but a few records are much longer. Next, we'd like to restrict our analysis to just 1000 - 2000 AD. This is possible in a nested tibble, but it's often useful to have a longer version, one where every row in the data.frame corresponds to a single year-value pair, rather than a whole timeseries. This is the purpose of lipd-ts-tibble-long objects, the final lipd object type. This is useful if you want easy access to all the data in one large tibble.
+
+We can convert our data to this structure using `tidyTs()` or, you guessed it, `as.lipdTsTibbleLong()`
+
+```{r}
+longTib <- as.lipdTsTibbleLong(filtered.tib) %>% 
+   dplyr::filter(between(year,1000,2000))
+```
+
+Take a look at our new tibble, we restricted the time range, but it still has 11,350 rows! As you can imagine, loading in a few hundred LiPD datasets and converting them into lipd-ts-tibble-long objects will result in tibbles of several million rows, which might cause your computer problems!
+
+Let's take a quick look at these filtered data. The `plotTimeseriesStack()` function lets you make a quick version of the classic paleoclimate stack plots. Check out [this tutorial](https://nickmckay.github.io/GeoChronR/articles/PlotTimeseriesStack.html) for a deep dive.
+
+Here we'll just plot our data, and color it by the proxy type. 
+
+```{r,fig.height=15}
+plotTimeseriesStack(longTib,color.var = "paleoData_proxy")
+```
+
+And there it is! Not too bad, but I don't love that default colorscheme with only 3 values. 
+
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #plotTimeseriesStack}
+Explore the options in plotTimeseriesStack. Create a new version that:
+
+a. Has better colors!
+b. Changes the line thickness. 
+c. What does invert.var do?
+d. Replot this, but only showing the MXD data. 
+:::
+::::
+
+
 
 
 

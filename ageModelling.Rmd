@@ -134,7 +134,7 @@ depthOxcal <- selectData(tana,
 ```
 
 
-Now that we have all the data extracted, we can use the `plotTimeseriesEnsRibbons()` function to plot each of the modeled age-depth relationships and their uncertainties. We will use the `magrittr` "pipe" function or `%>%` to pass the output of one plot into the next to build up a complex figure. We'll also use different colors and transparencies so we can distinguish the different models.  
+Now that we have all the data extracted, we can use the `plotTimeseriesEnsRibbons()` function to plot each of the modeled age-depth relationships and their uncertainties. We will use the `magrittr` "pipe" function `%>%` to pass the output of one plot into the next to build up a complex figure. We'll also use different colors and transparencies so we can distinguish the different models.  
 
 ```{r,message=FALSE}
 plotTimeseriesEnsRibbons(X = ensBacon,Y = depthBacon) %>% 
@@ -146,7 +146,7 @@ plotTimeseriesEnsRibbons(X = ensOxcal,Y = depthOxcal,
                          alp = .7,
                          color.high = "DarkBlue",
                          color.line = "Blue") %>% 
-  plotModelDistributions(tana,add.to.plot = .) + #here we use the ggplot 
+  plotModelDistributions(tana,add.to.plot = .) + #here we use the ggplot +
   scale_y_reverse()
 ```
 All geoChronR plotting functions return ggplot2 objects, so we can modify the scale by adding a layer using `+` using the ggplot2 model. 
@@ -224,14 +224,18 @@ But for now, let's think about the next step in our analysis. We want to look at
 #First, create a tibble from the paleoata
 paleo <- extractTs(tana) %>% ts2tibble()
 
-#Now you can explore that much more easily - here are all the variable names.
+#Now you can explore that much more easily - here are all the variable names in all the measurementTables in the paleoData.
 paleo$paleoData_variableName
 ```
  It looks like depth in this dataset is "Composite_depth", and the median age vector is here, but the age ensemble is not! Why not? Well, the ensemble chronology in a model may or may not have values corresponding to the paleoclimatic or paleoenvironmental measurements in paleoData. Each of our models have different depth scales, and they're all different than our paleoclimate data. So we need to "map" the model ensemble values to a measurement table in paleoData, so we can estimate the age uncertainty on each value. To do this we use the `mapAgeEnsembleToPaleoData()` function.
 
 
 ```{r , results = 'hide'}
-tana <- mapAgeEnsembleToPaleoData(tana,model.num = 4,paleo.depth.var = "Composite_depth", age.var = "ageEnsemble")
+tana <- mapAgeEnsembleToPaleoData(tana,
+                                  age.var = "ageEnsemble",
+                                  model.num = 4,
+                                  paleo.depth.var = "Composite_depth", 
+                                  meas.table.num = 1)
 ```
 Now let's look at the paleoData again:
 
@@ -250,8 +254,8 @@ Let's visualize the reconstructed temperature with age uncertainties.
 
 First, we'll use `selectData()` again to get our mapped ensemble and temperature data:
 ```{r}
-tana.ae <- selectData(tana,var.name = "ageEnsemble")
-tana.temp <- selectData(tana,var.name = "temperature")
+tana.ae <- selectData(tana,var.name = "ageEnsemble",meas.table.num = 1)
+tana.temp <- selectData(tana,var.name = "temperature",meas.table.num = 1)
 ```
 
 OK, we're ready to plot it. There are a few ways to visualize ensemble data. The simplest is to just plot multiple instances of the line. Here we will just plot the temperature data against 50 random ensemble members.   
@@ -260,20 +264,127 @@ tana.ts.plot <-  plotTimeseriesEnsLines(X = tana.ae,Y = tana.temp,alp = 0.05,n.e
 print(tana.ts.plot)
 ```
 
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #plotTimeseriesEnsLines}
+plotTimeseriesEnsLines() has options that control the output. Take a look at the documentation, and then change the following parameters, and understand how that affects the output:
+
+  a. alp
+  b. color (What does "Blues" or "Set2" do? How does it work)
+  c. n.ens.plot
+  d. Change the limits of the plot to only show the Holocene (~12,000-0 yr BP)
+  <details>
+  <summary>Hint</summary>
+  To change the limits, you'll use the xlim() or scale_x_reverse() functions from ggplot2
+  </details> 
+:::
+::::
+
+
+
+
 ### Creating a timeseries plot with a ribbon confidence intervals
 
 We can also plot this as a ribbon plot of quantiles
 
 ```{r,results = 'hide',warning=FALSE,message = FALSE}
-#hulu.ts.plot <- plotTimeseriesEnsRibbons(X = hulu.ae,Y = hulu.d18O,n.bins = 1000)+xlim(c(35000,75000))
-#print(hulu.ts.plot)
+tana.ribbon.plot <- plotTimeseriesEnsRibbons(X = tana.ae,Y = tana.temp)
+print(tana.ribbon.plot)
 ```
+
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #plotTimeseriesEnsLines}
+plotTimeseriesEnsRibbons () has many more options that control the output. Take a look at the documentation for that function, and then change the following parameters, and understand how that affects the output:
+
+  a. probs
+  b. color.high
+  c. n.bins
+  d. export.quantiles
+  e. limit.outliers.x
+:::
+::::
 
 ### Combining the two kinds of timeseries plots
 
-Or a combination of the two with the "add.to.plot option"
+Each of these approaches to age-uncertain timeseries visualization is valuable - ribbons show case the probability distributions of the data through time, given the ensembles, but tend to smooth out real variability recorded by the data. Plotting an ensemble of lines highlights this variability, but gets messy with many lines, or doesn't showcase the true range of uncertainty with a few lines. 
 
-```{r,results = 'hide',warning = FALSE,message = FALSE}
-#hulu.ts.plot <- plotTimeseriesEnsLines(X = hulu.ae,Y = hulu.d18O,alp = 0.1,n.ens.plot = 10,color = "red",add.to.plot = hulu.ts.plot)+ggtitle("Hulu Cave d18O")
-#print(hulu.ts.plot)
+At different times, either approach can be right, but our favorite, standard approach is to do both, using the `add.to.plot` option we used above. 
+
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #ribbonsAndLines}
+Use plotTimeseriesEnsRibbons(), plotTimeseriesEnsLines(), and the "add.to.plot" parameter to create a figure that shows the uncertainty ribbons in the background, and a with 5 ensemble members to highlight the variability of the data. 
+<details>
+  <summary>Hint</summary>
+  Something with this structure is what you're looking for
+```{r,eval = FALSE}
+plotTimeseriesEnsRibbons() %>% plotTimeseriesEnsLines()
 ```
+</details> 
+:::
+::::
+
+
+## Banded Age Modelling
+Thus far, we've explored methods to derive, transfer, and visualize age models derived from age-depth observations (mostly radiocarbon data). geoChronR also includes another type of age modelling algorithm, that estimates uncertainties based on miscounting rates in layer-counted archives. Consequently, BAM does not require, or even consider, depth in its uncertainty quantification. Although BAM is intended for layer-counted archives, like corals or varves, it can be useful as a rough approximation of age-uncertainty in non-banded timeseries, where the original geochronologic data needed to create a proper age model are not available. We'll explore this with Tana Lake dataset and see how it compares. 
+
+
+```{r}
+tana <- runBam(tana,
+               paleo.meas.table.num = 1,
+               n.ens = 1000,
+               model.num = 5,
+               make.new = TRUE,
+               ens.table.number = 1,
+               model = list(name = "poisson",
+                            param = 0.05, 
+                            resize = 0, 
+                            ns = 1000))
+```
+
+
+```{r}
+tana.ye <- selectData(tana,var.name = "yearEnsemble",meas.table.num = 1)
+tana.ae.bam <- convertAD2BP(tana.ye)
+
+tana.ribbon.plot.bam <- plotTimeseriesEnsRibbons(X = tana.ae.bam,Y = tana.temp)
+
+#we can compare this to the original age model supplied by the paper (which used the Heegaard et al., 2005 model, so a whole other approach)
+
+tana.orig.age <- selectData(tana,var.name = "age",meas.table.num = 1)
+
+tana.ribbon.plot.bam <- tana.ribbon.plot.bam +
+  geom_line(aes(x = tana.orig.age$values, y = tana.temp$values),color = "red")
+
+tana.ribbon.plot.bam
+
+```
+
+```{r}
+library(egg)
+ggarrange(plots = list(tana.ribbon.plot + xlim(c(15000,0)) + ggtitle("Temperature on Multimodel age model"),
+                            tana.ribbon.plot.bam + xlim(c(15000,0)) + ggtitle("Temperature on BAM")),
+               nrow = 2)
+
+
+```
+
+
+## Chapter project. 
+
+This chapter covers a range of age modelling approaches, how to implement them in geoChronR, how to propagate the uncertainties to data of interest, and visualization of all of the above. Now it's time to test what you've learned!
+
+In addition to a temperature reconstruction, the Tana Lake dataset includes \delta$^{18}$O from leaf waxes. The data are measured on a different samples at different resolution, and so are stored in a different measurement table. So your project is: 
+
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #ageModelProject}
+Using tools learned in this chapter, create ensemble timeseries figures for \delta$^{18}$O leaf wax from Tana Lake using, Bacon, Bchron, OxCal and BAM. Arrange these four figures vertically into a 4 panel figure with constant x-axes to allow comparison. How does the choice of age modelling algorithm impact the record? Which parts of the dataset are most vulnerable to age uncertainties?
+<details>
+  <summary>Hint</summary>
+Create plots for each model separately, and save them as variables. Then use ggarrange to combine them. 
+</details> 
+:::
+::::
+

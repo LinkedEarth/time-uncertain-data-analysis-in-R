@@ -54,3 +54,9 @@ mapping-the-age-ensemble-to-the-paleodata-measurements
 creating-a-timeseries-plot-as-a-spaghetti-plot-of-lines
 creating-a-timeseries-plot-with-a-ribbon-confidence-intervals
 combining-the-two-kinds-of-timeseries-plots
+exr:LoadingLipdData
+exr:mapLipd
+banded-age-modelling
+chapter-project.
+exr:plotTimeseriesStack
+filtering
