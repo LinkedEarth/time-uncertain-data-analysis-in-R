@@ -60,3 +60,13 @@ banded-age-modelling
 chapter-project.
 exr:plotTimeseriesStack
 filtering
+exr:correlationFirstLook
+agemodelling
+bacon-1
+time-uncertain-correlation
+first-look
+correlateResponsibly
+binning
+autocorrelation
+test-multiplicity
+plotting-the-ensemble-correlation-results

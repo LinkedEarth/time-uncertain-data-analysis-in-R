@@ -1,4 +1,4 @@
-# Age modelling in geoChronR
+# Age modelling in geoChronR {#agemodelling}
 
 geoChronR quantifies the uncertainties due to time uncertainty by taking advantage of ensembles of plausible age histories for one or more datasets.
 This means that often an early step in the geoChronR workflow is generating age ensembles. 
@@ -18,6 +18,19 @@ tana <- readLipd("https://lipdverse.org/Temp12k/1_0_2/TanaLake.Loomis.2015.lpd")
 
 
 ## Bacon
+
+## Bacon
+
+The Bayesian ACcumulatiON (Bacon) algorithm  [@Blaauw2011BACON] is one of the most broadly used age-modelling techniques, and was designed to take advantage of prior knowledge about the distribution and autocorrelation structure of sedimentation rates in a sequence to better quantify uncertainty between dated levels.
+Bacon divides a sediment sequence into a parameterized number of equally-thick segments; most models use dozens to hundreds of these segments.
+Bacon then models sediment deposition, with uniform accumulation within each segment, as an autoregressive gamma process, where both the amount of autocorrelation and the shape of the gamma distribution are given prior estimates.
+The algorithm employs an adaptive Markov Chain Monte Carlo algorithm that allows for Bayesian learning to update these variables given the age-depth constraints, and converge on a distribution of age estimates for each segment in the model.
+Bacon has two key parameters: the shape of the accumulation prior, and the segment length, which can interact in complicated ways [@trachsel2017].
+In our experience, the segment length parameter has the greatest impact on the ultimate shape and amount of uncertainty simulated by Bacon, as larger segments result in increased flexibility of the age-depth curve, and increased uncertainty between dated levels.
+Bacon is written in C++ and R, with an R interface.
+More recently, the authors released an R package "rbacon" [@baconPackage], which geoChronR leverages to provide access to the algorithm.
+Bacon will optionally return a thinned subset of the stabilized MCMC accumulation rate ensemble members, which geoChronR uses to form age ensemble members for subsequent analysis.
+
 
 ```{r,message=FALSE,results='hide',cache=TRUE}
 tana <- runBacon(tana,
@@ -49,8 +62,19 @@ Explore the parameter choices in plotChronEns. Can you a) change the confidence 
 :::
 ::::
 
+## BChron
 
-## Bchron
+BChron [@bchron;@parnell2008flexible] uses a similar approach, using a continuous Markov monotone stochastic process coupled to a piecewise linear deposition model.
+This simplicity allows semi-analytical solutions that make BChron computationally efficient. BChron was originally intended to model radiocarbon-based age-depth models in lake sedimentary cores of primarily Holocene age, but its design allows broader applications.
+In particular, modeling accumulation as additive independent gamma increments is appealing for the representation of hiatuses, particularly for speleothem records, where accumulation rate can vary quite abruptly between quiescent intervals of near-constant accumulation [@Parnell_QSR2011;@PRYSM;@Hu_epsl17].
+The downside of this assumption is that BChron is known to exaggerate age uncertainties in cases where sedimentation varies smoothly [@trachsel2017].
+
+Bchron has several key parameters, which allow a user to encode their specific knowledge about their data.
+In particular, the `outlierProbs` parameter is useful in giving less weight to chronological tie points that may be considered outliers, either because they create a reversal in the stratigraphic sequence, or because they were flagged during analysis (e.g. contamination).
+This is extremely useful for radiocarbon-based chronologies where the top age may not be accurately measured for modern samples.
+The `thetaMhSd`, `psiMhSd`, and `muMhSd` parameters control the Metropolis-Hastings standard deviation for the age parameters and Compound Poisson-Gamma scale and mean respectively, which influence the width of the ensemble between age control tie points.
+geoChronR uses the same default values as the official Bchron package, and we recommend that users only change them if they have good cause for doing so.
+
 
 ```{r, cache=TRUE, results = 'hide',cache=TRUE}
 tana <- runBchron(tana,
@@ -70,7 +94,19 @@ tana <- runBchron(tana,
 plotChronEns(tana,model.num = 2,truncate.dist = .0001) + ggtitle("Tana Lake - default Bchron model")
 ```
 
-## Oxcal
+## OxCal
+
+The OxCal software package has a long history and extensive tools for the statistical treatment of radiocarbon and other geochronological data [@BronkRamsey95].
+In @ramsey2008deposition, age-depth modelling was introduced with three options for modelling depositional processes that are typically useful for sedimentary sequences: uniform, varve, and Poisson deposition models, labeled U-sequence, V-sequence and P-sequence, respectively.
+The Poisson-based model is the most broadly applicable for sedimentary, or other accumulation-based archives (e.g. speleothems), and although any sequence type can be used in geoChronR, most users should use a P-sequence, which is the default.
+Analogously to segment length parameter in Bacon, the *k* parameter (called `eventsPerUnitLength` in geoChronR), controls how many events are simulated per unit of depth, and has a strong impact on the flexibility of the model, as well as the amplitude of the resulting uncertainty.
+As the number of events increases, the flexibility of the model, and the uncertainties, decrease.
+@trachsel2017 found that this parameter has a large impact on the accuracy of the model, more so than the choices made in Bacon or Bchron.
+Fortunately, @bronkramsey2010 made it possible for *k* to be treated as a variable, and the model will estimate the most likely values of *k* given a prior estimate and the data. The downside of this flexibility is that this calculation can greatly increase the convergence time of the model.
+Oxcal is written in C++, with an interface in R [@oxcAAR].
+Oxcal does not typically calculate posterior ensembles for a depth sequence, but can optionally output MCMC posteriors at specified levels in the sequence.
+geoChronR uses this feature to extract ensemble members for subsequent analysis.
+
 
 ```{r,cache=TRUE}
 tana <- runOxcal(tana,model.num = 3,
@@ -328,6 +364,14 @@ plotTimeseriesEnsRibbons() %>% plotTimeseriesEnsLines()
 
 ## Banded Age Modelling
 Thus far, we've explored methods to derive, transfer, and visualize age models derived from age-depth observations (mostly radiocarbon data). geoChronR also includes another type of age modelling algorithm, that estimates uncertainties based on miscounting rates in layer-counted archives. Consequently, BAM does not require, or even consider, depth in its uncertainty quantification. Although BAM is intended for layer-counted archives, like corals or varves, it can be useful as a rough approximation of age-uncertainty in non-banded timeseries, where the original geochronologic data needed to create a proper age model are not available. We'll explore this with Tana Lake dataset and see how it compares. 
+
+
+@BAM is a probabilistic model of age errors in layer-counted chronologies.
+The model allows a flexible parametric representation of such errors (either as Poisson or Bernoulli processes), and separately considers the possibility of double-counting or missing a band.
+The model is parameterized in terms of the error rates associated with each event, which are intuitive parameters to geoscientists, and may be estimated via replication [@DeLong_Paleo3_2013].
+In cases where such rates can be estimated from the data alone, an optimization principle may be used to identify a more likely age model when a high-frequency common signal can be used as a clock [@BAM].
+As of now, BAM does not consider uncertainties about such parameters, representing a weakness of the method.
+BAM was coded in MATLAB, Python and R, and it is this latter version that geoChronR uses.
 
 
 ```{r}

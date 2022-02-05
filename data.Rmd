@@ -73,7 +73,7 @@ One of the components of `plotSummary()` is a site map, which is created with th
 
 :::: {.blackbox data-latex=""}
 ::: {.exercise #mapLipd}
-Check out the documentation for `mapLipd()` (type `?mapLipd`), and tinker with the options to produce different types of maps. 
+Check out the documentation for mapLipd() (type ?mapLipd), and tinker with the options to produce different types of maps. 
 :::
 ::::
 

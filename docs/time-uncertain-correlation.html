@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 5 Time-uncertain correlation | Time-uncertain data analysis in R</title>
+  <meta name="description" content="This book covers time-uncertain data analysis in R, primarily relying on the geoChronR package" />
+  <meta name="generator" content="bookdown 0.22 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 5 Time-uncertain correlation | Time-uncertain data analysis in R" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This book covers time-uncertain data analysis in R, primarily relying on the geoChronR package" />
+  <meta name="github-repo" content="linkedearth/time-uncertain-data-analysis-in-R" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 5 Time-uncertain correlation | Time-uncertain data analysis in R" />
+  
+  <meta name="twitter:description" content="This book covers time-uncertain data analysis in R, primarily relying on the geoChronR package" />
+  
+
+<meta name="author" content="Nick McKay" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="agemodelling.html"/>
+<link rel="next" href="regression-and-calibration-in-time.html"/>
+<script src="libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">geoChronR Tutorial</a></li>
+<li><a href="http://nickmckay.github.io/GeoChronR>geoChronR manual</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Welcome!</a></li>
+<li class="chapter" data-level="2" data-path="installation.html"><a href="installation.html"><i class="fa fa-check"></i><b>2</b> Installing the software you need</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="installation.html"><a href="installation.html#installing-lipdr"><i class="fa fa-check"></i><b>2.1</b> Installing lipdR</a></li>
+<li class="chapter" data-level="2.2" data-path="installation.html"><a href="installation.html#installing-geochronr"><i class="fa fa-check"></i><b>2.2</b> Installing geoChronR</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="data.html"><a href="data.html"><i class="fa fa-check"></i><b>3</b> Data in geoChronR</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="data.html"><a href="data.html#loading-a-lipd-file"><i class="fa fa-check"></i><b>3.1</b> Loading a LiPD file</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="data.html"><a href="data.html#selectData"><i class="fa fa-check"></i><b>3.1.1</b> Extract a variable from a LiPD object</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="data.html"><a href="data.html#loading-multiple-lipd-datasets"><i class="fa fa-check"></i><b>3.2</b> Loading multiple LiPD datasets</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="agemodelling.html"><a href="agemodelling.html"><i class="fa fa-check"></i><b>4</b> Age modelling in geoChronR</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="agemodelling.html"><a href="agemodelling.html#bacon"><i class="fa fa-check"></i><b>4.1</b> Bacon</a></li>
+<li class="chapter" data-level="4.2" data-path="agemodelling.html"><a href="agemodelling.html#bacon-1"><i class="fa fa-check"></i><b>4.2</b> Bacon</a></li>
+<li class="chapter" data-level="4.3" data-path="agemodelling.html"><a href="agemodelling.html#bchron"><i class="fa fa-check"></i><b>4.3</b> BChron</a></li>
+<li class="chapter" data-level="4.4" data-path="agemodelling.html"><a href="agemodelling.html#oxcal"><i class="fa fa-check"></i><b>4.4</b> OxCal</a>
+<ul>
+<li class="chapter" data-level="4.4.1" data-path="agemodelling.html"><a href="agemodelling.html#lets-compare-these-models."><i class="fa fa-check"></i><b>4.4.1</b> Let’s compare these models.</a></li>
+<li class="chapter" data-level="4.4.2" data-path="agemodelling.html"><a href="agemodelling.html#creating-a-multimodel-ensemble"><i class="fa fa-check"></i><b>4.4.2</b> Creating a multimodel ensemble</a></li>
+<li class="chapter" data-level="4.4.3" data-path="agemodelling.html"><a href="agemodelling.html#mapping-the-age-ensemble-to-the-paleodata-measurements"><i class="fa fa-check"></i><b>4.4.3</b> Mapping the age ensemble to the paleoData measurements</a></li>
+<li class="chapter" data-level="4.4.4" data-path="agemodelling.html"><a href="agemodelling.html#creating-a-timeseries-plot-as-a-spaghetti-plot-of-lines"><i class="fa fa-check"></i><b>4.4.4</b> Creating a timeseries plot as a spaghetti plot of lines</a></li>
+<li class="chapter" data-level="4.4.5" data-path="agemodelling.html"><a href="agemodelling.html#creating-a-timeseries-plot-with-a-ribbon-confidence-intervals"><i class="fa fa-check"></i><b>4.4.5</b> Creating a timeseries plot with a ribbon confidence intervals</a></li>
+<li class="chapter" data-level="4.4.6" data-path="agemodelling.html"><a href="agemodelling.html#combining-the-two-kinds-of-timeseries-plots"><i class="fa fa-check"></i><b>4.4.6</b> Combining the two kinds of timeseries plots</a></li>
+</ul></li>
+<li class="chapter" data-level="4.5" data-path="agemodelling.html"><a href="agemodelling.html#banded-age-modelling"><i class="fa fa-check"></i><b>4.5</b> Banded Age Modelling</a></li>
+<li class="chapter" data-level="4.6" data-path="agemodelling.html"><a href="agemodelling.html#chapter-project."><i class="fa fa-check"></i><b>4.6</b> Chapter project.</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html"><i class="fa fa-check"></i><b>5</b> Time-uncertain correlation</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#first-look"><i class="fa fa-check"></i><b>5.1</b> First look</a></li>
+<li class="chapter" data-level="5.2" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#correlateResponsibly"><i class="fa fa-check"></i><b>5.2</b> How to correlate responsibly</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#binning"><i class="fa fa-check"></i><b>5.2.1</b> Binning</a></li>
+<li class="chapter" data-level="5.2.2" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#autocorrelation"><i class="fa fa-check"></i><b>5.2.2</b> Autocorrelation</a></li>
+<li class="chapter" data-level="5.2.3" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#test-multiplicity"><i class="fa fa-check"></i><b>5.2.3</b> Test multiplicity</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#the-corens-function"><i class="fa fa-check"></i><b>5.3</b> The corEns() function</a></li>
+<li class="chapter" data-level="5.4" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#plotting-the-ensemble-correlation-results"><i class="fa fa-check"></i><b>5.4</b> Plotting the ensemble correlation results</a>
+<ul>
+<li class="chapter" data-level="5.4.1" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#significance-testing-options"><i class="fa fa-check"></i><b>5.4.1</b> Significance testing options</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#judging-the-overall-significance-of-an-age-uncertain-correlation"><i class="fa fa-check"></i><b>5.5</b> Judging the overall significance of an age-uncertain correlation</a></li>
+<li class="chapter" data-level="5.6" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#conclusions"><i class="fa fa-check"></i><b>5.6</b> Conclusions</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html"><i class="fa fa-check"></i><b>6</b> Regression and Calibration-in-time</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#load-the-lipd-file"><i class="fa fa-check"></i><b>6.1</b> Load the LiPD file</a></li>
+<li class="chapter" data-level="6.2" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#check-out-the-contents"><i class="fa fa-check"></i><b>6.2</b> Check out the contents</a></li>
+<li class="chapter" data-level="6.3" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#create-an-age-model-with-bacon"><i class="fa fa-check"></i><b>6.3</b> Create an age model with Bacon</a></li>
+<li class="chapter" data-level="6.4" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-ensemble-output"><i class="fa fa-check"></i><b>6.4</b> And plot the ensemble output</a></li>
+<li class="chapter" data-level="6.5" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#map-the-age-ensemble-to-the-paleodata-table"><i class="fa fa-check"></i><b>6.5</b> Map the age ensemble to the paleodata table</a></li>
+<li class="chapter" data-level="6.6" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#select-the-paleodata-age-ensemble-and-rabd-data-that-wed-like-to-regress-and-calibrate"><i class="fa fa-check"></i><b>6.6</b> Select the paleodata age ensemble, and RABD data that we’d like to regress and calibrate</a></li>
+<li class="chapter" data-level="6.7" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#now-load-in-the-instrumental-data-we-want-to-correlate-and-regress-agains"><i class="fa fa-check"></i><b>6.7</b> Now load in the instrumental data we want to correlate and regress agains</a></li>
+<li class="chapter" data-level="6.8" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#check-agetime-units-before-proceeding"><i class="fa fa-check"></i><b>6.8</b> Check age/time units before proceeding</a></li>
+<li class="chapter" data-level="6.9" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#create-a-variable-list-for-the-instrumental-data"><i class="fa fa-check"></i><b>6.9</b> Create a “variable list” for the instrumental data</a></li>
+<li class="chapter" data-level="6.10" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#calculate-an-ensmeble-correlation-between-the-rabd-and-local-summer-temperature-data"><i class="fa fa-check"></i><b>6.10</b> Calculate an ensmeble correlation between the RABD and local summer temperature data</a></li>
+<li class="chapter" data-level="6.11" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-output"><i class="fa fa-check"></i><b>6.11</b> And plot the output</a></li>
+<li class="chapter" data-level="6.12" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#perform-ensemble-regression"><i class="fa fa-check"></i><b>6.12</b> Perform ensemble regression</a></li>
+<li class="chapter" data-level="6.13" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-output-1"><i class="fa fa-check"></i><b>6.13</b> And plot the output</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="spectral-analysis.html"><a href="spectral-analysis.html"><i class="fa fa-check"></i><b>7</b> Spectral Analysis</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="spectral-analysis.html"><a href="spectral-analysis.html#time-certain-spectral-analysis"><i class="fa fa-check"></i><b>7.1</b> Time-certain spectral analysis</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="spectral-analysis.html"><a href="spectral-analysis.html#lomb-scargle-periodogram"><i class="fa fa-check"></i><b>7.1.1</b> Lomb-Scargle periodogram</a></li>
+<li class="chapter" data-level="7.1.2" data-path="spectral-analysis.html"><a href="spectral-analysis.html#multi-taper-method"><i class="fa fa-check"></i><b>7.1.2</b> Multi-taper Method</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="spectral-analysis.html"><a href="spectral-analysis.html#time-uncertain-spectral-analysis"><i class="fa fa-check"></i><b>7.2</b> Time-uncertain spectral analysis</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="principal-components-analysis.html"><a href="principal-components-analysis.html"><i class="fa fa-check"></i><b>8</b> Principal Components Analysis</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="principal-components-analysis.html"><a href="principal-components-analysis.html#make-a-map"><i class="fa fa-check"></i><b>8.1</b> Make a map</a></li>
+<li class="chapter" data-level="8.2" data-path="principal-components-analysis.html"><a href="principal-components-analysis.html#prepare-the-data-for-pca"><i class="fa fa-check"></i><b>8.2</b> Prepare the data for PCA</a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="principal-components-analysis.html"><a href="principal-components-analysis.html#grab-the-age-ensembles-for-each-record."><i class="fa fa-check"></i><b>8.2.1</b> Grab the age ensembles for each record.</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="principal-components-analysis.html"><a href="principal-components-analysis.html#calculate-the-ensemble-pca"><i class="fa fa-check"></i><b>8.3</b> Calculate the ensemble PCA</a>
+<ul>
+<li class="chapter" data-level="8.3.1" data-path="principal-components-analysis.html"><a href="principal-components-analysis.html#plot-the-ensemble-pca-results"><i class="fa fa-check"></i><b>8.3.1</b> Plot the ensemble PCA results</a></li>
+</ul></li>
+<li class="chapter" data-level="8.4" data-path="principal-components-analysis.html"><a href="principal-components-analysis.html#ensemble-pca-take-two---using-a-covariance-matrix."><i class="fa fa-check"></i><b>8.4</b> Ensemble PCA take two - using a covariance matrix.</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Time-uncertain data analysis in R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="time-uncertain-correlation" class="section level1" number="5">
+<h1><span class="header-section-number">Chapter 5</span> Time-uncertain correlation</h1>
+<p>Correlation is perhaps the most commonly used statistical tool in the paleogeosciences. This makes sense, because we often see similar patterns between datasets, but want to know whether the apparent relationship is robust, or could be spurious. And of course, age uncertainty can have immense impacts on correlation.</p>
+<p>In this chapter, we’ll explore the time-uncertain correlation tools in geoChronR by walking through a classic comparison in paleoclimatology, the relationship between <span class="math inline">\(^{18}\)</span>O variability in Greenland ice cores and Asian speleothems.
+On multi-millennial timescales, the two datasets display such similar features that the well-dated Hulu Cave record, and other similar records from China and Greenland, have been used to argue for atmospheric teleconnections between the regions and support the independent chronology of GISP2 <span class="citation">(<a href="#ref-hulu2001" role="doc-biblioref"><strong>hulu2001?</strong></a>)</span>.
+Here, we revisit this relation quantitatively, using ensemble age models and the <code>corEns</code> function, to calculate the impact of age uncertainty on the correlation between these two iconic datasets.
+<!-- Because these datasets are not normally distributed, we use Spearman's Rank correlation to avoid the assumption of linearity. -->
+<!-- Kendall's Tau method, or using Pearson correlation after gaussianizing the input (the geoChronR default), are also reasonable options that in most cases, including this one, produce comparable results. -->
+It’s worth noting at this point that there is a long and detailed discussion in the literature discussing this relationship, and any correlation approach to address this question ignores aspects of the science, and ignores ancillary evidence that may support a mechanistic relationship between two timeseries.
+Nevertheless, this is a good example of how age uncertainty can affect apparent alignment between two datasets.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="time-uncertain-correlation.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lipdR)</span>
+<span id="cb1-2"><a href="time-uncertain-correlation.html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geoChronR)</span>
+<span id="cb1-3"><a href="time-uncertain-correlation.html#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-4"><a href="time-uncertain-correlation.html#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gridExtra)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="time-uncertain-correlation.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">loadRemote</span>(<span class="st">&quot;https://lipdverse.org/geoChronR-examples/introductionOutput.RData&quot;</span>,<span class="at">useSavedNames =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div id="first-look" class="section level2" number="5.1">
+<h2><span class="header-section-number">5.1</span> First look</h2>
+<p>LiPD files for the Hulu Cave speleothem <span class="math inline">\(^{18}\)</span>O and the GISP2 ice core <span class="math inline">\(^{18}\)</span>O records are available at x and y.
+These LiPD files already include age ensembles, so you don’t need to create new age models. Use the skills you leanred in Chapters @(data) and @(agemodelling) to take a first look at the data.</p>
+<div class="blackbox">
+<div class="exercise">
+<span id="exr:correlationFirstLook" class="exercise"><strong>Exercise 5.1  </strong></span>Create a figure that that uses ensemble timeseries plots to compares the Hulu Cave GISP2 ice core records.
+<details>
+<summary>
+Hint #1
+</summary>
+Use readLipd() to load the data from the lipdverse
+</details>
+<details>
+<summary>
+Hint #2
+</summary>
+Use mapAgeEnsembleToPaleoData(), and note that there is no depth data in the GISP2 dataset.
+</details>
+<details>
+<summary>
+Hint #3
+</summary>
+Use selectData() to pull out the age ensembles and d18O values of interest
+</details>
+<details>
+<summary>
+Hint #4
+</summary>
+Use plotEnsTimeseriesRibbons() and/or plotEnsTimeseriesLines() to create plots that span a common interval
+</details>
+<details>
+<summary>
+Hint #5
+</summary>
+Use the egg package and ggarrange to stack the plots to allow easy comparison.
+</details>
+</div>
+</div>
+<p>Great! There’s no replacement for actually looking at the data, and lipdR and geoChronR make it possible to do this in just a few lines of code. If you found that exercise difficult, spend some time reviewing Chapters @(data) and @(agemodelling).
+:::: {.blackbox data-latex=""}
+::: {.exercise #correlationThoughts}
+Now that you’ve made the overview figure, does it look like there might be a relationship between these datasets? Would you expect the a positive, negative, or zero correlation?
+:::
+::::</p>
+</div>
+<div id="correlateResponsibly" class="section level2" number="5.2">
+<h2><span class="header-section-number">5.2</span> How to correlate responsibly</h2>
+<p>Before we jump into the details of how to conduct time-uncertain correlation in R, let’s review some of the key assumptions, methods and choices. The following is an excerpt from the <a href="https://gchron.copernicus.org/articles/3/149/2021/">geoChronR paper in Geochronology</a> <span class="citation">(<a href="#ref-geochronrPaper" role="doc-biblioref"><strong>geochronrPaper?</strong></a>)</span>.</p>
+<p>Correlation is the most common measure of a relationship between two variables <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>.
+Its computation is fast, lending itself to ensemble analysis, with a handful of pretreatment and significance considerations that are relevant for ensembles of paleoenvironmental and geoscientific data.
+geoChronR implements three methods for correlation analysis: Pearson’s product-moment, Spearman’s rank and Kendall’s tau.
+Pearson correlation is the most common correlation statistic, but assumes normally-distributed data.
+This assumption is commonly not met in paleoenvironmental or geoscientific datasets, but can be can be overcome by mapping both datasets to a standard normal distribution prior to analysis <span class="citation">(<a href="#ref-JEG_Tingley_CP2016" role="doc-biblioref"><strong>JEG_Tingley_CP2016?</strong></a>)</span>.
+Alternatively, the Spearman and Kendall correlation methods are rank-based, and do not require normally distributed input data, and are useful alternatives in many applications.</p>
+<div id="binning" class="section level3" number="5.2.1">
+<h3><span class="header-section-number">5.2.1</span> Binning</h3>
+<p>All correlation analyses for timeseries are built on the assumption the datasets can be aligned on a common timeline.
+Age-uncertain data violate this assumption.
+We overcome this by treating each ensemble member from one or more age uncertain timeseries as valid for that iteration, then “bin” each of the timeseries into coeval intervals.
+The “binning” procedure in geoChronR sets up an interval, which is typical evenly spaced, over which the data are averaged. Generally, this intentionally degrades the median resolution of the timeseries, for example, a timeseries with 37-year median spacing could be reasonably “binned” into 100- or 200-year bins.
+The binning procedure is repeated for each ensemble member, meaning that between different ensembles, different observations will be placed in different bins.</p>
+</div>
+<div id="autocorrelation" class="section level3" number="5.2.2">
+<h3><span class="header-section-number">5.2.2</span> Autocorrelation</h3>
+<p>Following binning, the correlation is calculated and recorded for each ensemble member. The standard way to assess correlation significance is using a Student’s T-test, which assumes normality and independence. Although geoChronR can overcome the normality requirement, as discussed above, paleoenvironmental timeseries are often highly autocorrelated, and not serially independent, leading to spurious assessments of significance <span class="citation">(<a href="#ref-Hu_epsl17" role="doc-biblioref"><strong>Hu_epsl17?</strong></a>)</span>.
+geoChronR addresses this potential bias using three approaches:</p>
+<ol style="list-style-type: decimal">
+<li><p>The simplest approach is to adjust the test’s sample size to reflect the reduction in degrees of freedom due to autocorrelation. Following <span class="citation">(<a href="#ref-dawdy1964statistical" role="doc-biblioref"><strong>dawdy1964statistical?</strong></a>)</span>, the effective number of degrees of freedom is <span class="math inline">\(\nu = n \frac{1-\phi_{1,X}\phi_{1,X}}{1+\phi_{1,X}\phi_{1,X}}\)</span>, where <span class="math inline">\(n\)</span> is the sample size (here, the number of bins) and where <span class="math inline">\(\phi_{1,X}, \phi_{1,X}\)</span> are the lag-1 autocorrelation of two
+time series <span class="math inline">\(X\)</span>, <span class="math inline">\(Y\)</span>, respectively. This approach is called ``effective-n’’ in geoChronR. It is an extremely simple approach, with no added computations by virtue of being a parametric test using a known distribution (<span class="math inline">\(t\)</span> distribution).
+A downside is that the correction is approximate, and can substantially reduce the degrees of freedom <span class="citation">(<a href="#ref-Hu_epsl17" role="doc-biblioref"><strong>Hu_epsl17?</strong></a>)</span>, to less than 1 in cases of high autocorrelation, which is common in paleoenvironmental timeseries.
+This may result in overly conservative assessment of significance, so this option is therefore not recommended.</p></li>
+<li><p>A parametric alternative is to generate surrogates, or random synthetic timeseries, that emulate the persistence characteristics of the series.
+This “isopersistent” test generates <span class="math inline">\(M\)</span> (say, 500) simulations from an autoregressive process of order 1 (AR(1)), which has been fitted to the data.
+These random timeseries are then used to obtain the null distribution, and compute p-values, which therefore measure the probability that a correlation as high as the one observed (<span class="math inline">\(r_o\)</span>) could have arisen from correlating <span class="math inline">\(X\)</span> or <span class="math inline">\(Y\)</span> with AR(1) series with identical persistence characteristics as the observations.
+This approach is particularly suited if an AR model is a sensible approximation to the data, as is often the case <span class="citation">(<a href="#ref-Ghil02" role="doc-biblioref"><strong>Ghil02?</strong></a>)</span>.
+However, it may be overly permissive or overly conservative in some situations.</p></li>
+<li><p>A non-parametric alternative is the approach of <span class="citation">(<a href="#ref-Ebisuzaki_JClim97" role="doc-biblioref"><strong>Ebisuzaki_JClim97?</strong></a>)</span>, which generates surrogates by scrambling the phases of <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>, thus preserving their power spectrum.
+To generate these “isospectral” surrogates, geoChronR uses the <code>make_surrogate_data</code> function from the rEDM package <span class="citation">(<a href="#ref-rEDM" role="doc-biblioref"><strong>rEDM?</strong></a>)</span>.
+This method makes the fewest assumptions as to the structure of the series, and its computational cost is moderate, making it the default in geoChronR.</p></li>
+</ol>
+<!-- Each of these approaches has strengths and weaknesses.  -->
+<!-- The effective sample size approach is fast, and provides reasonable results for weakly to  moderately autocorrelated timeseries, but can be overly conservative for highly autocorrelated data.  -->
+<!-- This also makes the least stable of the methods to changes in bin size.  -->
+<!-- Isopersistence.... Ebisuzaki.... , which is why we consider the most broadly applicable, and is the default choice in geoChronR. -->
+</div>
+<div id="test-multiplicity" class="section level3" number="5.2.3">
+<h3><span class="header-section-number">5.2.3</span> Test multiplicity</h3>
+<p>In addition to the impact of autocorrelation on this analysis, repeating the test over multiple ensemble members raises the issue of test multiplicity <span class="citation">(<a href="#ref-Ventura2004" role="doc-biblioref"><strong>Ventura2004?</strong></a>)</span>, also known as the “look elsewhere effect.”
+To overcome this problem, we control for this false discovery rate (FDR) using the simple approach of <span class="citation">(<a href="#ref-BenjaminiHochberg95" role="doc-biblioref"><strong>BenjaminiHochberg95?</strong></a>)</span>, coded in R by <span class="citation">(<a href="#ref-Ventura2004" role="doc-biblioref"><strong>Ventura2004?</strong></a>)</span>.
+FDR explicitly controls for spurious discoveries arising from repeatedly carrying out the same test.
+At a 5% level, one would expect a 1000 member ensemble to contain 50 spurious “discoveries” – instances of the null hypothesis (here “no correlation”) being rejected.
+FDR takes this effect into account to minimize the risk of identifying such spurious correlations merely on account of repeated testing.
+In effect, it filters the set of “significant” results identified by each hypothesis test (effective-N, isopersistent, or isospectral).</p>
+</div>
+</div>
+<div id="the-corens-function" class="section level2" number="5.3">
+<h2><span class="header-section-number">5.3</span> The corEns() function</h2>
+<p>Now that you’ve thoroughly reviewed the theory, lets make it run in geoChronR! <em>I know that not everyone thoroughly reviewed the theory. That’s ok, but it’s worth reflecting on these choices, because you won’t fully understand your results unless you understand these details. The default choices in geoChronR will not be right for every application.</em></p>
+<p>Let’s take another look at the the two timeseries over the period of overlap.
+To calculate age uncertian correlation let use geoChronR’s <code>corEns</code> function.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="time-uncertain-correlation.html#cb3-1" aria-hidden="true" tabindex="-1"></a>corout <span class="ot">&lt;-</span> <span class="fu">corEns</span>(<span class="at">time.1 =</span> gisp2.ae,</span>
+<span id="cb3-2"><a href="time-uncertain-correlation.html#cb3-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">values.1 =</span> gisp2.d18O,</span>
+<span id="cb3-3"><a href="time-uncertain-correlation.html#cb3-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">time.2 =</span> hulu.ae,</span>
+<span id="cb3-4"><a href="time-uncertain-correlation.html#cb3-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">values.2 =</span> hulu.d18O,</span>
+<span id="cb3-5"><a href="time-uncertain-correlation.html#cb3-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">bin.step =</span> <span class="dv">200</span>,</span>
+<span id="cb3-6"><a href="time-uncertain-correlation.html#cb3-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">max.ens =</span> <span class="dv">1000</span>,</span>
+<span id="cb3-7"><a href="time-uncertain-correlation.html#cb3-7" aria-hidden="true" tabindex="-1"></a>                 <span class="at">isopersistent  =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb3-8"><a href="time-uncertain-correlation.html#cb3-8" aria-hidden="true" tabindex="-1"></a>                 <span class="at">isospectral =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb3-9"><a href="time-uncertain-correlation.html#cb3-9" aria-hidden="true" tabindex="-1"></a>                 <span class="at">gaussianize =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p>Hopefully, some of those options look familiar (see <a href="time-uncertain-correlation.html#correlateResponsibly">5.2</a> if they don’t). There are a lot of choice that go into time uncertain correlation, meaning that there are a lot of parameters available for the <code>corEns</code> function (check out the help at <code>?corEns</code>).</p>
+<p>Some of the key ones to pay attention to are:</p>
+<ul>
+<li><p><strong>bin.step</strong> This variable sets the size of the bins that the data will be averaged into to align before correlation. Smaller bins will focus allow examination of shorter timescales, and increase the the sample size, but also increase the number of empty bins, and tend to increase autocorrelation. The right bin size varies depends on the distribution of resolutions in your datasets.</p></li>
+<li><p><strong>isopersistent</strong> and <strong>isospectral</strong> These need to be set to TRUE if you want to calculate null significance models for significance testing with these methods. On the other hand, turning it off will speed up calculation if you don’t need it.</p></li>
+<li><p><strong>gaussianize</strong> You’ll find the gaussianize option throughout geoChronR, and it’s typically the default option. <code>gaussianize</code> will transform the data into a Gaussian distribution, recognizing that many of the methods and/or their significance testing assume that the input data are normally distributed. This options ensures that this is the case.</p></li>
+</ul>
+<p><code>corEns</code> returns a list that has the key correlation and significance results for all the selected methods.
+If percentiles are provided to corEns, and they are by default, the function will output a data.frame that summarizes the output.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="time-uncertain-correlation.html#cb4-1" aria-hidden="true" tabindex="-1"></a>corout<span class="sc">$</span>cor.stats</span></code></pre></div>
+<pre><code>## # A tibble: 5 x 6
+##   percentiles       r pSerial     pRaw pIsopersistent pIsospectral
+##         &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;          &lt;dbl&gt;        &lt;dbl&gt;
+## 1       0.025 -0.454    0.117 0.000434     0.00000501       0.0288
+## 2       0.25  -0.269    0.389 0.0337       0.0396           0.192 
+## 3       0.5   -0.192    0.544 0.145        0.157            0.386 
+## 4       0.75  -0.115    0.722 0.368        0.391            0.615 
+## 5       0.975  0.0466   0.959 0.859        0.896            0.940</code></pre>
+</div>
+<div id="plotting-the-ensemble-correlation-results" class="section level2" number="5.4">
+<h2><span class="header-section-number">5.4</span> Plotting the ensemble correlation results</h2>
+<p>This gives us a first order sense of the results, but let’s use the <code>plotCorEns</code> function to dig in deeper.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="time-uncertain-correlation.html#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotCorEns</span>(corout,</span>
+<span id="cb6-2"><a href="time-uncertain-correlation.html#cb6-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">legend.position =</span><span class="fu">c</span>(.<span class="dv">85</span>,.<span class="dv">8</span>),</span>
+<span id="cb6-3"><a href="time-uncertain-correlation.html#cb6-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">f.sig.lab.position =</span> <span class="fu">c</span>(.<span class="dv">85</span>,.<span class="dv">6</span>),</span>
+<span id="cb6-4"><a href="time-uncertain-correlation.html#cb6-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">significance.option =</span> <span class="st">&quot;raw&quot;</span>,</span>
+<span id="cb6-5"><a href="time-uncertain-correlation.html#cb6-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">use.fdr =</span> <span class="cn">FALSE</span>)<span class="sc">+</span><span class="fu">ggtitle</span>(<span class="st">&quot;Distribution of correlation coefficients&quot;</span>)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-4-1.png" width="576" /></p>
+<div id="significance-testing-options" class="section level3" number="5.4.1">
+<h3><span class="header-section-number">5.4.1</span> Significance testing options</h3>
+<p>OK, here we see the distribution of correlation coefficients, and their significance.
+Note that we chose “significance.option = ‘raw’,” so in green we see the distribution of significant correlations as determined by a standard T-test, without any consideration of autocorrelation.
+In this case, we observe that 31.7% of the correlations are signficant.
+Of course we know this is a very simplistic approach, and that with many paleoclimate datasets we must consider the impact of temporal autocorrelation, which can readily cause spurious correlations.
+geoChronR addresses this point using three approaches, which are elaborated on in the <a href="https://doi.org/10.5194/gchron-2020-25">geoChronR manuscript</a>, and summarized here:</p>
+<ol style="list-style-type: decimal">
+<li><p>The simplest approach (“eff-n”) is to adjust the test’s sample size to reflect the reduction in degrees of freedom due to autocorrelation.</p></li>
+<li><p>Alternatively, the “isopersistent” option will generate surrogates, or random synthetic timeseries, that emulate the persistence characteristics of the series, and use those to estiamte significance.</p></li>
+<li><p>The final option, “isospectral” also generates surrogates to estimate significance, but does so by scrambling the spectral phases of the two datasets, thus preserving their power spectrum while destroying the correlated signal.</p></li>
+</ol>
+<p>Let’s take a look at each of these three options,</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="time-uncertain-correlation.html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotCorEns</span>(corout,</span>
+<span id="cb7-2"><a href="time-uncertain-correlation.html#cb7-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">legend.position =</span><span class="fu">c</span>(.<span class="dv">85</span>,.<span class="dv">8</span>),</span>
+<span id="cb7-3"><a href="time-uncertain-correlation.html#cb7-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">f.sig.lab.position =</span> <span class="fu">c</span>(.<span class="dv">85</span>,.<span class="dv">6</span>),</span>
+<span id="cb7-4"><a href="time-uncertain-correlation.html#cb7-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">significance.option =</span> <span class="st">&quot;eff-n&quot;</span>,</span>
+<span id="cb7-5"><a href="time-uncertain-correlation.html#cb7-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">use.fdr =</span> <span class="cn">FALSE</span>)<span class="sc">+</span><span class="fu">ggtitle</span>(<span class="st">&quot;Effective-N significance testing&quot;</span>)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-5-1.png" width="576" /></p>
+<p>Here we see a dramatic effect of accounting for serial autocorrelation in our significance testing. Using the “effective-N” method drops the percentage of significant correlations (at the 0.05 level) to 0. However when autocorrelation is large, this approach dramatically reduces the effective degrees of freedom and has been shown to be overly conservative in many cases. So let’s take a look at the surrogate-based approaches.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="time-uncertain-correlation.html#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotCorEns</span>(corout,</span>
+<span id="cb8-2"><a href="time-uncertain-correlation.html#cb8-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">legend.position =</span><span class="fu">c</span>(.<span class="dv">85</span>,.<span class="dv">8</span>),</span>
+<span id="cb8-3"><a href="time-uncertain-correlation.html#cb8-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">f.sig.lab.position =</span> <span class="fu">c</span>(.<span class="dv">85</span>,.<span class="dv">6</span>),</span>
+<span id="cb8-4"><a href="time-uncertain-correlation.html#cb8-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">significance.option =</span> <span class="st">&quot;isopersistent&quot;</span>,</span>
+<span id="cb8-5"><a href="time-uncertain-correlation.html#cb8-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">use.fdr =</span> <span class="cn">FALSE</span>)<span class="sc">+</span><span class="fu">ggtitle</span>(<span class="st">&quot;Isopersistent significance testing&quot;</span>)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-6-1.png" width="576" /></p>
+<p>Using the “isopersistent” approach, where we simulate thousands of synthetic correlations with the same autocorrelation characteristics as the real data, and see how frequently we observe r-values at the observed levels, gives a much less conservative result. In this case the fraction of significant correlations is only slightly smaller than when not accounting for autocorrelation at all.</p>
+<p>This is a good point to note that we have another statistical problem on our hands. In addition to the impact of autocorrelation on this analysis, repeating the test over multiple ensemble members raises the issue of test multiplicity <span class="citation">(<a href="#ref-Ventura2004" role="doc-biblioref"><strong>Ventura2004?</strong></a>)</span>, or the “look elsewhere effect.”
+At a 5% significance level, one would expect a 1000 member ensemble to contain 50 spurious “discoveries” – instances of the null hypothesis, here “no correlation” being rejected.
+To overcome this problem, we control for this false discovery rate (FDR) using the simple approach of <span class="citation">(<a href="#ref-BenjaminiHochberg95" role="doc-biblioref"><strong>BenjaminiHochberg95?</strong></a>)</span>, coded in R by <span class="citation">(<a href="#ref-Ventura2004" role="doc-biblioref"><strong>Ventura2004?</strong></a>)</span>.
+FDR takes this effect into account to minimize the risk of identifying such spurious correlations merely on account of repeated testing.
+In effect, it filters the set of “significant” results identified by each hypothesis test (effective-N, isopersistent, or isospectral).
+Let’s plot this again, but turn the <code>use.fdr</code> option to <code>TRUE</code>.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="time-uncertain-correlation.html#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotCorEns</span>(corout,</span>
+<span id="cb9-2"><a href="time-uncertain-correlation.html#cb9-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">legend.position =</span><span class="fu">c</span>(.<span class="dv">85</span>,.<span class="dv">8</span>),</span>
+<span id="cb9-3"><a href="time-uncertain-correlation.html#cb9-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">f.sig.lab.position =</span> <span class="fu">c</span>(.<span class="dv">85</span>,.<span class="dv">6</span>),</span>
+<span id="cb9-4"><a href="time-uncertain-correlation.html#cb9-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">significance.option =</span> <span class="st">&quot;isopersistent&quot;</span>,</span>
+<span id="cb9-5"><a href="time-uncertain-correlation.html#cb9-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">use.fdr =</span> <span class="cn">TRUE</span>)<span class="sc">+</span><span class="fu">ggtitle</span>(<span class="st">&quot;Isopersistent significance testing, with False Discovery Rate effects&quot;</span>)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-7-1.png" width="576" /></p>
+<p>Now we see how accounting for FDR can further reduce our significance levels. In this case, all but a small fraction of the significant correlations are expected due to test multiplicity - the randomness that we’re sampling by repeating the correlation across 1000 ensemble members. After acccounting for this, only 32.7% of the ensemble members are significant.</p>
+<p>Note that accounting for False Discovery Rate is a separate process than deriving p-values, and can be applied to any of the significance.options in geoChronR. For our final example we’ll take a look at isospectral significance testing and account for FDR.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="time-uncertain-correlation.html#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotCorEns</span>(corout,</span>
+<span id="cb10-2"><a href="time-uncertain-correlation.html#cb10-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">legend.position =</span><span class="fu">c</span>(.<span class="dv">85</span>,.<span class="dv">8</span>),</span>
+<span id="cb10-3"><a href="time-uncertain-correlation.html#cb10-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">f.sig.lab.position =</span> <span class="fu">c</span>(.<span class="dv">85</span>,.<span class="dv">6</span>),</span>
+<span id="cb10-4"><a href="time-uncertain-correlation.html#cb10-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">significance.option =</span> <span class="st">&quot;isospectral&quot;</span>,</span>
+<span id="cb10-5"><a href="time-uncertain-correlation.html#cb10-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">use.fdr =</span> <span class="cn">TRUE</span>)<span class="sc">+</span><span class="fu">ggtitle</span>(<span class="st">&quot;Isospectral significance testing&quot;</span>)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-8-1.png" width="576" /></p>
+<p>In the isospectral test, only a few of the ensembles members are significant, none of which remain upon adjusting for FDR.
+This method makes the fewest assumptions as to the structure of the series, and its computational cost is moderate, and so it is the default in geoChronR.
+We also recommend including FDR adjustment to avoid test-multiplicitly corrections.</p>
+</div>
+</div>
+<div id="judging-the-overall-significance-of-an-age-uncertain-correlation" class="section level2" number="5.5">
+<h2><span class="header-section-number">5.5</span> Judging the overall significance of an age-uncertain correlation</h2>
+<p>So, with all of the methods, only a small subset of the correlations are significant, so it’s probably fair to say to that this is not a significant correlation after accounting for age uncertainty.
+But this begs the question, what fraction of the correlation ensemble needs to be significant to consider an age-uncertain relation significant?
+There is no hard and fast theoretical justification for what fraction of ensemble correlation results should be expected to pass such a significance test, and so evaluating the significance of age uncertain correlation remains somewhat subjective.
+Indeed, two truly correlated timeseries, when afflicted with age uncertainty, will commonly return some fraction of insignificant results when random ensemble members are correlated against each other.
+The frequency of these “false negatives” depends on the structure of the age uncertainties and the timeseries, and will vary to some extent by random chance.
+One way to get a sense of the vulnerability of a timeseries to false negatives is to perform an age-uncertain correlation of a dataset with itself.
+It is appropriate to consider the results of this analysis as a best-case scenario, and to consider the correlation results in this light.
+For illustration, we perform this calculation with the Hulu Cave <span class="math inline">\(\delta^{18}\)</span>O record</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="time-uncertain-correlation.html#cb11-1" aria-hidden="true" tabindex="-1"></a>coroutHulu <span class="ot">&lt;-</span> <span class="fu">corEns</span>(hulu.ae,hulu.d18O,hulu.ae,hulu.d18O,<span class="at">bin.step =</span> <span class="dv">200</span>,<span class="at">max.ens =</span> <span class="dv">1000</span>)</span>
+<span id="cb11-2"><a href="time-uncertain-correlation.html#cb11-2" aria-hidden="true" tabindex="-1"></a>corPlotHulu <span class="ot">&lt;-</span> <span class="fu">plotCorEns</span>(coroutHulu,</span>
+<span id="cb11-3"><a href="time-uncertain-correlation.html#cb11-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="fl">0.8</span>),</span>
+<span id="cb11-4"><a href="time-uncertain-correlation.html#cb11-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">significance.option =</span> <span class="st">&quot;isospectral&quot;</span>)<span class="sc">+</span><span class="fu">ggtitle</span>(<span class="cn">NULL</span>)</span>
+<span id="cb11-5"><a href="time-uncertain-correlation.html#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="time-uncertain-correlation.html#cb11-6" aria-hidden="true" tabindex="-1"></a>above90 <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">sum</span>(coroutHulu<span class="sc">$</span>cor.df<span class="sc">$</span>r <span class="sc">&gt;</span> <span class="fl">0.9</span>)<span class="sc">/</span><span class="fu">nrow</span>(coroutHulu<span class="sc">$</span>cor.df)<span class="sc">*</span><span class="dv">100</span>,<span class="dv">1</span>)</span>
+<span id="cb11-7"><a href="time-uncertain-correlation.html#cb11-7" aria-hidden="true" tabindex="-1"></a>med <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">median</span>(coroutHulu<span class="sc">$</span>cor.df<span class="sc">$</span>r),<span class="dv">2</span>)</span>
+<span id="cb11-8"><a href="time-uncertain-correlation.html#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="time-uncertain-correlation.html#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(corPlotHulu)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-9-1.png" width="576" /></p>
+<p>The impact of age uncertainty on the correlation of this record is apparent; even when correlated against itself, only NA% of the ensembles have r-values greater than 0.9, and the median correlation is NA.
+However, all of the correlations remain significant, even after accounting for autocorrelation, indicating that age uncertainty and the structure of the timeseries does not preclude the possibility of significant correlations.</p>
+</div>
+<div id="conclusions" class="section level2" number="5.6">
+<h2><span class="header-section-number">5.6</span> Conclusions</h2>
+<p>So, to wrap up, generally, age uncertainties obscure relationships between records, while in rare cases creating the appearance of spurious correlations. It is appropriate to think of the ensemble correlation results produced by geoChronR as a first-order estimate of the age-uncertain correlation characteristics between timeseries, rather than a binary answer to the question “Are these two datasets significantly correlated?”
+However, as a rule of thumb, if more than half of the ensemble correlation results are significant, it is reasonable to characterize that correlation as robust to age uncertainty.</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="agemodelling.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="regression-and-calibration-in-time.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["Time-uncertain-data-analysis-in-R.pdf"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
