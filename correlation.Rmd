@@ -17,11 +17,6 @@ library(ggplot2)
 library(gridExtra)
 ```
 
-
-```{r load data}
-loadRemote("https://lipdverse.org/geoChronR-examples/introductionOutput.RData",useSavedNames = TRUE)
-```
-
 ## First look
 
 LiPD files for the Hulu Cave speleothem \delta$^{18}$O and the GISP2 ice core \delta$^{18}$O records are available at x and y. 
@@ -55,8 +50,8 @@ Create a figure that that uses ensemble timeseries plots to compares the Hulu Ca
 
 
 ```{r,echo=FALSE,results='hide',message=FALSE,warning=FALSE}
-hulu <- readLipd("~/Download/Hulucave.Wang.2001-ens.lpd")
-gisp2 <- readLipd("~/Download/GISP2.Alley.2000-ens.lpd")
+hulu <- readLipd("~/Dropbox/Hulucave.Wang.2001-ens.lpd")
+gisp2 <- readLipd("~/Dropbox/GISP2.Alley.2000-ens.lpd")
 
 hulu <- mapAgeEnsembleToPaleoData(hulu,age.var = "ageEnsemble")
 gisp2 <- mapAgeEnsembleToPaleoData(gisp2,chron.depth.var = NULL,paleo.depth.var = NULL)
@@ -74,7 +69,9 @@ gisp2.ae <- selectData(gisp2,var.name = "ageEnsemble")
 ```
 
 
-Great! There's no replacement for actually looking at the data, and lipdR and geoChronR make it possible to do this in just a few lines of code. If you found that exercise difficult, spend some time reviewing Chapters @\label(data) and @\label(agemodelling).
+Great! There's no replacement for actually looking at the data, and lipdR and geoChronR make it possible to do this in just a few lines of code. If you found that exercise difficult, spend some time reviewing Chapters @\ref(data) and @\ref(agemodelling).
+
+
 :::: {.blackbox data-latex=""}
 ::: {.exercise #correlationThoughts}
 Now that you've made the overview figure, does it look like there might be a relationship between these datasets? Would you expect the a positive, negative, or zero correlation?
@@ -142,7 +139,8 @@ In effect, it filters the set of "significant" results identified by each hypoth
 Now that you've thoroughly reviewed the theory, lets make it run in geoChronR! *I know that not everyone thoroughly reviewed the theory. That's ok, but it's worth reflecting on these choices, because you won't fully understand your results unless you understand these details. The default choices in geoChronR will not be right for every application.*
 
 Let's take another look at the the two timeseries over the period of overlap.
-To calculate age uncertian correlation let use geoChronR's `corEns` function.
+To calculate age uncertain correlation let use geoChronR's `corEns` function. 
+We'll run it with only 200 ensemble members for now, since we have multiple significance testing options turned on and it can be a little slow.
 
 ```{r, results='hide',warning = FALSE, message = FALSE,cache = TRUE}
 corout <- corEns(time.1 = gisp2.ae,
@@ -150,7 +148,7 @@ corout <- corEns(time.1 = gisp2.ae,
                  time.2 = hulu.ae,
                  values.2 = hulu.d18O,
                  bin.step = 200,
-                 max.ens = 1000,
+                 max.ens = 200,
                  isopersistent  = TRUE,
                  isospectral = TRUE,
                  gaussianize = TRUE)
@@ -179,20 +177,32 @@ This gives us a first order sense of the results, but let's use the `plotCorEns`
 
 
 ```{r,warning=FALSE,message=FALSE,fig.width=6, fig.height=4}
-plotCorEns(corout,
-           legend.position =c(.85,.8),
-           f.sig.lab.position = c(.85,.6),
+raw <- plotCorEns(corout,
            significance.option = "raw",
            use.fdr = FALSE)+ggtitle("Distribution of correlation coefficients")
+
+print(raw)
 ```
+
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #plotCorEns}
+Explore the plotting options for plotCorEns. 
+a. Change the color scheme
+b. Move the legend
+c. Move the labels
+d. Change which quantiles are plotted (this one is tricky)
+:::
+::::
+
 
 ### Significance testing options
 
-OK, here we see the distribution of correlation coefficients, and their significance.
+In this figure we see the distribution of correlation coefficients, and their significance.
 Note that we chose "significance.option = 'raw'", so in green we see the distribution of significant correlations as determined by a standard T-test, without any consideration of autocorrelation.
-In this case, we observe that `r round(100*sum(corout$cor.df$pRaw <= 0.05)/nrow(corout$cor.df),1)`% of the correlations are signficant. 
+In this case, we observe that `r round(100*sum(corout$cor.df$pRaw <= 0.05)/nrow(corout$cor.df),1)`% of the correlations are significant. 
 Of course we know this is a very simplistic approach, and that with many paleoclimate datasets we must consider the impact of temporal autocorrelation, which can readily cause spurious correlations. 
-geoChronR addresses this point using three approaches, which are elaborated on in the [geoChronR manuscript](https://doi.org/10.5194/gchron-2020-25), and summarized here:
+geoChronR addresses this point using three approaches, as discussed above in detail, and summarized here:
 
 1. The simplest approach ("eff-n") is to adjust the test's sample size to reflect the reduction in degrees of freedom due to autocorrelation. 
 
@@ -200,61 +210,72 @@ geoChronR addresses this point using three approaches, which are elaborated on i
 
 3. The final option, "isospectral" also generates surrogates to estimate significance, but does so by scrambling the spectral phases of the two datasets, thus preserving their power spectrum while destroying the correlated signal. 
 
-Let's take a look at each of these three options, 
+Let's take a look at each of these three options. 
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #plotCorEns}
+Create three more versions of the correlation ensemble histogram, so that you have the original and one for all three options for accounting for autocorrelation. Label them, and combine them into a single plot. 
+
+Which option shows the biggest reduction in significant correlations? Which is the most similar to the unadjusted distribution? 
+:::
+::::
 
 
-```{r,warning=FALSE,message=FALSE,fig.width=6, fig.height=4}
-plotCorEns(corout,
+```{r,warning=FALSE,message=FALSE,fig.width=6, fig.height=4,echo=FALSE,eval=TRUE}
+effN <- plotCorEns(corout,
            legend.position =c(.85,.8),
            f.sig.lab.position = c(.85,.6),
            significance.option = "eff-n",
            use.fdr = FALSE)+ggtitle("Effective-N significance testing")
-```
 
-Here we see a dramatic effect of accounting for serial autocorrelation in our significance testing. Using the "effective-N" method drops the percentage of significant correlations (at the 0.05 level) to 0. However when autocorrelation is large, this approach dramatically reduces the effective degrees of freedom and has been shown to be overly conservative in many cases. So let's take a look at the surrogate-based approaches. 
-
-```{r,warning=FALSE,message=FALSE,fig.width=6, fig.height=4}
-plotCorEns(corout,
+isoPersistent <- plotCorEns(corout,
            legend.position =c(.85,.8),
            f.sig.lab.position = c(.85,.6),
            significance.option = "isopersistent",
            use.fdr = FALSE)+ggtitle("Isopersistent significance testing")
+
+
+isoSpectral <- plotCorEns(corout,
+           legend.position =c(.85,.8),
+           f.sig.lab.position = c(.85,.6),
+           significance.option = "isospectral",
+           use.fdr = FALSE)+ggtitle("Isospectral significance testing")
+
+egg::ggarrange(plots=list(raw,effN,isoPersistent,isoSpectral),nrow = 2)
 ```
 
-Using the "isopersistent" approach, where we simulate thousands of synthetic correlations with the same autocorrelation characteristics as the real data, and see how frequently we observe r-values at the observed levels, gives a much less conservative result. In this case the fraction of significant correlations is only slightly smaller than when not accounting for autocorrelation at all. 
+If you put your plot together properly, you now see the dramatic effect of accounting for serial autocorrelation in our significance testing. Using the "effective-N" method drops the percentage of significant correlations (at the 0.05 level) to 0. However when autocorrelation is large, this approach dramatically reduces the effective degrees of freedom and has been shown to be overly conservative in many cases. So let's take a look at the surrogate-based approaches. 
 
-This is a good point to note that we have another statistical problem on our hands. In addition to the impact of autocorrelation on this analysis, repeating the test over multiple ensemble members raises the issue of test multiplicity  [@Ventura2004], or the "look elsewhere effect".
+Using the "isopersistent" approach, where we simulate thousands of synthetic correlations with the same autocorrelation characteristics as the real data, and see how frequently we observe r-values at the observed levels, gives a much less conservative result. 
+
+In the isospectral test, only a few of the ensembles members are significant. 
+This approach often serves as a compromise between the more conservative effective-N approach and the more liberal isopersistent approach.
+The isospectral method also makes the fewest assumptions as to the structure of the series, and its computational cost is moderate, and so it is the default in geoChronR.
+
+### False-discovery rate testing
+
+Although taking advantage of the age ensembles allows us to propagate the impacts of age uncertainty, it introduces another statistical problem on our hands. In addition to the impact of autocorrelation on this analysis, repeating the test over multiple ensemble members raises the issue of test multiplicity  [@Ventura2004], or the "look elsewhere effect".
+
 At a 5% significance level, one would expect a 1000 member ensemble to contain 50 spurious "discoveries" -- instances of the null hypothesis, here "no correlation" being rejected.
 To overcome this problem, we control for this false discovery rate (FDR) using the simple approach of @BenjaminiHochberg95, coded in R by @Ventura2004.
 FDR takes this effect into account to minimize the risk of identifying such spurious correlations merely on account of repeated testing.
 In effect, it filters the set of "significant" results identified by each hypothesis test (effective-N, isopersistent, or isospectral).
-Let's plot this again, but turn the `use.fdr` option to `TRUE`.
+Let's plot the results of the isopersistent test again, but turn the `use.fdr` option to `TRUE`.
 
 
 ```{r,warning=FALSE,message=FALSE,fig.width=6, fig.height=4}
-plotCorEns(corout,
+isoPersistentFdr <- plotCorEns(corout,
            legend.position =c(.85,.8),
            f.sig.lab.position = c(.85,.6),
            significance.option = "isopersistent",
-           use.fdr = TRUE)+ggtitle("Isopersistent significance testing, with False Discovery Rate effects")
+           use.fdr = TRUE)+ggtitle("Isopersistent significance testing with FDR")
+
+isoPersistentFdr
 ```
 
-Now we see how accounting for FDR can further reduce our significance levels. In this case, all but a small fraction of the significant correlations are expected due to test multiplicity - the randomness that we're sampling by repeating the correlation across 1000 ensemble members. After acccounting for this, only `r round(100*corout$cor.fdr.stats$pIsopersistentFDR,1)`% of the ensemble members are significant. 
+Now we see how accounting for FDR can further reduce our significance levels. In this case many of the significant correlations are expected due to test multiplicity (shown in the green bars in the plot above). This represents the randomness that we're sampling by repeating the correlation across 1000 ensemble members. After accounting for this, only `r round(100*corout$cor.fdr.stats$pIsopersistentFDR,1)`% of the ensemble members are significant. 
 
-Note that accounting for False Discovery Rate is a separate process than deriving p-values, and can be applied to any of the significance.options in geoChronR. For our final example we'll take a look at isospectral significance testing and account for FDR.
-
-
-```{r,warning=FALSE,message=FALSE,fig.width=6, fig.height=4}
-plotCorEns(corout,
-           legend.position =c(.85,.8),
-           f.sig.lab.position = c(.85,.6),
-           significance.option = "isospectral",
-           use.fdr = TRUE)+ggtitle("Isospectral significance testing")
-```
-
-In the isospectral test, only a few of the ensembles members are significant, none of which remain upon adjusting for FDR. 
-This method makes the fewest assumptions as to the structure of the series, and its computational cost is moderate, and so it is the default in geoChronR.
-We also recommend including FDR adjustment to avoid test-multiplicitly corrections. 
+Note that accounting for False Discovery Rate is a separate process than deriving p-values, and can be applied to any of the significance.options in geoChronR.
 
 ## Judging the overall significance of an age-uncertain correlation
 
@@ -264,26 +285,85 @@ There is no hard and fast theoretical justification for what fraction of ensembl
 Indeed, two truly correlated timeseries, when afflicted with age uncertainty, will commonly return some fraction of insignificant results when random ensemble members are correlated against each other.
 The frequency of these "false negatives" depends on the structure of the age uncertainties and the timeseries, and will vary to some extent by random chance. 
 One way to get a sense of the vulnerability of a timeseries to false negatives is to perform an age-uncertain correlation of a dataset with itself.
-It is appropriate to consider the results of this analysis as a best-case scenario, and to consider the correlation results in this light. 
-For illustration, we perform this calculation with the Hulu Cave $\delta^{18}$O record 
 
-```{r,warning=FALSE,message=FALSE,fig.width=6, fig.height=4,results='hide'}
-coroutHulu <- corEns(hulu.ae,hulu.d18O,hulu.ae,hulu.d18O,bin.step = 200,max.ens = 1000)
+:::: {.blackbox data-latex=""}
+::: {.exercise #selfCor}
+Calculate the correlation ensemble where you correlate the Hulu Cave $\delta^{18}$O record with itself, and plot a histogram of the results. Use the isospectral method to quantify significance, while accounting for FDR. 
+
+Repeat this exercise with the GISP2 $\delta^{18}$O record. 
+
+Make a combined plot, with the axes aligned. 
+
+What fraction of significant correlations do you get with this approach for each record? Does one dataset have higher self-correlations that the other? Explore the data to think what might cause this?
+:::
+::::
+
+```{r,warning=FALSE,message=FALSE,fig.width=6, fig.height=4,results='hide',echo = FALSE, eval = FALSE}
+coroutGisp <- corEns(gisp2.ae,gisp2.d18O,gisp2.ae,gisp2.d18O,bin.step = 200,max.ens = 500)
+corPlotGisp <- plotCorEns(coroutGisp,
+                          legend.position = c(0.1, 0.8),
+                          significance.option = "isospectral")+ggtitle(NULL) + xlim(c(.6,1))
+
+coroutHulu <- corEns(hulu.ae,hulu.d18O,hulu.ae,hulu.d18O,bin.step = 200,max.ens = 500)
 corPlotHulu <- plotCorEns(coroutHulu,
                           legend.position = c(0.1, 0.8),
-                          significance.option = "isospectral")+ggtitle(NULL)
+                          significance.option = "isospectral")+ggtitle(NULL)+ xlim(c(.6,1))
 
-above90 <- round(sum(coroutHulu$cor.df$r > 0.9)/nrow(coroutHulu$cor.df)*100,1)
-med <- round(median(coroutHulu$cor.df$r),2)
-
-print(corPlotHulu)
+egg::ggarrange(plots = list(corPlotGisp,corPlotHulu),nrow = 2)
 
 ```
 
-The impact of age uncertainty on the correlation of this record is apparent; even when correlated against itself, only `r sprintf("%.1f",above90)`% of the ensembles have r-values greater than 0.9, and the median correlation is `r sprintf("%.1f",med)`.
-However, all of the correlations remain significant, even after accounting for autocorrelation, indicating that age uncertainty and the structure of the timeseries does not preclude the possibility of significant correlations.
+## Chapter Project
 
-## Conclusions
+Generally, age uncertainties obscure relationships between records, while in rare cases creating the appearance of spurious correlations.  It is appropriate to think of ensemble correlation as a tool to explore the age-uncertain correlation characteristics between timeseries, rather than a binary answer to the question "Are these two datasets significantly correlated?".
 
-So, to wrap up, generally, age uncertainties obscure relationships between records, while in rare cases creating the appearance of spurious correlations.  It is appropriate to think of the ensemble correlation results produced by geoChronR as a first-order estimate of the age-uncertain correlation characteristics between timeseries, rather than a binary answer to the question "Are these two datasets significantly correlated?".
-However, as a rule of thumb, if more than half of the ensemble correlation results are significant, it is reasonable to characterize that correlation as robust to age uncertainty. 
+So for your chapter project, we'll explore one more parameter that will have significant impacts on your result. 
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #selfCor}
+
+:::
+::::
+
+
+```{r}
+library(magrittr)
+library(geoChronR)
+library(lipdR)
+agassiz <- readLipd("https://lipdverse.org/geoChronR-examples/arc2k/Arc-Agassiz.Vinther.2008.lpd") %>% 
+  mapAgeEnsembleToPaleoData(strict.search = TRUE,
+                            age.var = "ageEnsemble",
+                            chron.depth.var = NULL )
+
+ag.ae <- selectData(agassiz,"ageEnsemble")
+ag.d18O <- selectData(agassiz,"d18O")
+
+
+crete <- readLipd("https://lipdverse.org/geoChronR-examples/arc2k/Arc-Crete.Vinther.2010.lpd") %>% 
+  mapAgeEnsembleToPaleoData(strict.search = TRUE,
+                            age.var = "ageEnsemble",
+                            chron.depth.var = NULL )
+cr.ae <- selectData(crete,"ageEnsemble")
+cr.d18O <- selectData(crete,"d18O")
+
+ag <- plotTimeseriesEnsRibbons(X = ag.ae,Y = ag.d18O) + xlim(c(550,1950))
+cr <- plotTimeseriesEnsRibbons(X = cr.ae,Y = cr.d18O)+ xlim(c(550,1950))
+
+egg::ggarrange(plots = list(ag,cr),nrow = 2)
+
+
+co <- corEns(ag.ae,ag.d18O,
+             cr.ae,cr.d18O,
+             bin.step = 1,
+             max.ens = 100,
+             gaussianize = FALSE,
+             isopersistent = FALSE)
+
+plotCorEns(co,use.fdr = TRUE)
+
+```
+
+
+
+
+

@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 5 Time-uncertain correlation | Time-uncertain data analysis in R</title>
   <meta name="description" content="This book covers time-uncertain data analysis in R, primarily relying on the geoChronR package" />
-  <meta name="generator" content="bookdown 0.22 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 5 Time-uncertain correlation | Time-uncertain data analysis in R" />
   <meta property="og:type" content="book" />
@@ -32,8 +32,9 @@
   
 <link rel="prev" href="agemodelling.html"/>
 <link rel="next" href="regression-and-calibration-in-time.html"/>
-<script src="libs/header-attrs-2.9/header-attrs.js"></script>
-<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -41,7 +42,6 @@
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
-
 
 
 
@@ -181,6 +181,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="5.4" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#plotting-the-ensemble-correlation-results"><i class="fa fa-check"></i><b>5.4</b> Plotting the ensemble correlation results</a>
 <ul>
 <li class="chapter" data-level="5.4.1" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#significance-testing-options"><i class="fa fa-check"></i><b>5.4.1</b> Significance testing options</a></li>
+<li class="chapter" data-level="5.4.2" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#false-discovery-rate-testing"><i class="fa fa-check"></i><b>5.4.2</b> False-discovery rate testing</a></li>
 </ul></li>
 <li class="chapter" data-level="5.5" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#judging-the-overall-significance-of-an-age-uncertain-correlation"><i class="fa fa-check"></i><b>5.5</b> Judging the overall significance of an age-uncertain correlation</a></li>
 <li class="chapter" data-level="5.6" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#conclusions"><i class="fa fa-check"></i><b>5.6</b> Conclusions</a></li>
@@ -257,7 +258,6 @@ Nevertheless, this is a good example of how age uncertainty can affect apparent 
 <span id="cb1-2"><a href="time-uncertain-correlation.html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geoChronR)</span>
 <span id="cb1-3"><a href="time-uncertain-correlation.html#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb1-4"><a href="time-uncertain-correlation.html#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gridExtra)</span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="time-uncertain-correlation.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">loadRemote</span>(<span class="st">&quot;https://lipdverse.org/geoChronR-examples/introductionOutput.RData&quot;</span>,<span class="at">useSavedNames =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <div id="first-look" class="section level2" number="5.1">
 <h2><span class="header-section-number">5.1</span> First look</h2>
 <p>LiPD files for the Hulu Cave speleothem <span class="math inline">\(^{18}\)</span>O and the GISP2 ice core <span class="math inline">\(^{18}\)</span>O records are available at x and y.
@@ -297,12 +297,12 @@ Use the egg package and ggarrange to stack the plots to allow easy comparison.
 </details>
 </div>
 </div>
-<p>Great! There’s no replacement for actually looking at the data, and lipdR and geoChronR make it possible to do this in just a few lines of code. If you found that exercise difficult, spend some time reviewing Chapters @(data) and @(agemodelling).
-:::: {.blackbox data-latex=""}
-::: {.exercise #correlationThoughts}
-Now that you’ve made the overview figure, does it look like there might be a relationship between these datasets? Would you expect the a positive, negative, or zero correlation?
-:::
-::::</p>
+<p>Great! There’s no replacement for actually looking at the data, and lipdR and geoChronR make it possible to do this in just a few lines of code. If you found that exercise difficult, spend some time reviewing Chapters @(data) and @(agemodelling).</p>
+<div class="blackbox">
+<div class="exercise">
+<p><span id="exr:correlationThoughts" class="exercise"><strong>Exercise 5.2  </strong></span>Now that you’ve made the overview figure, does it look like there might be a relationship between these datasets? Would you expect the a positive, negative, or zero correlation?</p>
+</div>
+</div>
 </div>
 <div id="correlateResponsibly" class="section level2" number="5.2">
 <h2><span class="header-section-number">5.2</span> How to correlate responsibly</h2>
@@ -358,16 +358,17 @@ In effect, it filters the set of “significant” results identified by each hy
 <h2><span class="header-section-number">5.3</span> The corEns() function</h2>
 <p>Now that you’ve thoroughly reviewed the theory, lets make it run in geoChronR! <em>I know that not everyone thoroughly reviewed the theory. That’s ok, but it’s worth reflecting on these choices, because you won’t fully understand your results unless you understand these details. The default choices in geoChronR will not be right for every application.</em></p>
 <p>Let’s take another look at the the two timeseries over the period of overlap.
-To calculate age uncertian correlation let use geoChronR’s <code>corEns</code> function.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="time-uncertain-correlation.html#cb3-1" aria-hidden="true" tabindex="-1"></a>corout <span class="ot">&lt;-</span> <span class="fu">corEns</span>(<span class="at">time.1 =</span> gisp2.ae,</span>
-<span id="cb3-2"><a href="time-uncertain-correlation.html#cb3-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">values.1 =</span> gisp2.d18O,</span>
-<span id="cb3-3"><a href="time-uncertain-correlation.html#cb3-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">time.2 =</span> hulu.ae,</span>
-<span id="cb3-4"><a href="time-uncertain-correlation.html#cb3-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">values.2 =</span> hulu.d18O,</span>
-<span id="cb3-5"><a href="time-uncertain-correlation.html#cb3-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">bin.step =</span> <span class="dv">200</span>,</span>
-<span id="cb3-6"><a href="time-uncertain-correlation.html#cb3-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">max.ens =</span> <span class="dv">1000</span>,</span>
-<span id="cb3-7"><a href="time-uncertain-correlation.html#cb3-7" aria-hidden="true" tabindex="-1"></a>                 <span class="at">isopersistent  =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb3-8"><a href="time-uncertain-correlation.html#cb3-8" aria-hidden="true" tabindex="-1"></a>                 <span class="at">isospectral =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb3-9"><a href="time-uncertain-correlation.html#cb3-9" aria-hidden="true" tabindex="-1"></a>                 <span class="at">gaussianize =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+To calculate age uncertain correlation let use geoChronR’s <code>corEns</code> function.
+We’ll run it with only 200 ensemble members for now, since we have multiple significance testing options turned on and it can be a little slow.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="time-uncertain-correlation.html#cb2-1" aria-hidden="true" tabindex="-1"></a>corout <span class="ot">&lt;-</span> <span class="fu">corEns</span>(<span class="at">time.1 =</span> gisp2.ae,</span>
+<span id="cb2-2"><a href="time-uncertain-correlation.html#cb2-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">values.1 =</span> gisp2.d18O,</span>
+<span id="cb2-3"><a href="time-uncertain-correlation.html#cb2-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">time.2 =</span> hulu.ae,</span>
+<span id="cb2-4"><a href="time-uncertain-correlation.html#cb2-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">values.2 =</span> hulu.d18O,</span>
+<span id="cb2-5"><a href="time-uncertain-correlation.html#cb2-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">bin.step =</span> <span class="dv">200</span>,</span>
+<span id="cb2-6"><a href="time-uncertain-correlation.html#cb2-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">max.ens =</span> <span class="dv">200</span>,</span>
+<span id="cb2-7"><a href="time-uncertain-correlation.html#cb2-7" aria-hidden="true" tabindex="-1"></a>                 <span class="at">isopersistent  =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb2-8"><a href="time-uncertain-correlation.html#cb2-8" aria-hidden="true" tabindex="-1"></a>                 <span class="at">isospectral =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb2-9"><a href="time-uncertain-correlation.html#cb2-9" aria-hidden="true" tabindex="-1"></a>                 <span class="at">gaussianize =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <p>Hopefully, some of those options look familiar (see <a href="time-uncertain-correlation.html#correlateResponsibly">5.2</a> if they don’t). There are a lot of choice that go into time uncertain correlation, meaning that there are a lot of parameters available for the <code>corEns</code> function (check out the help at <code>?corEns</code>).</p>
 <p>Some of the key ones to pay attention to are:</p>
 <ul>
@@ -377,72 +378,74 @@ To calculate age uncertian correlation let use geoChronR’s <code>corEns</code>
 </ul>
 <p><code>corEns</code> returns a list that has the key correlation and significance results for all the selected methods.
 If percentiles are provided to corEns, and they are by default, the function will output a data.frame that summarizes the output.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="time-uncertain-correlation.html#cb4-1" aria-hidden="true" tabindex="-1"></a>corout<span class="sc">$</span>cor.stats</span></code></pre></div>
-<pre><code>## # A tibble: 5 x 6
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="time-uncertain-correlation.html#cb3-1" aria-hidden="true" tabindex="-1"></a>corout<span class="sc">$</span>cor.stats</span></code></pre></div>
+<pre><code>## # A tibble: 5 × 6
 ##   percentiles       r pSerial     pRaw pIsopersistent pIsospectral
 ##         &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;          &lt;dbl&gt;        &lt;dbl&gt;
-## 1       0.025 -0.454    0.117 0.000434     0.00000501       0.0288
-## 2       0.25  -0.269    0.389 0.0337       0.0396           0.192 
-## 3       0.5   -0.192    0.544 0.145        0.157            0.386 
-## 4       0.75  -0.115    0.722 0.368        0.391            0.615 
-## 5       0.975  0.0466   0.959 0.859        0.896            0.940</code></pre>
+## 1       0.025 -0.473    0.115 0.000299     0.00000161       0.0282
+## 2       0.25  -0.267    0.387 0.0420       0.0503           0.204 
+## 3       0.5   -0.162    0.595 0.215        0.232            0.485 
+## 4       0.75  -0.0826   0.773 0.498        0.545            0.714 
+## 5       0.975  0.133    0.977 0.949        0.971            0.983</code></pre>
 </div>
 <div id="plotting-the-ensemble-correlation-results" class="section level2" number="5.4">
 <h2><span class="header-section-number">5.4</span> Plotting the ensemble correlation results</h2>
 <p>This gives us a first order sense of the results, but let’s use the <code>plotCorEns</code> function to dig in deeper.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="time-uncertain-correlation.html#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotCorEns</span>(corout,</span>
-<span id="cb6-2"><a href="time-uncertain-correlation.html#cb6-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">legend.position =</span><span class="fu">c</span>(.<span class="dv">85</span>,.<span class="dv">8</span>),</span>
-<span id="cb6-3"><a href="time-uncertain-correlation.html#cb6-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">f.sig.lab.position =</span> <span class="fu">c</span>(.<span class="dv">85</span>,.<span class="dv">6</span>),</span>
-<span id="cb6-4"><a href="time-uncertain-correlation.html#cb6-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">significance.option =</span> <span class="st">&quot;raw&quot;</span>,</span>
-<span id="cb6-5"><a href="time-uncertain-correlation.html#cb6-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">use.fdr =</span> <span class="cn">FALSE</span>)<span class="sc">+</span><span class="fu">ggtitle</span>(<span class="st">&quot;Distribution of correlation coefficients&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="time-uncertain-correlation.html#cb5-1" aria-hidden="true" tabindex="-1"></a>raw <span class="ot">&lt;-</span> <span class="fu">plotCorEns</span>(corout,</span>
+<span id="cb5-2"><a href="time-uncertain-correlation.html#cb5-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">significance.option =</span> <span class="st">&quot;raw&quot;</span>,</span>
+<span id="cb5-3"><a href="time-uncertain-correlation.html#cb5-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">use.fdr =</span> <span class="cn">TRUE</span>)<span class="sc">+</span><span class="fu">ggtitle</span>(<span class="st">&quot;Distribution of correlation coefficients&quot;</span>)</span>
+<span id="cb5-4"><a href="time-uncertain-correlation.html#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="time-uncertain-correlation.html#cb5-5" aria-hidden="true" tabindex="-1"></a>raw</span></code></pre></div>
 <p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-4-1.png" width="576" /></p>
+<div class="blackbox">
+<div class="exercise">
+<p><span id="exr:plotCorEns" class="exercise"><strong>Exercise 5.3  </strong></span>Explore the plotting options for plotCorEns.
+a. Change the color scheme
+b. Move the legend
+c. Move the labels
+d. Change which quantiles are plotted (this one is tricky)</p>
+</div>
+</div>
 <div id="significance-testing-options" class="section level3" number="5.4.1">
 <h3><span class="header-section-number">5.4.1</span> Significance testing options</h3>
-<p>OK, here we see the distribution of correlation coefficients, and their significance.
+<p>In this figure we see the distribution of correlation coefficients, and their significance.
 Note that we chose “significance.option = ‘raw’,” so in green we see the distribution of significant correlations as determined by a standard T-test, without any consideration of autocorrelation.
-In this case, we observe that 31.7% of the correlations are signficant.
+In this case, we observe that 28% of the correlations are significant.
 Of course we know this is a very simplistic approach, and that with many paleoclimate datasets we must consider the impact of temporal autocorrelation, which can readily cause spurious correlations.
-geoChronR addresses this point using three approaches, which are elaborated on in the <a href="https://doi.org/10.5194/gchron-2020-25">geoChronR manuscript</a>, and summarized here:</p>
+geoChronR addresses this point using three approaches, as discussed above in detail, and summarized here:</p>
 <ol style="list-style-type: decimal">
 <li><p>The simplest approach (“eff-n”) is to adjust the test’s sample size to reflect the reduction in degrees of freedom due to autocorrelation.</p></li>
 <li><p>Alternatively, the “isopersistent” option will generate surrogates, or random synthetic timeseries, that emulate the persistence characteristics of the series, and use those to estiamte significance.</p></li>
 <li><p>The final option, “isospectral” also generates surrogates to estimate significance, but does so by scrambling the spectral phases of the two datasets, thus preserving their power spectrum while destroying the correlated signal.</p></li>
 </ol>
-<p>Let’s take a look at each of these three options,</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="time-uncertain-correlation.html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotCorEns</span>(corout,</span>
-<span id="cb7-2"><a href="time-uncertain-correlation.html#cb7-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">legend.position =</span><span class="fu">c</span>(.<span class="dv">85</span>,.<span class="dv">8</span>),</span>
-<span id="cb7-3"><a href="time-uncertain-correlation.html#cb7-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">f.sig.lab.position =</span> <span class="fu">c</span>(.<span class="dv">85</span>,.<span class="dv">6</span>),</span>
-<span id="cb7-4"><a href="time-uncertain-correlation.html#cb7-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">significance.option =</span> <span class="st">&quot;eff-n&quot;</span>,</span>
-<span id="cb7-5"><a href="time-uncertain-correlation.html#cb7-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">use.fdr =</span> <span class="cn">FALSE</span>)<span class="sc">+</span><span class="fu">ggtitle</span>(<span class="st">&quot;Effective-N significance testing&quot;</span>)</span></code></pre></div>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-5-1.png" width="576" /></p>
-<p>Here we see a dramatic effect of accounting for serial autocorrelation in our significance testing. Using the “effective-N” method drops the percentage of significant correlations (at the 0.05 level) to 0. However when autocorrelation is large, this approach dramatically reduces the effective degrees of freedom and has been shown to be overly conservative in many cases. So let’s take a look at the surrogate-based approaches.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="time-uncertain-correlation.html#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotCorEns</span>(corout,</span>
-<span id="cb8-2"><a href="time-uncertain-correlation.html#cb8-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">legend.position =</span><span class="fu">c</span>(.<span class="dv">85</span>,.<span class="dv">8</span>),</span>
-<span id="cb8-3"><a href="time-uncertain-correlation.html#cb8-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">f.sig.lab.position =</span> <span class="fu">c</span>(.<span class="dv">85</span>,.<span class="dv">6</span>),</span>
-<span id="cb8-4"><a href="time-uncertain-correlation.html#cb8-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">significance.option =</span> <span class="st">&quot;isopersistent&quot;</span>,</span>
-<span id="cb8-5"><a href="time-uncertain-correlation.html#cb8-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">use.fdr =</span> <span class="cn">FALSE</span>)<span class="sc">+</span><span class="fu">ggtitle</span>(<span class="st">&quot;Isopersistent significance testing&quot;</span>)</span></code></pre></div>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-6-1.png" width="576" /></p>
+<p>Let’s take a look at each of these three options.</p>
+<div class="blackbox">
+<div class="exercise">
+<p><span id="exr:plotCorEns" class="exercise"><strong>Exercise 5.3  </strong></span>Create three more versions of the correlation ensemble histogram, so that you have the original and one for all three options for accounting for autocorrelation. Label them, and combine them into a single plot.</p>
+<p>Which option shows the biggest reduction in significant correlations? Which is the most similar to the unadjusted distribution?</p>
+</div>
+</div>
+<p>If you put your plot together properly, you now see the dramatic effect of accounting for serial autocorrelation in our significance testing. Using the “effective-N” method drops the percentage of significant correlations (at the 0.05 level) to 0. However when autocorrelation is large, this approach dramatically reduces the effective degrees of freedom and has been shown to be overly conservative in many cases. So let’s take a look at the surrogate-based approaches.</p>
 <p>Using the “isopersistent” approach, where we simulate thousands of synthetic correlations with the same autocorrelation characteristics as the real data, and see how frequently we observe r-values at the observed levels, gives a much less conservative result. In this case the fraction of significant correlations is only slightly smaller than when not accounting for autocorrelation at all.</p>
-<p>This is a good point to note that we have another statistical problem on our hands. In addition to the impact of autocorrelation on this analysis, repeating the test over multiple ensemble members raises the issue of test multiplicity <span class="citation">(<a href="#ref-Ventura2004" role="doc-biblioref"><strong>Ventura2004?</strong></a>)</span>, or the “look elsewhere effect.”
-At a 5% significance level, one would expect a 1000 member ensemble to contain 50 spurious “discoveries” – instances of the null hypothesis, here “no correlation” being rejected.
+</div>
+<div id="false-discovery-rate-testing" class="section level3" number="5.4.2">
+<h3><span class="header-section-number">5.4.2</span> False-discovery rate testing</h3>
+<p>This is a good point to note that we have another statistical problem on our hands. In addition to the impact of autocorrelation on this analysis, repeating the test over multiple ensemble members raises the issue of test multiplicity <span class="citation">(<a href="#ref-Ventura2004" role="doc-biblioref"><strong>Ventura2004?</strong></a>)</span>, or the “look elsewhere effect.”</p>
+<p>At a 5% significance level, one would expect a 1000 member ensemble to contain 50 spurious “discoveries” – instances of the null hypothesis, here “no correlation” being rejected.
 To overcome this problem, we control for this false discovery rate (FDR) using the simple approach of <span class="citation">(<a href="#ref-BenjaminiHochberg95" role="doc-biblioref"><strong>BenjaminiHochberg95?</strong></a>)</span>, coded in R by <span class="citation">(<a href="#ref-Ventura2004" role="doc-biblioref"><strong>Ventura2004?</strong></a>)</span>.
 FDR takes this effect into account to minimize the risk of identifying such spurious correlations merely on account of repeated testing.
 In effect, it filters the set of “significant” results identified by each hypothesis test (effective-N, isopersistent, or isospectral).
 Let’s plot this again, but turn the <code>use.fdr</code> option to <code>TRUE</code>.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="time-uncertain-correlation.html#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotCorEns</span>(corout,</span>
-<span id="cb9-2"><a href="time-uncertain-correlation.html#cb9-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">legend.position =</span><span class="fu">c</span>(.<span class="dv">85</span>,.<span class="dv">8</span>),</span>
-<span id="cb9-3"><a href="time-uncertain-correlation.html#cb9-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">f.sig.lab.position =</span> <span class="fu">c</span>(.<span class="dv">85</span>,.<span class="dv">6</span>),</span>
-<span id="cb9-4"><a href="time-uncertain-correlation.html#cb9-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">significance.option =</span> <span class="st">&quot;isopersistent&quot;</span>,</span>
-<span id="cb9-5"><a href="time-uncertain-correlation.html#cb9-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">use.fdr =</span> <span class="cn">TRUE</span>)<span class="sc">+</span><span class="fu">ggtitle</span>(<span class="st">&quot;Isopersistent significance testing, with False Discovery Rate effects&quot;</span>)</span></code></pre></div>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-7-1.png" width="576" /></p>
-<p>Now we see how accounting for FDR can further reduce our significance levels. In this case, all but a small fraction of the significant correlations are expected due to test multiplicity - the randomness that we’re sampling by repeating the correlation across 1000 ensemble members. After acccounting for this, only 32.7% of the ensemble members are significant.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="time-uncertain-correlation.html#cb6-1" aria-hidden="true" tabindex="-1"></a>isoSpectralFdr <span class="ot">&lt;-</span> <span class="fu">plotCorEns</span>(corout,</span>
+<span id="cb6-2"><a href="time-uncertain-correlation.html#cb6-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">legend.position =</span><span class="fu">c</span>(.<span class="dv">85</span>,.<span class="dv">8</span>),</span>
+<span id="cb6-3"><a href="time-uncertain-correlation.html#cb6-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">f.sig.lab.position =</span> <span class="fu">c</span>(.<span class="dv">85</span>,.<span class="dv">6</span>),</span>
+<span id="cb6-4"><a href="time-uncertain-correlation.html#cb6-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">significance.option =</span> <span class="st">&quot;isopersistent&quot;</span>,</span>
+<span id="cb6-5"><a href="time-uncertain-correlation.html#cb6-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">use.fdr =</span> <span class="cn">TRUE</span>)<span class="sc">+</span><span class="fu">ggtitle</span>(<span class="st">&quot;Isospectral significance testing&quot;</span>)</span>
+<span id="cb6-6"><a href="time-uncertain-correlation.html#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="time-uncertain-correlation.html#cb6-7" aria-hidden="true" tabindex="-1"></a>isoSpectralFdr</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-6-1.png" width="576" /></p>
+<p>Now we see how accounting for FDR can further reduce our significance levels. In this case, all but a small fraction of the significant correlations are expected due to test multiplicity - the randomness that we’re sampling by repeating the correlation across 1000 ensemble members. After acccounting for this, only 9% of the ensemble members are significant.</p>
 <p>Note that accounting for False Discovery Rate is a separate process than deriving p-values, and can be applied to any of the significance.options in geoChronR. For our final example we’ll take a look at isospectral significance testing and account for FDR.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="time-uncertain-correlation.html#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotCorEns</span>(corout,</span>
-<span id="cb10-2"><a href="time-uncertain-correlation.html#cb10-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">legend.position =</span><span class="fu">c</span>(.<span class="dv">85</span>,.<span class="dv">8</span>),</span>
-<span id="cb10-3"><a href="time-uncertain-correlation.html#cb10-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">f.sig.lab.position =</span> <span class="fu">c</span>(.<span class="dv">85</span>,.<span class="dv">6</span>),</span>
-<span id="cb10-4"><a href="time-uncertain-correlation.html#cb10-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">significance.option =</span> <span class="st">&quot;isospectral&quot;</span>,</span>
-<span id="cb10-5"><a href="time-uncertain-correlation.html#cb10-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">use.fdr =</span> <span class="cn">TRUE</span>)<span class="sc">+</span><span class="fu">ggtitle</span>(<span class="st">&quot;Isospectral significance testing&quot;</span>)</span></code></pre></div>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-8-1.png" width="576" /></p>
 <p>In the isospectral test, only a few of the ensembles members are significant, none of which remain upon adjusting for FDR.
 This method makes the fewest assumptions as to the structure of the series, and its computational cost is moderate, and so it is the default in geoChronR.
 We also recommend including FDR adjustment to avoid test-multiplicitly corrections.</p>
@@ -458,16 +461,16 @@ The frequency of these “false negatives” depends on the structure of the age
 One way to get a sense of the vulnerability of a timeseries to false negatives is to perform an age-uncertain correlation of a dataset with itself.
 It is appropriate to consider the results of this analysis as a best-case scenario, and to consider the correlation results in this light.
 For illustration, we perform this calculation with the Hulu Cave <span class="math inline">\(\delta^{18}\)</span>O record</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="time-uncertain-correlation.html#cb11-1" aria-hidden="true" tabindex="-1"></a>coroutHulu <span class="ot">&lt;-</span> <span class="fu">corEns</span>(hulu.ae,hulu.d18O,hulu.ae,hulu.d18O,<span class="at">bin.step =</span> <span class="dv">200</span>,<span class="at">max.ens =</span> <span class="dv">1000</span>)</span>
-<span id="cb11-2"><a href="time-uncertain-correlation.html#cb11-2" aria-hidden="true" tabindex="-1"></a>corPlotHulu <span class="ot">&lt;-</span> <span class="fu">plotCorEns</span>(coroutHulu,</span>
-<span id="cb11-3"><a href="time-uncertain-correlation.html#cb11-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="fl">0.8</span>),</span>
-<span id="cb11-4"><a href="time-uncertain-correlation.html#cb11-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">significance.option =</span> <span class="st">&quot;isospectral&quot;</span>)<span class="sc">+</span><span class="fu">ggtitle</span>(<span class="cn">NULL</span>)</span>
-<span id="cb11-5"><a href="time-uncertain-correlation.html#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-6"><a href="time-uncertain-correlation.html#cb11-6" aria-hidden="true" tabindex="-1"></a>above90 <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">sum</span>(coroutHulu<span class="sc">$</span>cor.df<span class="sc">$</span>r <span class="sc">&gt;</span> <span class="fl">0.9</span>)<span class="sc">/</span><span class="fu">nrow</span>(coroutHulu<span class="sc">$</span>cor.df)<span class="sc">*</span><span class="dv">100</span>,<span class="dv">1</span>)</span>
-<span id="cb11-7"><a href="time-uncertain-correlation.html#cb11-7" aria-hidden="true" tabindex="-1"></a>med <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">median</span>(coroutHulu<span class="sc">$</span>cor.df<span class="sc">$</span>r),<span class="dv">2</span>)</span>
-<span id="cb11-8"><a href="time-uncertain-correlation.html#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-9"><a href="time-uncertain-correlation.html#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(corPlotHulu)</span></code></pre></div>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-9-1.png" width="576" /></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="time-uncertain-correlation.html#cb7-1" aria-hidden="true" tabindex="-1"></a>coroutHulu <span class="ot">&lt;-</span> <span class="fu">corEns</span>(hulu.ae,hulu.d18O,hulu.ae,hulu.d18O,<span class="at">bin.step =</span> <span class="dv">200</span>,<span class="at">max.ens =</span> <span class="dv">1000</span>)</span>
+<span id="cb7-2"><a href="time-uncertain-correlation.html#cb7-2" aria-hidden="true" tabindex="-1"></a>corPlotHulu <span class="ot">&lt;-</span> <span class="fu">plotCorEns</span>(coroutHulu,</span>
+<span id="cb7-3"><a href="time-uncertain-correlation.html#cb7-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="fl">0.8</span>),</span>
+<span id="cb7-4"><a href="time-uncertain-correlation.html#cb7-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">significance.option =</span> <span class="st">&quot;isospectral&quot;</span>)<span class="sc">+</span><span class="fu">ggtitle</span>(<span class="cn">NULL</span>)</span>
+<span id="cb7-5"><a href="time-uncertain-correlation.html#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="time-uncertain-correlation.html#cb7-6" aria-hidden="true" tabindex="-1"></a>above90 <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">sum</span>(coroutHulu<span class="sc">$</span>cor.df<span class="sc">$</span>r <span class="sc">&gt;</span> <span class="fl">0.9</span>)<span class="sc">/</span><span class="fu">nrow</span>(coroutHulu<span class="sc">$</span>cor.df)<span class="sc">*</span><span class="dv">100</span>,<span class="dv">1</span>)</span>
+<span id="cb7-7"><a href="time-uncertain-correlation.html#cb7-7" aria-hidden="true" tabindex="-1"></a>med <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">median</span>(coroutHulu<span class="sc">$</span>cor.df<span class="sc">$</span>r),<span class="dv">2</span>)</span>
+<span id="cb7-8"><a href="time-uncertain-correlation.html#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="time-uncertain-correlation.html#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(corPlotHulu)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-8-1.png" width="576" /></p>
 <p>The impact of age uncertainty on the correlation of this record is apparent; even when correlated against itself, only NA% of the ensembles have r-values greater than 0.9, and the median correlation is NA.
 However, all of the correlations remain significant, even after accounting for autocorrelation, indicating that age uncertainty and the structure of the timeseries does not preclude the possibility of significant correlations.</p>
 </div>
@@ -488,7 +491,6 @@ However, as a rule of thumb, if more than half of the ensemble correlation resul
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
-<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
 <script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
@@ -528,6 +530,10 @@ gitbook.start({
 "text": null
 },
 "download": ["Time-uncertain-data-analysis-in-R.pdf"],
+"search": {
+"engine": "fuse",
+"options": null
+},
 "toc": {
 "collapse": "subsection"
 }

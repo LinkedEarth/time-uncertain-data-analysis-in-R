@@ -70,3 +70,6 @@ binning
 autocorrelation
 test-multiplicity
 plotting-the-ensemble-correlation-results
+exr:correlationThoughts
+exr:plotCorEns
+false-discovery-rate-testing
