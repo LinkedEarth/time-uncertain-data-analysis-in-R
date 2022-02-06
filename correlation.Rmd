@@ -1,31 +1,151 @@
-# Age-uncertain correlation
+# Time-uncertain correlation
 
-This vignette picks up where the [introduction](Introduction.html) leaves off, we've generated age ensembles for two datasets, and now want to explore the relationship between these two datasets. First we'll load the packages we need. 
+Correlation is perhaps the most commonly used statistical tool in the paleogeosciences. This makes sense, because we often see similar patterns between datasets, but want to know whether the apparent relationship is robust, or could be spurious. And of course, age uncertainty can have immense impacts on correlation.
 
+In this chapter, we'll explore the time-uncertain correlation tools in geoChronR by walking through a classic comparison in paleoclimatology, the relationship between \delta$^{18}$O variability in Greenland ice cores and Asian speleothems. 
+On multi-millennial timescales, the two datasets display such similar features that the well-dated Hulu Cave record, and other similar records from China and Greenland, have been used to argue for atmospheric teleconnections between the regions and support the independent chronology of GISP2 [@hulu2001].
+Here, we revisit this relation quantitatively, using ensemble age models and the `corEns` function, to calculate the impact of age uncertainty on the correlation between these two iconic datasets.
+<!-- Because these datasets are not normally distributed, we use Spearman's Rank correlation to avoid the assumption of linearity. -->
+<!-- Kendall's Tau method, or using Pearson correlation after gaussianizing the input (the geoChronR default), are also reasonable options that in most cases, including this one, produce comparable results. -->
+It's worth noting at this point that there is a long and detailed discussion in the literature discussing this relationship, and any correlation approach to address this question ignores aspects of the science, and ignores ancillary evidence that may support a mechanistic relationship between two timeseries.
+Nevertheless, this is a good example of how age uncertainty can affect apparent alignment between two datasets.
 
 ```{r setup,message=FALSE,warning=FALSE,results='hide'}
+library(lipdR)
 library(geoChronR)
 library(ggplot2)
 library(gridExtra)
 ```
 
-And the data we generated in the [introduction](Introduction.html).
 
 ```{r load data}
 loadRemote("https://lipdverse.org/geoChronR-examples/introductionOutput.RData",useSavedNames = TRUE)
 ```
 
+## First look
+
+LiPD files for the Hulu Cave speleothem \delta$^{18}$O and the GISP2 ice core \delta$^{18}$O records are available at x and y. 
+These LiPD files already include age ensembles, so you don't need to create new age models. Use the skills you leanred in Chapters @\label(data) and @\label(agemodelling) to take a first look at the data. 
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #correlationFirstLook}
+Create a figure that that uses ensemble timeseries plots to compares the Hulu Cave GISP2 ice core records.
+<details>
+<summary>Hint #1</summary>
+  Use readLipd() to load the data from the lipdverse
+</details> 
+<details>
+  <summary>Hint #2</summary>
+  Use mapAgeEnsembleToPaleoData(), and note that there is no depth data in the GISP2 dataset.
+</details> 
+<details>
+  <summary>Hint #3</summary>
+  Use selectData() to pull out the age ensembles and d18O values of interest
+</details> 
+<details>
+  <summary>Hint #4</summary>
+  Use plotEnsTimeseriesRibbons() and/or plotEnsTimeseriesLines() to create plots that span a common interval
+</details> 
+<details>
+  <summary>Hint #5</summary>
+  Use the egg package and ggarrange to stack the plots to allow easy comparison.
+</details> 
+:::
+::::
+
+
+```{r,echo=FALSE,results='hide',message=FALSE,warning=FALSE}
+hulu <- readLipd("~/Download/Hulucave.Wang.2001-ens.lpd")
+gisp2 <- readLipd("~/Download/GISP2.Alley.2000-ens.lpd")
+
+hulu <- mapAgeEnsembleToPaleoData(hulu,age.var = "ageEnsemble")
+gisp2 <- mapAgeEnsembleToPaleoData(gisp2,chron.depth.var = NULL,paleo.depth.var = NULL)
+
+
+hulu.ae <- selectData(hulu,var.name = "ageEnsemble")
+hulu.d18O <- selectData(hulu,var.name = "d18O")
+gisp2.d18O <- selectData(gisp2,var.name = "temp")
+gisp2.ae <- selectData(gisp2,var.name = "ageEnsemble")
+
+#plotTimeseriesEnsLines(X = hulu.ae,Y = hulu.d18O)
+#plotTimeseriesEnsLines(X = gisp2.ae,Y = gisp2.d18O)
+
+
+```
+
+
+Great! There's no replacement for actually looking at the data, and lipdR and geoChronR make it possible to do this in just a few lines of code. If you found that exercise difficult, spend some time reviewing Chapters @\label(data) and @\label(agemodelling).
+:::: {.blackbox data-latex=""}
+::: {.exercise #correlationThoughts}
+Now that you've made the overview figure, does it look like there might be a relationship between these datasets? Would you expect the a positive, negative, or zero correlation?
+:::
+::::
+
+
+## How to correlate responsibly {#correlateResponsibly}
+Before we jump into the details of how to conduct time-uncertain correlation in R, let's review some of the key assumptions, methods and choices. The following is an excerpt from the [geoChronR paper in Geochronology](https://gchron.copernicus.org/articles/3/149/2021/) [@geochronrPaper].
+
+
+Correlation is the most common measure of a relationship between two variables $X$ and $Y$.
+Its computation is fast, lending itself to ensemble analysis, with a handful of pretreatment and significance considerations that are relevant for ensembles of paleoenvironmental and geoscientific data.
+geoChronR implements three methods for correlation analysis: Pearson's product-moment, Spearman's rank and Kendall's tau.
+Pearson correlation is the most common correlation statistic, but assumes normally-distributed data.
+This assumption is commonly not met in paleoenvironmental or geoscientific datasets, but can be can be overcome by mapping both datasets to a standard normal distribution prior to analysis [@vanAlbada2007,@JEG_Tingley_CP2016].
+Alternatively, the Spearman and Kendall correlation methods are rank-based, and do not require normally distributed input data, and are useful alternatives in many applications.
+
+### Binning
+
+All correlation analyses for timeseries are built on the assumption the datasets can be aligned on a common timeline.
+Age-uncertain data violate this assumption.
+We overcome this by treating each ensemble member from one or more age uncertain timeseries as valid for that iteration, then "bin" each of the timeseries into coeval intervals.
+The "binning" procedure in geoChronR sets up an interval, which is typical evenly spaced, over which the data are averaged. Generally, this intentionally degrades the median resolution of the timeseries, for example, a timeseries with 37-year median spacing could be reasonably "binned" into 100- or 200-year bins.
+The binning procedure is repeated for each ensemble member, meaning that between different ensembles, different observations will be placed in different bins.
+
+### Autocorrelation
+
+Following binning, the correlation is calculated and recorded for each ensemble member.  The standard way to assess correlation significance is using a Student's T-test, which assumes normality and independence. Although geoChronR can overcome the normality requirement, as discussed above, paleoenvironmental timeseries are often highly autocorrelated, and not serially independent, leading to spurious assessments of significance [@Hu_epsl17].
+geoChronR addresses this potential bias using three approaches:
+
+1. The simplest approach is to adjust the test's sample size to reflect the reduction in degrees of freedom due to autocorrelation. Following @dawdy1964statistical, the effective number of degrees of freedom is $\nu = n \frac{1-\phi_{1,X}\phi_{1,X}}{1+\phi_{1,X}\phi_{1,X}}$, where $n$ is the sample size (here, the number of bins) and where \(\phi_{1,X}, \phi_{1,X}\) are the lag-1 autocorrelation of two
+time series \(X\), \(Y\), respectively. This approach is called ``effective-n'' in geoChronR. It is an extremely simple approach, with no added computations by virtue of being a parametric test using a known distribution ($t$ distribution).
+A downside is that the correction is approximate, and can substantially reduce the degrees of freedom [@Hu_epsl17], to less than 1 in cases of high autocorrelation, which is common in paleoenvironmental timeseries.
+This may result in overly conservative assessment of significance, so this option is therefore not recommended.
+
+
+2. A parametric alternative is to generate surrogates, or random synthetic timeseries, that emulate the persistence characteristics of the series.
+This "isopersistent" test generates $M$ (say, 500) simulations from an autoregressive process of order 1 (AR(1)), which has been fitted to the data.
+These random timeseries are then used to obtain the null distribution, and compute p-values, which therefore measure the probability that a correlation as high as the one observed ($r_o$) could have arisen from correlating $X$ or $Y$ with AR(1) series with identical persistence characteristics as the observations.
+This approach is particularly suited if an AR model is a sensible approximation to the data, as is often the case [@Ghil02].
+However, it may be overly permissive or overly conservative in some situations.
+
+3. A non-parametric alternative is the approach of @Ebisuzaki_JClim97, which generates surrogates by scrambling the phases of $X$ and $Y$, thus preserving their power spectrum.
+To generate these "isospectral" surrogates, geoChronR uses the `make_surrogate_data` function from the rEDM package [@rEDM].
+This method makes the fewest assumptions as to the structure of the series, and its computational cost is moderate, making it the default in geoChronR.
+
+
+<!-- Each of these approaches has strengths and weaknesses.  -->
+<!-- The effective sample size approach is fast, and provides reasonable results for weakly to  moderately autocorrelated timeseries, but can be overly conservative for highly autocorrelated data.  -->
+<!-- This also makes the least stable of the methods to changes in bin size.  -->
+<!-- Isopersistence.... Ebisuzaki.... , which is why we consider the most broadly applicable, and is the default choice in geoChronR. -->
+
+### Test multiplicity
+
+In addition to the impact of autocorrelation on this analysis, repeating the test over multiple ensemble members raises the issue of test multiplicity  [@Ventura2004], also known as the "look elsewhere effect".
+To overcome this problem, we control for this false discovery rate (FDR) using the simple approach of @BenjaminiHochberg95, coded in R by @Ventura2004.
+FDR explicitly controls for spurious discoveries arising from repeatedly carrying out the same test.
+At a 5% level, one would expect a 1000 member ensemble to contain 50 spurious "discoveries" -- instances of the null hypothesis (here "no correlation") being rejected.
+FDR takes this effect into account to minimize the risk of identifying such spurious correlations merely on account of repeated testing.
+In effect, it filters the set of "significant" results identified by each hypothesis test (effective-N, isopersistent, or isospectral).
+
 ## The corEns() function
+
+Now that you've thoroughly reviewed the theory, lets make it run in geoChronR! *I know that not everyone thoroughly reviewed the theory. That's ok, but it's worth reflecting on these choices, because you won't fully understand your results unless you understand these details. The default choices in geoChronR will not be right for every application.*
 
 Let's take another look at the the two timeseries over the period of overlap.
 To calculate age uncertian correlation let use geoChronR's `corEns` function.
-Note that this approach is, in many ways, simplistic.
-Correlating the two age-uncertain datasets will characterize the relationship, but ignores ancillary evidence that may support a mechanistic relationship between two timeseries. 
-Still, it illustrates how age uncertainty can affect apparent alignment between two datasets, which is the purpose of this example.
-
 
 ```{r, results='hide',warning = FALSE, message = FALSE,cache = TRUE}
-corout <- corEns(time.1 = gisp2.ens,
+corout <- corEns(time.1 = gisp2.ae,
                  values.1 = gisp2.d18O,
                  time.2 = hulu.ae,
                  values.2 = hulu.d18O,
@@ -36,7 +156,8 @@ corout <- corEns(time.1 = gisp2.ens,
                  gaussianize = TRUE)
 ```
 
-Note that there are many parameters available for the `corEns` function (check out the help at `?corEns`).
+Hopefully, some of those options look familiar (see \@ref(correlateResponsibly) if they don't). There are a lot of choice that go into time uncertain correlation, meaning that there are a lot of parameters available for the `corEns` function (check out the help at `?corEns`).
+
 Some of the key ones to pay attention to are:
 
 *    **bin.step** This variable sets the size of the bins that the data will be averaged into to align before correlation. Smaller bins will focus allow examination of shorter timescales, and increase the the sample size, but also increase the number of empty bins, and tend to increase autocorrelation. The right bin size varies depends on the distribution of resolutions in your datasets. 
@@ -51,7 +172,8 @@ If percentiles are provided to corEns, and they are by default, the function wil
 corout$cor.stats
 ```
 
-## Plotting the results
+
+## Plotting the ensemble correlation results
 
 This gives us a first order sense of the results, but let's use the `plotCorEns` function to dig in deeper.
 

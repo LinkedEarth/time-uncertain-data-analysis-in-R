@@ -1,16 +1,41 @@
 # Installing the software you need {#installation}
 
-You need R and probably RStudio
+You need [R (>=3.6)](https://cran.r-project.org/) and we strongly recommend [RStudio as an IDE](https://www.rstudio.com/products/rstudio/download/). 
 
-## Loading a LiPD file
+If you're not sure which version of R you're running, try 
+
+```{r}
+R.version
+```
+
+If that gives you an error, you likely have an older version, but this should work.
+
+```{r}
+sessionInfo()
+```
+
+
+## Installing lipdR
 
 The `lipdR` package is your gateway to working with LiPD data. To install `lipdR`, you'll need the remotes package if you don't already have it.
 
 ```{r, echo=TRUE, eval=FALSE}
 install.packages("remotes")
 remotes::install_github("nickmckay/lipdR")
-remotes::install_github("nickmckay/geoChronR")
 ```
+
+
+## Installing geoChronR
+
+Finally, you can install geoChronR using a similar command:
+```{r, echo=TRUE, eval=FALSE}
+remotes::install_github("nickmckay/lipdR")
+```
+
+
+This should also install all the dependencies you need. geoChronR is built on top of a large collection of other packages, which means it can take a while to install, but also it means that changes to those packages sometimes causes errors in geoChronR. If you get an error during installation, [please report it here]("http://github.com/nickmckay/GeoChronR/issues/"), and we'll fix it as soon as possible. 
+
+
 
 
 
