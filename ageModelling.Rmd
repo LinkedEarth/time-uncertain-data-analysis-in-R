@@ -271,7 +271,7 @@ tana <- mapAgeEnsembleToPaleoData(tana,
                                   age.var = "ageEnsemble",
                                   model.num = 4,
                                   paleo.depth.var = "Composite_depth", 
-                                  meas.table.num = 1)
+                                  paleo.meas.table.num = 1)
 ```
 Now let's look at the paleoData again:
 

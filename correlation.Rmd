@@ -2,7 +2,7 @@
 
 Correlation is perhaps the most commonly used statistical tool in the paleogeosciences. This makes sense, because we often see similar patterns between datasets, but want to know whether the apparent relationship is robust, or could be spurious. And of course, age uncertainty can have immense impacts on correlation.
 
-In this chapter, we'll explore the time-uncertain correlation tools in geoChronR by walking through a classic comparison in paleoclimatology, the relationship between \delta$^{18}$O variability in Greenland ice cores and Asian speleothems. 
+In this chapter, we'll explore the time-uncertain correlation tools in geoChronR by walking through a classic comparison in paleoclimatology, the relationship between $\delta^{18}$O variability in Greenland ice cores and Asian speleothems. 
 On multi-millennial timescales, the two datasets display such similar features that the well-dated Hulu Cave record, and other similar records from China and Greenland, have been used to argue for atmospheric teleconnections between the regions and support the independent chronology of GISP2 [@hulu2001].
 Here, we revisit this relation quantitatively, using ensemble age models and the `corEns` function, to calculate the impact of age uncertainty on the correlation between these two iconic datasets.
 <!-- Because these datasets are not normally distributed, we use Spearman's Rank correlation to avoid the assumption of linearity. -->
@@ -14,13 +14,14 @@ Nevertheless, this is a good example of how age uncertainty can affect apparent 
 library(lipdR)
 library(geoChronR)
 library(ggplot2)
-library(gridExtra)
+library(magrittr)
+library(egg)
 ```
 
 ## First look
 
-LiPD files for the Hulu Cave speleothem \delta$^{18}$O and the GISP2 ice core \delta$^{18}$O records are available at x and y. 
-These LiPD files already include age ensembles, so you don't need to create new age models. Use the skills you leanred in Chapters @\label(data) and @\label(agemodelling) to take a first look at the data. 
+LiPD files for the Hulu Cave speleothem $\delta^{18}$O and the GISP2 ice core $\delta^{18}$O records are available at x and y. 
+These LiPD files already include age ensembles, so you don't need to create new age models. Use the skills you learned in Chapters \@ref(data) and @\ref(agemodelling) to take a first look at the data. 
 
 :::: {.blackbox data-latex=""}
 ::: {.exercise #correlationFirstLook}
@@ -69,7 +70,7 @@ gisp2.ae <- selectData(gisp2,var.name = "ageEnsemble")
 ```
 
 
-Great! There's no replacement for actually looking at the data, and lipdR and geoChronR make it possible to do this in just a few lines of code. If you found that exercise difficult, spend some time reviewing Chapters @\ref(data) and @\ref(agemodelling).
+Great! There's no replacement for actually looking at the data, and lipdR and geoChronR make it possible to do this in just a few lines of code. If you found that exercise difficult, spend some time reviewing Chapters \@ref(data) and @\ref(agemodelling).
 
 
 :::: {.blackbox data-latex=""}
@@ -140,7 +141,7 @@ Now that you've thoroughly reviewed the theory, lets make it run in geoChronR! *
 
 Let's take another look at the the two timeseries over the period of overlap.
 To calculate age uncertain correlation let use geoChronR's `corEns` function. 
-We'll run it with only 200 ensemble members for now, since we have multiple significance testing options turned on and it can be a little slow.
+I'm going to run this with 1000 ensemble members, but you may want to run it with only 200 ensemble members for now, since we have multiple significance testing options turned on and it can be a little slow.
 
 ```{r, results='hide',warning = FALSE, message = FALSE,cache = TRUE}
 corout <- corEns(time.1 = gisp2.ae,
@@ -148,7 +149,7 @@ corout <- corEns(time.1 = gisp2.ae,
                  time.2 = hulu.ae,
                  values.2 = hulu.d18O,
                  bin.step = 200,
-                 max.ens = 200,
+                 max.ens = 1000,
                  isopersistent  = TRUE,
                  isospectral = TRUE,
                  gaussianize = TRUE)
@@ -187,7 +188,8 @@ print(raw)
 
 :::: {.blackbox data-latex=""}
 ::: {.exercise #plotCorEns}
-Explore the plotting options for plotCorEns. 
+Explore the plotting options for plotCorEns.
+
 a. Change the color scheme
 b. Move the legend
 c. Move the labels
@@ -213,7 +215,7 @@ geoChronR addresses this point using three approaches, as discussed above in det
 Let's take a look at each of these three options. 
 
 :::: {.blackbox data-latex=""}
-::: {.exercise #plotCorEns}
+::: {.exercise #significanceOptions}
 Create three more versions of the correlation ensemble histogram, so that you have the original and one for all three options for accounting for autocorrelation. Label them, and combine them into a single plot. 
 
 Which option shows the biggest reduction in significant correlations? Which is the most similar to the unadjusted distribution? 
@@ -221,7 +223,7 @@ Which option shows the biggest reduction in significant correlations? Which is t
 ::::
 
 
-```{r,warning=FALSE,message=FALSE,fig.width=6, fig.height=4,echo=FALSE,eval=TRUE}
+```{r,warning=FALSE,message=FALSE,fig.width=6, fig.height=4,echo=FALSE,eval=FALSE}
 effN <- plotCorEns(corout,
            legend.position =c(.85,.8),
            f.sig.lab.position = c(.85,.6),
@@ -270,7 +272,7 @@ isoPersistentFdr <- plotCorEns(corout,
            significance.option = "isopersistent",
            use.fdr = TRUE)+ggtitle("Isopersistent significance testing with FDR")
 
-isoPersistentFdr
+print(isoPersistentFdr)
 ```
 
 Now we see how accounting for FDR can further reduce our significance levels. In this case many of the significant correlations are expected due to test multiplicity (shown in the green bars in the plot above). This represents the randomness that we're sampling by repeating the correlation across 1000 ensemble members. After accounting for this, only `r round(100*corout$cor.fdr.stats$pIsopersistentFDR,1)`% of the ensemble members are significant. 
@@ -320,23 +322,20 @@ Generally, age uncertainties obscure relationships between records, while in rar
 So for your chapter project, we'll explore one more parameter that will have significant impacts on your result. 
 
 :::: {.blackbox data-latex=""}
-::: {.exercise #selfCor}
-
+::: {.exercise #corProject}
+OK, let's go through the whole exercise of comparing two time-uncertain series. This time, we're going to look on a shorter timescale, just the past 2000 years. Your project is to conduct an age-uncertain correlation of two ice core d18O records, from the Renland and Crete ice cores. LiPD data with age ensembles are available for [Renland](https://lipdverse.org/geoChronR-examples/arc2k/Arc-Renland.Vinther.2008.lpd) and [Crete](https://lipdverse.org/geoChronR-examples/arc2k/Arc-Crete.Vinther.2010.lpd). You'll need to go through the whole process explored in this chapter, but once you've produced an age uncertain correlation, explore the impact of changing the bin.step over a range of reasonable choices. How do larger (and smaller) bins affect the correlation, and the significance of the result? Defend the choice that you think is most reasonable.
 :::
 ::::
 
 
-```{r}
-library(magrittr)
-library(geoChronR)
-library(lipdR)
-agassiz <- readLipd("https://lipdverse.org/geoChronR-examples/arc2k/Arc-Agassiz.Vinther.2008.lpd") %>% 
+```{r,echo=FALSE,warning=FALSE,eval=FALSE}
+renland <- readLipd("https://lipdverse.org/geoChronR-examples/arc2k/Arc-Renland.Vinther.2008.lpd") %>% 
   mapAgeEnsembleToPaleoData(strict.search = TRUE,
                             age.var = "ageEnsemble",
                             chron.depth.var = NULL )
 
-ag.ae <- selectData(agassiz,"ageEnsemble")
-ag.d18O <- selectData(agassiz,"d18O")
+re.ae <- selectData(renland,"ageEnsemble")
+re.d18O <- selectData(renland,"d18O")
 
 
 crete <- readLipd("https://lipdverse.org/geoChronR-examples/arc2k/Arc-Crete.Vinther.2010.lpd") %>% 
@@ -346,16 +345,16 @@ crete <- readLipd("https://lipdverse.org/geoChronR-examples/arc2k/Arc-Crete.Vint
 cr.ae <- selectData(crete,"ageEnsemble")
 cr.d18O <- selectData(crete,"d18O")
 
-ag <- plotTimeseriesEnsRibbons(X = ag.ae,Y = ag.d18O) + xlim(c(550,1950))
+re <- plotTimeseriesEnsRibbons(X = re.ae,Y = re.d18O) + xlim(c(550,1950))
 cr <- plotTimeseriesEnsRibbons(X = cr.ae,Y = cr.d18O)+ xlim(c(550,1950))
 
-egg::ggarrange(plots = list(ag,cr),nrow = 2)
+egg::ggarrange(plots = list(re,cr),nrow = 2)
 
 
-co <- corEns(ag.ae,ag.d18O,
+co <- corEns(re.ae,re.d18O,
              cr.ae,cr.d18O,
-             bin.step = 1,
-             max.ens = 100,
+             bin.step = 10,
+             max.ens = 1000,
              gaussianize = FALSE,
              isopersistent = FALSE)
 

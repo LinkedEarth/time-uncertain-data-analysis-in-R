@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 4 Age modelling in geoChronR | Time-uncertain data analysis in R</title>
+  <meta name="description" content="This book covers time-uncertain data analysis in R, primarily relying on the geoChronR package" />
+  <meta name="generator" content="bookdown 0.22 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 4 Age modelling in geoChronR | Time-uncertain data analysis in R" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This book covers time-uncertain data analysis in R, primarily relying on the geoChronR package" />
+  <meta name="github-repo" content="linkedearth/time-uncertain-data-analysis-in-R" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 4 Age modelling in geoChronR | Time-uncertain data analysis in R" />
+  
+  <meta name="twitter:description" content="This book covers time-uncertain data analysis in R, primarily relying on the geoChronR package" />
+  
+
+<meta name="author" content="Nick McKay" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="data.html"/>
+<link rel="next" href="time-uncertain-correlation.html"/>
+<script src="libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">geoChronR Tutorial</a></li>
+<li><a href="http://nickmckay.github.io/GeoChronR>geoChronR manual</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Welcome!</a></li>
+<li class="chapter" data-level="2" data-path="installation.html"><a href="installation.html"><i class="fa fa-check"></i><b>2</b> Installing the software you need</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="installation.html"><a href="installation.html#installing-lipdr"><i class="fa fa-check"></i><b>2.1</b> Installing lipdR</a></li>
+<li class="chapter" data-level="2.2" data-path="installation.html"><a href="installation.html#installing-geochronr"><i class="fa fa-check"></i><b>2.2</b> Installing geoChronR</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="data.html"><a href="data.html"><i class="fa fa-check"></i><b>3</b> Data in geoChronR</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="data.html"><a href="data.html#loading-a-lipd-file"><i class="fa fa-check"></i><b>3.1</b> Loading a LiPD file</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="data.html"><a href="data.html#selectData"><i class="fa fa-check"></i><b>3.1.1</b> Extract a variable from a LiPD object</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="data.html"><a href="data.html#loading-multiple-lipd-datasets"><i class="fa fa-check"></i><b>3.2</b> Loading multiple LiPD datasets</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="agemodelling.html"><a href="agemodelling.html"><i class="fa fa-check"></i><b>4</b> Age modelling in geoChronR</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="agemodelling.html"><a href="agemodelling.html#bacon"><i class="fa fa-check"></i><b>4.1</b> Bacon</a></li>
+<li class="chapter" data-level="4.2" data-path="agemodelling.html"><a href="agemodelling.html#bacon-1"><i class="fa fa-check"></i><b>4.2</b> Bacon</a></li>
+<li class="chapter" data-level="4.3" data-path="agemodelling.html"><a href="agemodelling.html#bchron"><i class="fa fa-check"></i><b>4.3</b> BChron</a></li>
+<li class="chapter" data-level="4.4" data-path="agemodelling.html"><a href="agemodelling.html#oxcal"><i class="fa fa-check"></i><b>4.4</b> OxCal</a>
+<ul>
+<li class="chapter" data-level="4.4.1" data-path="agemodelling.html"><a href="agemodelling.html#lets-compare-these-models."><i class="fa fa-check"></i><b>4.4.1</b> Let’s compare these models.</a></li>
+<li class="chapter" data-level="4.4.2" data-path="agemodelling.html"><a href="agemodelling.html#creating-a-multimodel-ensemble"><i class="fa fa-check"></i><b>4.4.2</b> Creating a multimodel ensemble</a></li>
+<li class="chapter" data-level="4.4.3" data-path="agemodelling.html"><a href="agemodelling.html#mapping-the-age-ensemble-to-the-paleodata-measurements"><i class="fa fa-check"></i><b>4.4.3</b> Mapping the age ensemble to the paleoData measurements</a></li>
+<li class="chapter" data-level="4.4.4" data-path="agemodelling.html"><a href="agemodelling.html#creating-a-timeseries-plot-as-a-spaghetti-plot-of-lines"><i class="fa fa-check"></i><b>4.4.4</b> Creating a timeseries plot as a spaghetti plot of lines</a></li>
+<li class="chapter" data-level="4.4.5" data-path="agemodelling.html"><a href="agemodelling.html#creating-a-timeseries-plot-with-a-ribbon-confidence-intervals"><i class="fa fa-check"></i><b>4.4.5</b> Creating a timeseries plot with a ribbon confidence intervals</a></li>
+<li class="chapter" data-level="4.4.6" data-path="agemodelling.html"><a href="agemodelling.html#combining-the-two-kinds-of-timeseries-plots"><i class="fa fa-check"></i><b>4.4.6</b> Combining the two kinds of timeseries plots</a></li>
+</ul></li>
+<li class="chapter" data-level="4.5" data-path="agemodelling.html"><a href="agemodelling.html#banded-age-modelling"><i class="fa fa-check"></i><b>4.5</b> Banded Age Modelling</a></li>
+<li class="chapter" data-level="4.6" data-path="agemodelling.html"><a href="agemodelling.html#chapter-project."><i class="fa fa-check"></i><b>4.6</b> Chapter project.</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html"><i class="fa fa-check"></i><b>5</b> Time-uncertain correlation</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#first-look"><i class="fa fa-check"></i><b>5.1</b> First look</a></li>
+<li class="chapter" data-level="5.2" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#correlateResponsibly"><i class="fa fa-check"></i><b>5.2</b> How to correlate responsibly</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#binning"><i class="fa fa-check"></i><b>5.2.1</b> Binning</a></li>
+<li class="chapter" data-level="5.2.2" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#autocorrelation"><i class="fa fa-check"></i><b>5.2.2</b> Autocorrelation</a></li>
+<li class="chapter" data-level="5.2.3" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#test-multiplicity"><i class="fa fa-check"></i><b>5.2.3</b> Test multiplicity</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#the-corens-function"><i class="fa fa-check"></i><b>5.3</b> The corEns() function</a></li>
+<li class="chapter" data-level="5.4" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#plotting-the-ensemble-correlation-results"><i class="fa fa-check"></i><b>5.4</b> Plotting the ensemble correlation results</a>
+<ul>
+<li class="chapter" data-level="5.4.1" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#significance-testing-options"><i class="fa fa-check"></i><b>5.4.1</b> Significance testing options</a></li>
+<li class="chapter" data-level="5.4.2" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#false-discovery-rate-testing"><i class="fa fa-check"></i><b>5.4.2</b> False-discovery rate testing</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#judging-the-overall-significance-of-an-age-uncertain-correlation"><i class="fa fa-check"></i><b>5.5</b> Judging the overall significance of an age-uncertain correlation</a></li>
+<li class="chapter" data-level="5.6" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#chapter-project"><i class="fa fa-check"></i><b>5.6</b> Chapter Project</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html"><i class="fa fa-check"></i><b>6</b> Regression and Calibration-in-time</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#load-the-lipd-file"><i class="fa fa-check"></i><b>6.1</b> Load the LiPD file</a></li>
+<li class="chapter" data-level="6.2" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#check-out-the-contents"><i class="fa fa-check"></i><b>6.2</b> Check out the contents</a></li>
+<li class="chapter" data-level="6.3" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#create-an-age-model-with-bacon"><i class="fa fa-check"></i><b>6.3</b> Create an age model with Bacon</a></li>
+<li class="chapter" data-level="6.4" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-ensemble-output"><i class="fa fa-check"></i><b>6.4</b> And plot the ensemble output</a></li>
+<li class="chapter" data-level="6.5" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#map-the-age-ensemble-to-the-paleodata-table"><i class="fa fa-check"></i><b>6.5</b> Map the age ensemble to the paleodata table</a></li>
+<li class="chapter" data-level="6.6" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#select-the-paleodata-age-ensemble-and-rabd-data-that-wed-like-to-regress-and-calibrate"><i class="fa fa-check"></i><b>6.6</b> Select the paleodata age ensemble, and RABD data that we’d like to regress and calibrate</a></li>
+<li class="chapter" data-level="6.7" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#now-load-in-the-instrumental-data-we-want-to-correlate-and-regress-agains"><i class="fa fa-check"></i><b>6.7</b> Now load in the instrumental data we want to correlate and regress agains</a></li>
+<li class="chapter" data-level="6.8" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#check-agetime-units-before-proceeding"><i class="fa fa-check"></i><b>6.8</b> Check age/time units before proceeding</a></li>
+<li class="chapter" data-level="6.9" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#create-a-variable-list-for-the-instrumental-data"><i class="fa fa-check"></i><b>6.9</b> Create a “variable list” for the instrumental data</a></li>
+<li class="chapter" data-level="6.10" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#calculate-an-ensmeble-correlation-between-the-rabd-and-local-summer-temperature-data"><i class="fa fa-check"></i><b>6.10</b> Calculate an ensmeble correlation between the RABD and local summer temperature data</a></li>
+<li class="chapter" data-level="6.11" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-output"><i class="fa fa-check"></i><b>6.11</b> And plot the output</a></li>
+<li class="chapter" data-level="6.12" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#perform-ensemble-regression"><i class="fa fa-check"></i><b>6.12</b> Perform ensemble regression</a></li>
+<li class="chapter" data-level="6.13" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-output-1"><i class="fa fa-check"></i><b>6.13</b> And plot the output</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="spectral-analysis.html"><a href="spectral-analysis.html"><i class="fa fa-check"></i><b>7</b> Spectral Analysis</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="spectral-analysis.html"><a href="spectral-analysis.html#time-certain-spectral-analysis"><i class="fa fa-check"></i><b>7.1</b> Time-certain spectral analysis</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="spectral-analysis.html"><a href="spectral-analysis.html#lomb-scargle-periodogram"><i class="fa fa-check"></i><b>7.1.1</b> Lomb-Scargle periodogram</a></li>
+<li class="chapter" data-level="7.1.2" data-path="spectral-analysis.html"><a href="spectral-analysis.html#multi-taper-method"><i class="fa fa-check"></i><b>7.1.2</b> Multi-taper Method</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="spectral-analysis.html"><a href="spectral-analysis.html#time-uncertain-spectral-analysis"><i class="fa fa-check"></i><b>7.2</b> Time-uncertain spectral analysis</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="principal-components-analysis.html"><a href="principal-components-analysis.html"><i class="fa fa-check"></i><b>8</b> Principal Components Analysis</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="principal-components-analysis.html"><a href="principal-components-analysis.html#make-a-map"><i class="fa fa-check"></i><b>8.1</b> Make a map</a></li>
+<li class="chapter" data-level="8.2" data-path="principal-components-analysis.html"><a href="principal-components-analysis.html#prepare-the-data-for-pca"><i class="fa fa-check"></i><b>8.2</b> Prepare the data for PCA</a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="principal-components-analysis.html"><a href="principal-components-analysis.html#grab-the-age-ensembles-for-each-record."><i class="fa fa-check"></i><b>8.2.1</b> Grab the age ensembles for each record.</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="principal-components-analysis.html"><a href="principal-components-analysis.html#calculate-the-ensemble-pca"><i class="fa fa-check"></i><b>8.3</b> Calculate the ensemble PCA</a>
+<ul>
+<li class="chapter" data-level="8.3.1" data-path="principal-components-analysis.html"><a href="principal-components-analysis.html#plot-the-ensemble-pca-results"><i class="fa fa-check"></i><b>8.3.1</b> Plot the ensemble PCA results</a></li>
+</ul></li>
+<li class="chapter" data-level="8.4" data-path="principal-components-analysis.html"><a href="principal-components-analysis.html#ensemble-pca-take-two---using-a-covariance-matrix."><i class="fa fa-check"></i><b>8.4</b> Ensemble PCA take two - using a covariance matrix.</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Time-uncertain data analysis in R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="agemodelling" class="section level1" number="4">
+<h1><span class="header-section-number">Chapter 4</span> Age modelling in geoChronR</h1>
+<p>geoChronR quantifies the uncertainties due to time uncertainty by taking advantage of ensembles of plausible age histories for one or more datasets.
+This means that often an early step in the geoChronR workflow is generating age ensembles.
+Most modern age modelling approaches quantify uncertainties using methods that rely on ensembles, however preserving, extracting, and storing those uncertainties for subsequent analysis can be challenging.
+geoChronR helps with this!
+In this chapter, we’ll go through the workflow of generating age models with four methods that are integrated into geoChronR
+<!-- add note about importing age models from other approaches --></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="agemodelling.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lipdR)</span>
+<span id="cb1-2"><a href="agemodelling.html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geoChronR)</span></code></pre></div>
+<pre><code>## Registered S3 method overwritten by &#39;spatstat.geom&#39;:
+##   method     from
+##   print.boxx cli</code></pre>
+<pre><code>## Welcome to geoChronR version 1.1.0!</code></pre>
+<pre><code>## </code></pre>
+<pre><code>## 
+## Attaching package: &#39;geoChronR&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:lipdR&#39;:
+## 
+##     createTSid, pullTsVariable</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="agemodelling.html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb7-2"><a href="agemodelling.html#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(magrittr)</span>
+<span id="cb7-3"><a href="agemodelling.html#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="agemodelling.html#cb7-4" aria-hidden="true" tabindex="-1"></a>tana <span class="ot">&lt;-</span> <span class="fu">readLipd</span>(<span class="st">&quot;https://lipdverse.org/Temp12k/1_0_2/TanaLake.Loomis.2015.lpd&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;reading: TanaLake.Loomis.2015.lpd&quot;</code></pre>
+<div id="bacon" class="section level2" number="4.1">
+<h2><span class="header-section-number">4.1</span> Bacon</h2>
+</div>
+<div id="bacon-1" class="section level2" number="4.2">
+<h2><span class="header-section-number">4.2</span> Bacon</h2>
+<p>The Bayesian ACcumulatiON (Bacon) algorithm <span class="citation">(<a href="#ref-Blaauw2011BACON" role="doc-biblioref">M. Blaauw and Christen 2011</a>)</span> is one of the most broadly used age-modelling techniques, and was designed to take advantage of prior knowledge about the distribution and autocorrelation structure of sedimentation rates in a sequence to better quantify uncertainty between dated levels.
+Bacon divides a sediment sequence into a parameterized number of equally-thick segments; most models use dozens to hundreds of these segments.
+Bacon then models sediment deposition, with uniform accumulation within each segment, as an autoregressive gamma process, where both the amount of autocorrelation and the shape of the gamma distribution are given prior estimates.
+The algorithm employs an adaptive Markov Chain Monte Carlo algorithm that allows for Bayesian learning to update these variables given the age-depth constraints, and converge on a distribution of age estimates for each segment in the model.
+Bacon has two key parameters: the shape of the accumulation prior, and the segment length, which can interact in complicated ways <span class="citation">(<a href="#ref-trachsel2017" role="doc-biblioref">Trachsel and Telford 2017</a>)</span>.
+In our experience, the segment length parameter has the greatest impact on the ultimate shape and amount of uncertainty simulated by Bacon, as larger segments result in increased flexibility of the age-depth curve, and increased uncertainty between dated levels.
+Bacon is written in C++ and R, with an R interface.
+More recently, the authors released an R package “rbacon” <span class="citation">(<a href="#ref-baconPackage" role="doc-biblioref">Maarten Blaauw, Christen, and Aquino L. 2020</a>)</span>, which geoChronR leverages to provide access to the algorithm.
+Bacon will optionally return a thinned subset of the stabilized MCMC accumulation rate ensemble members, which geoChronR uses to form age ensemble members for subsequent analysis.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="agemodelling.html#cb9-1" aria-hidden="true" tabindex="-1"></a>tana <span class="ot">&lt;-</span> <span class="fu">runBacon</span>(tana,</span>
+<span id="cb9-2"><a href="agemodelling.html#cb9-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">lab.id.var =</span> <span class="st">&#39;LabID&#39;</span>, </span>
+<span id="cb9-3"><a href="agemodelling.html#cb9-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">age.14c.var =</span> <span class="st">&#39;age14C&#39;</span>,</span>
+<span id="cb9-4"><a href="agemodelling.html#cb9-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">age.14c.uncertainty.var =</span> <span class="st">&#39;age14CUnc&#39;</span>, </span>
+<span id="cb9-5"><a href="agemodelling.html#cb9-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">age.var =</span> <span class="st">&#39;age&#39;</span>, </span>
+<span id="cb9-6"><a href="agemodelling.html#cb9-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">age.uncertainty.var =</span> <span class="st">&#39;1SD&#39;</span>, </span>
+<span id="cb9-7"><a href="agemodelling.html#cb9-7" aria-hidden="true" tabindex="-1"></a>                 <span class="at">depth.var =</span> <span class="st">&#39;depth&#39;</span>, </span>
+<span id="cb9-8"><a href="agemodelling.html#cb9-8" aria-hidden="true" tabindex="-1"></a>                 <span class="at">reservoir.age.14c.var =</span> <span class="cn">NULL</span>, </span>
+<span id="cb9-9"><a href="agemodelling.html#cb9-9" aria-hidden="true" tabindex="-1"></a>                 <span class="at">reservoir.age.14c.uncertainty.var =</span> <span class="cn">NULL</span>, </span>
+<span id="cb9-10"><a href="agemodelling.html#cb9-10" aria-hidden="true" tabindex="-1"></a>                 <span class="at">rejected.ages.var =</span> <span class="cn">NULL</span>,</span>
+<span id="cb9-11"><a href="agemodelling.html#cb9-11" aria-hidden="true" tabindex="-1"></a>                 <span class="at">accept.suggestions =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-2-1.png" width="672" /><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-2-2.png" width="672" />
+Great! If all went well Bacon ran, and geoChronR grabbed the ensembles for future use. What kind of future use? Well, let’s start with plotting.</p>
+<p>The <code>plotChronEns()</code> function is great for making, quick, but pretty nice, figures to show an age model ensemble. It has a lot of options for customization (check out <code>?plotChronEns</code>). Lastly, what it returns is a ggplot2 object, meaning that you can further customize it! Let’s see how it goes!</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="agemodelling.html#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotChronEns</span>(tana) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">&quot;Tana Lake - default Bacon model&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;Found it! Moving on...&quot;
+## [1] &quot;Found it! Moving on...&quot;
+## [1] &quot;plotting your chron ensemble. This make take a few seconds...&quot;</code></pre>
+<pre><code>## Scale for &#39;x&#39; is already present. Adding another scale for &#39;x&#39;, which will
+## replace the existing scale.</code></pre>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-3-1.png" width="672" />
+That was easy! But you’ll have to explore the options to fully customize your figure.</p>
+<div class="blackbox">
+<div class="exercise">
+<p><span id="exr:exploreplotChronEns" class="exercise"><strong>Exercise 4.1  </strong></span>Explore the parameter choices in plotChronEns. Can you a) change the confidence interval colors and b) quantiles? c) Change the type of distribution plotted for the dates d) and their color and transparency? e) what does truncate.dist do?</p>
+</div>
+</div>
+</div>
+<div id="bchron" class="section level2" number="4.3">
+<h2><span class="header-section-number">4.3</span> BChron</h2>
+<p>BChron <span class="citation">(<a href="#ref-bchron" role="doc-biblioref">Haslett and Parnell 2008</a>; <a href="#ref-parnell2008flexible" role="doc-biblioref">A. Parnell et al. 2008</a>)</span> uses a similar approach, using a continuous Markov monotone stochastic process coupled to a piecewise linear deposition model.
+This simplicity allows semi-analytical solutions that make BChron computationally efficient. BChron was originally intended to model radiocarbon-based age-depth models in lake sedimentary cores of primarily Holocene age, but its design allows broader applications.
+In particular, modeling accumulation as additive independent gamma increments is appealing for the representation of hiatuses, particularly for speleothem records, where accumulation rate can vary quite abruptly between quiescent intervals of near-constant accumulation <span class="citation">(<a href="#ref-Parnell_QSR2011" role="doc-biblioref">A. C. Parnell, Buck, and Doan 2011</a>; <a href="#ref-PRYSM" role="doc-biblioref">Dee et al. 2015</a>; <a href="#ref-Hu_epsl17" role="doc-biblioref">Hu, Emile-Geay, and Partin 2017</a>)</span>.
+The downside of this assumption is that BChron is known to exaggerate age uncertainties in cases where sedimentation varies smoothly <span class="citation">(<a href="#ref-trachsel2017" role="doc-biblioref">Trachsel and Telford 2017</a>)</span>.</p>
+<p>Bchron has several key parameters, which allow a user to encode their specific knowledge about their data.
+In particular, the <code>outlierProbs</code> parameter is useful in giving less weight to chronological tie points that may be considered outliers, either because they create a reversal in the stratigraphic sequence, or because they were flagged during analysis (e.g. contamination).
+This is extremely useful for radiocarbon-based chronologies where the top age may not be accurately measured for modern samples.
+The <code>thetaMhSd</code>, <code>psiMhSd</code>, and <code>muMhSd</code> parameters control the Metropolis-Hastings standard deviation for the age parameters and Compound Poisson-Gamma scale and mean respectively, which influence the width of the ensemble between age control tie points.
+geoChronR uses the same default values as the official Bchron package, and we recommend that users only change them if they have good cause for doing so.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="agemodelling.html#cb13-1" aria-hidden="true" tabindex="-1"></a>tana <span class="ot">&lt;-</span> <span class="fu">runBchron</span>(tana,</span>
+<span id="cb13-2"><a href="agemodelling.html#cb13-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">iter =</span> <span class="dv">10000</span>,</span>
+<span id="cb13-3"><a href="agemodelling.html#cb13-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">model.num =</span> <span class="dv">2</span>,</span>
+<span id="cb13-4"><a href="agemodelling.html#cb13-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">lab.id.var =</span> <span class="st">&#39;LabID&#39;</span>, </span>
+<span id="cb13-5"><a href="agemodelling.html#cb13-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">age.14c.var =</span> <span class="st">&#39;age14C&#39;</span>,</span>
+<span id="cb13-6"><a href="agemodelling.html#cb13-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">age.14c.uncertainty.var =</span> <span class="st">&#39;age14CUnc&#39;</span>, </span>
+<span id="cb13-7"><a href="agemodelling.html#cb13-7" aria-hidden="true" tabindex="-1"></a>                 <span class="at">age.var =</span> <span class="st">&#39;age&#39;</span>, </span>
+<span id="cb13-8"><a href="agemodelling.html#cb13-8" aria-hidden="true" tabindex="-1"></a>                 <span class="at">age.uncertainty.var =</span> <span class="st">&#39;1SD&#39;</span>, </span>
+<span id="cb13-9"><a href="agemodelling.html#cb13-9" aria-hidden="true" tabindex="-1"></a>                 <span class="at">depth.var =</span> <span class="st">&#39;depth&#39;</span>, </span>
+<span id="cb13-10"><a href="agemodelling.html#cb13-10" aria-hidden="true" tabindex="-1"></a>                 <span class="at">reservoir.age.14c.var =</span> <span class="cn">NULL</span>, </span>
+<span id="cb13-11"><a href="agemodelling.html#cb13-11" aria-hidden="true" tabindex="-1"></a>                 <span class="at">reservoir.age.14c.uncertainty.var =</span> <span class="cn">NULL</span>, </span>
+<span id="cb13-12"><a href="agemodelling.html#cb13-12" aria-hidden="true" tabindex="-1"></a>                 <span class="at">rejected.ages.var =</span> <span class="cn">NULL</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="agemodelling.html#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotChronEns</span>(tana,<span class="at">model.num =</span> <span class="dv">2</span>,<span class="at">truncate.dist =</span> .<span class="dv">0001</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">&quot;Tana Lake - default Bchron model&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;Found it! Moving on...&quot;
+## [1] &quot;Found it! Moving on...&quot;
+## [1] &quot;plotting your chron ensemble. This make take a few seconds...&quot;</code></pre>
+<pre><code>## Scale for &#39;x&#39; is already present. Adding another scale for &#39;x&#39;, which will
+## replace the existing scale.</code></pre>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>
+<div id="oxcal" class="section level2" number="4.4">
+<h2><span class="header-section-number">4.4</span> OxCal</h2>
+<p>The OxCal software package has a long history and extensive tools for the statistical treatment of radiocarbon and other geochronological data <span class="citation">(<a href="#ref-BronkRamsey95" role="doc-biblioref">Bronk Ramsey 1995</a>)</span>.
+In <span class="citation"><a href="#ref-ramsey2008deposition" role="doc-biblioref">Bronk Ramsey</a> (<a href="#ref-ramsey2008deposition" role="doc-biblioref">2008</a>)</span>, age-depth modelling was introduced with three options for modelling depositional processes that are typically useful for sedimentary sequences: uniform, varve, and Poisson deposition models, labeled U-sequence, V-sequence and P-sequence, respectively.
+The Poisson-based model is the most broadly applicable for sedimentary, or other accumulation-based archives (e.g. speleothems), and although any sequence type can be used in geoChronR, most users should use a P-sequence, which is the default.
+Analogously to segment length parameter in Bacon, the <em>k</em> parameter (called <code>eventsPerUnitLength</code> in geoChronR), controls how many events are simulated per unit of depth, and has a strong impact on the flexibility of the model, as well as the amplitude of the resulting uncertainty.
+As the number of events increases, the flexibility of the model, and the uncertainties, decrease.
+<span class="citation"><a href="#ref-trachsel2017" role="doc-biblioref">Trachsel and Telford</a> (<a href="#ref-trachsel2017" role="doc-biblioref">2017</a>)</span> found that this parameter has a large impact on the accuracy of the model, more so than the choices made in Bacon or Bchron.
+Fortunately, <span class="citation"><a href="#ref-bronkramsey2010" role="doc-biblioref">Bronk Ramsey et al.</a> (<a href="#ref-bronkramsey2010" role="doc-biblioref">2010</a>)</span> made it possible for <em>k</em> to be treated as a variable, and the model will estimate the most likely values of <em>k</em> given a prior estimate and the data. The downside of this flexibility is that this calculation can greatly increase the convergence time of the model.
+Oxcal is written in C++, with an interface in R <span class="citation">(<a href="#ref-oxcAAR" role="doc-biblioref">Martin et al. 2018</a>)</span>.
+Oxcal does not typically calculate posterior ensembles for a depth sequence, but can optionally output MCMC posteriors at specified levels in the sequence.
+geoChronR uses this feature to extract ensemble members for subsequent analysis.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="agemodelling.html#cb17-1" aria-hidden="true" tabindex="-1"></a>tana <span class="ot">&lt;-</span> <span class="fu">runOxcal</span>(tana,<span class="at">model.num =</span> <span class="dv">3</span>,</span>
+<span id="cb17-2"><a href="agemodelling.html#cb17-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">lab.id.var =</span> <span class="st">&#39;LabID&#39;</span>, </span>
+<span id="cb17-3"><a href="agemodelling.html#cb17-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">age.14c.var =</span> <span class="st">&#39;age14C&#39;</span>,</span>
+<span id="cb17-4"><a href="agemodelling.html#cb17-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">age.14c.uncertainty.var =</span> <span class="st">&#39;age14CUnc&#39;</span>, </span>
+<span id="cb17-5"><a href="agemodelling.html#cb17-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">age.var =</span> <span class="st">&#39;age&#39;</span>, </span>
+<span id="cb17-6"><a href="agemodelling.html#cb17-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">age.uncertainty.var =</span> <span class="st">&#39;1SD&#39;</span>, </span>
+<span id="cb17-7"><a href="agemodelling.html#cb17-7" aria-hidden="true" tabindex="-1"></a>                 <span class="at">depth.var =</span> <span class="st">&#39;depth&#39;</span>, </span>
+<span id="cb17-8"><a href="agemodelling.html#cb17-8" aria-hidden="true" tabindex="-1"></a>                 <span class="at">reservoir.age.14c.var =</span> <span class="cn">NULL</span>, </span>
+<span id="cb17-9"><a href="agemodelling.html#cb17-9" aria-hidden="true" tabindex="-1"></a>                 <span class="at">reservoir.age.14c.uncertainty.var =</span> <span class="cn">NULL</span>, </span>
+<span id="cb17-10"><a href="agemodelling.html#cb17-10" aria-hidden="true" tabindex="-1"></a>                 <span class="at">rejected.ages.var =</span> <span class="cn">NULL</span>,</span>
+<span id="cb17-11"><a href="agemodelling.html#cb17-11" aria-hidden="true" tabindex="-1"></a>                 <span class="at">events.per.unit.length =</span> .<span class="dv">05</span>,</span>
+<span id="cb17-12"><a href="agemodelling.html#cb17-12" aria-hidden="true" tabindex="-1"></a>                 <span class="at">depth.interval =</span> <span class="dv">20</span>)</span></code></pre></div>
+<pre><code>## Oxcal is installed but Oxcal executable path is wrong. Let&#39;s have a look...</code></pre>
+<pre><code>## Oxcal path set!</code></pre>
+<pre><code>## [1] &quot;Found it! Moving on...&quot;
+## [1] &quot;Found it! Moving on...&quot;
+## Looking for age uncertainty
+## No variable called sd, or choosing is enforced (always.choose = TRUE)
+## Looking for laboratory ID 
+## [1] &quot;Found it! Moving on...&quot;
+## Looking for radiocarbon ages 
+## [1] &quot;Found it! Moving on...&quot;
+## Looking for 1-sigma radiocarbon age uncertainty (+/-) 
+## [1] &quot;Found it! Moving on...&quot;
+## Looking for calibrated/calendar ages 
+## [1] &quot;Found it! Moving on...&quot;
+## Looking for 2-sigma calibrated age uncertainty (+/-) 
+## [1] &quot;Found it! Moving on...&quot;
+## Looking for depth or position 
+## [1] &quot;Found it! Moving on...&quot;
+## Looking for radiocarbon reservoir age offsets (deltaR) 
+## radiocarbon reservoir age offsets (deltaR) does not seem to exist, moving on.
+## Looking for radiocarbon reservoir age offsets (deltaR) uncertainties 
+## radiocarbon reservoir age offsets (deltaR) uncertainties does not seem to exist, moving on.
+## Looking for rejected ages 
+## rejected ages does not seem to exist, moving on.
+## [1] &quot;Variable choices for reuse...&quot;
+## For future reference: here are the options you chose:
+##  Find later with getLastVarString()
+## lab.id.var = &#39;LabID&#39;, age.14c.var = &#39;age14C&#39;, age.14c.uncertainty.var = &#39;age14CUnc&#39;, age.var = &#39;age&#39;, age.uncertainty.var = &#39;1SD&#39;, depth.var = &#39;depth&#39;, reservoir.age.14c.var = NULL, reservoir.age.14c.uncertainty.var = NULL, rejected.ages.var = NULL, 
+## Oxcal is now running, depending on your settings and your computer, this may take a few minutes to several hours. The model is complete when a table of model diagnostics appears.</code></pre>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="agemodelling.html#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotChronEns</span>(tana,<span class="at">model.num =</span> <span class="dv">3</span>,<span class="at">truncate.dist =</span> .<span class="dv">0001</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">&quot;Tana Lake - Oxcal model&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;Found it! Moving on...&quot;
+## [1] &quot;Found it! Moving on...&quot;
+## [1] &quot;plotting your chron ensemble. This make take a few seconds...&quot;</code></pre>
+<pre><code>## Scale for &#39;x&#39; is already present. Adding another scale for &#39;x&#39;, which will
+## replace the existing scale.</code></pre>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<div id="lets-compare-these-models." class="section level3" number="4.4.1">
+<h3><span class="header-section-number">4.4.1</span> Let’s compare these models.</h3>
+<p>First, lets use <code>selectData()</code> to pull the depth and ageEnsemble variables for each model. The <code>selectData()</code> function is introduced in section  .</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="agemodelling.html#cb24-1" aria-hidden="true" tabindex="-1"></a>ensBacon <span class="ot">&lt;-</span> <span class="fu">selectData</span>(tana,</span>
+<span id="cb24-2"><a href="agemodelling.html#cb24-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">var.name =</span> <span class="st">&quot;ageEnsemble&quot;</span>,</span>
+<span id="cb24-3"><a href="agemodelling.html#cb24-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">paleo.or.chron =</span> <span class="st">&quot;chronData&quot;</span>,</span>
+<span id="cb24-4"><a href="agemodelling.html#cb24-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">model.num =</span> <span class="dv">1</span>,</span>
+<span id="cb24-5"><a href="agemodelling.html#cb24-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">table.type =</span> <span class="st">&quot;ensemble&quot;</span>)</span>
+<span id="cb24-6"><a href="agemodelling.html#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-7"><a href="agemodelling.html#cb24-7" aria-hidden="true" tabindex="-1"></a>depthBacon <span class="ot">&lt;-</span> <span class="fu">selectData</span>(tana,</span>
+<span id="cb24-8"><a href="agemodelling.html#cb24-8" aria-hidden="true" tabindex="-1"></a>                       <span class="at">var.name =</span> <span class="st">&quot;depth&quot;</span>,</span>
+<span id="cb24-9"><a href="agemodelling.html#cb24-9" aria-hidden="true" tabindex="-1"></a>                       <span class="at">paleo.or.chron =</span> <span class="st">&quot;chronData&quot;</span>,</span>
+<span id="cb24-10"><a href="agemodelling.html#cb24-10" aria-hidden="true" tabindex="-1"></a>                       <span class="at">model.num =</span> <span class="dv">1</span>,</span>
+<span id="cb24-11"><a href="agemodelling.html#cb24-11" aria-hidden="true" tabindex="-1"></a>                       <span class="at">table.type =</span> <span class="st">&quot;ensemble&quot;</span>)</span>
+<span id="cb24-12"><a href="agemodelling.html#cb24-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-13"><a href="agemodelling.html#cb24-13" aria-hidden="true" tabindex="-1"></a>ensBchron <span class="ot">&lt;-</span> <span class="fu">selectData</span>(tana,</span>
+<span id="cb24-14"><a href="agemodelling.html#cb24-14" aria-hidden="true" tabindex="-1"></a>                       <span class="at">var.name =</span> <span class="st">&quot;ageEnsemble&quot;</span>,</span>
+<span id="cb24-15"><a href="agemodelling.html#cb24-15" aria-hidden="true" tabindex="-1"></a>                       <span class="at">paleo.or.chron =</span> <span class="st">&quot;chronData&quot;</span>,</span>
+<span id="cb24-16"><a href="agemodelling.html#cb24-16" aria-hidden="true" tabindex="-1"></a>                       <span class="at">model.num =</span> <span class="dv">2</span>,</span>
+<span id="cb24-17"><a href="agemodelling.html#cb24-17" aria-hidden="true" tabindex="-1"></a>                       <span class="at">table.type =</span> <span class="st">&quot;ensemble&quot;</span>)</span>
+<span id="cb24-18"><a href="agemodelling.html#cb24-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-19"><a href="agemodelling.html#cb24-19" aria-hidden="true" tabindex="-1"></a>depthBchron <span class="ot">&lt;-</span> <span class="fu">selectData</span>(tana,</span>
+<span id="cb24-20"><a href="agemodelling.html#cb24-20" aria-hidden="true" tabindex="-1"></a>                       <span class="at">var.name =</span> <span class="st">&quot;depth&quot;</span>,</span>
+<span id="cb24-21"><a href="agemodelling.html#cb24-21" aria-hidden="true" tabindex="-1"></a>                       <span class="at">paleo.or.chron =</span> <span class="st">&quot;chronData&quot;</span>,</span>
+<span id="cb24-22"><a href="agemodelling.html#cb24-22" aria-hidden="true" tabindex="-1"></a>                       <span class="at">model.num =</span> <span class="dv">2</span>,</span>
+<span id="cb24-23"><a href="agemodelling.html#cb24-23" aria-hidden="true" tabindex="-1"></a>                       <span class="at">table.type =</span> <span class="st">&quot;ensemble&quot;</span>)</span>
+<span id="cb24-24"><a href="agemodelling.html#cb24-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-25"><a href="agemodelling.html#cb24-25" aria-hidden="true" tabindex="-1"></a>ensOxcal <span class="ot">&lt;-</span> <span class="fu">selectData</span>(tana,</span>
+<span id="cb24-26"><a href="agemodelling.html#cb24-26" aria-hidden="true" tabindex="-1"></a>                       <span class="at">var.name =</span> <span class="st">&quot;ageEnsemble&quot;</span>,</span>
+<span id="cb24-27"><a href="agemodelling.html#cb24-27" aria-hidden="true" tabindex="-1"></a>                       <span class="at">paleo.or.chron =</span> <span class="st">&quot;chronData&quot;</span>,</span>
+<span id="cb24-28"><a href="agemodelling.html#cb24-28" aria-hidden="true" tabindex="-1"></a>                       <span class="at">model.num =</span> <span class="dv">3</span>,</span>
+<span id="cb24-29"><a href="agemodelling.html#cb24-29" aria-hidden="true" tabindex="-1"></a>                       <span class="at">table.type =</span> <span class="st">&quot;ensemble&quot;</span>)</span>
+<span id="cb24-30"><a href="agemodelling.html#cb24-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-31"><a href="agemodelling.html#cb24-31" aria-hidden="true" tabindex="-1"></a>depthOxcal <span class="ot">&lt;-</span> <span class="fu">selectData</span>(tana,</span>
+<span id="cb24-32"><a href="agemodelling.html#cb24-32" aria-hidden="true" tabindex="-1"></a>                       <span class="at">var.name =</span> <span class="st">&quot;depth&quot;</span>,</span>
+<span id="cb24-33"><a href="agemodelling.html#cb24-33" aria-hidden="true" tabindex="-1"></a>                       <span class="at">paleo.or.chron =</span> <span class="st">&quot;chronData&quot;</span>,</span>
+<span id="cb24-34"><a href="agemodelling.html#cb24-34" aria-hidden="true" tabindex="-1"></a>                       <span class="at">model.num =</span> <span class="dv">3</span>,</span>
+<span id="cb24-35"><a href="agemodelling.html#cb24-35" aria-hidden="true" tabindex="-1"></a>                       <span class="at">table.type =</span> <span class="st">&quot;ensemble&quot;</span>)</span></code></pre></div>
+<p>Now that we have all the data extracted, we can use the <code>plotTimeseriesEnsRibbons()</code> function to plot each of the modeled age-depth relationships and their uncertainties. We will use the <code>magrittr</code> “pipe” function <code>%&gt;%</code> to pass the output of one plot into the next to build up a complex figure. We’ll also use different colors and transparencies so we can distinguish the different models.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="agemodelling.html#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotTimeseriesEnsRibbons</span>(<span class="at">X =</span> ensBacon,<span class="at">Y =</span> depthBacon) <span class="sc">%&gt;%</span> </span>
+<span id="cb25-2"><a href="agemodelling.html#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plotTimeseriesEnsRibbons</span>(<span class="at">X =</span> ensBchron,<span class="at">Y =</span> depthBchron,</span>
+<span id="cb25-3"><a href="agemodelling.html#cb25-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">alp =</span> .<span class="dv">7</span>,</span>
+<span id="cb25-4"><a href="agemodelling.html#cb25-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">color.high =</span> <span class="st">&quot;DarkGreen&quot;</span>,</span>
+<span id="cb25-5"><a href="agemodelling.html#cb25-5" aria-hidden="true" tabindex="-1"></a>                           <span class="at">color.line =</span> <span class="st">&quot;Green&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb25-6"><a href="agemodelling.html#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plotTimeseriesEnsRibbons</span>(<span class="at">X =</span> ensOxcal,<span class="at">Y =</span> depthOxcal,</span>
+<span id="cb25-7"><a href="agemodelling.html#cb25-7" aria-hidden="true" tabindex="-1"></a>                         <span class="at">alp =</span> .<span class="dv">7</span>,</span>
+<span id="cb25-8"><a href="agemodelling.html#cb25-8" aria-hidden="true" tabindex="-1"></a>                         <span class="at">color.high =</span> <span class="st">&quot;DarkBlue&quot;</span>,</span>
+<span id="cb25-9"><a href="agemodelling.html#cb25-9" aria-hidden="true" tabindex="-1"></a>                         <span class="at">color.line =</span> <span class="st">&quot;Blue&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb25-10"><a href="agemodelling.html#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plotModelDistributions</span>(tana,<span class="at">add.to.plot =</span> .) <span class="sc">+</span> <span class="co">#here we use the ggplot +</span></span>
+<span id="cb25-11"><a href="agemodelling.html#cb25-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_reverse</span>()</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-9-1.png" width="672" />
+All geoChronR plotting functions return ggplot2 objects, so we can modify the scale by adding a layer using <code>+</code> using the ggplot2 model.</p>
+<div class="blackbox">
+<div class="exercise">
+<p><span id="exr:compareChronModels" class="exercise"><strong>Exercise 4.2  </strong></span>Where do the models agree? Where do they differ? Do you think one is better than the others?</p>
+<details>
+<summary>
+After you’ve answered, click for next step
+</summary>
+<p>The OxCal model is considerably more flexible than the Bacon model, which leaves outliers off the main trend. If you wanted to make the OxCal model less flexible, which parameter(s) would you change? Alternatively, if you wanted to make the Bacon model more flexible, which parameter(s) would you change in the Bacon model?</p>
+<p>Try making a change to parameters in either Bacon or OxCal to make the models more similar (note, Bacon runs much faster, so I’d probably try that one first)</p>
+Finally, how should you decide whether a more or less flexible model is better?
+</details>
+</div>
+</div>
+</div>
+<div id="creating-a-multimodel-ensemble" class="section level3" number="4.4.2">
+<h3><span class="header-section-number">4.4.2</span> Creating a multimodel ensemble</h3>
+<p>Sometimes, there are good reason to believe that because of it’s design, or underlying assumptions, one model may be superior to the others, in which case you should choose that model. However, frequently, it’s unclear which model to choose, or to objectively pick on model over another. In this case, you might want to create a multimodel ensemble that incorporates model structural uncertainty into your uncertainty structure. This is pretty straightforward in geoChronR.</p>
+<p>Here, we’ll create a fourth model that combines these three into a “Grand Ensemble” using <code>createMultiModelEnsemble</code></p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="agemodelling.html#cb26-1" aria-hidden="true" tabindex="-1"></a>tana <span class="ot">&lt;-</span> <span class="fu">createMultiModelEnsemble</span>(tana,</span>
+<span id="cb26-2"><a href="agemodelling.html#cb26-2" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">models.to.combine =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,</span>
+<span id="cb26-3"><a href="agemodelling.html#cb26-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">depth.interval =</span><span class="dv">10</span>,</span>
+<span id="cb26-4"><a href="agemodelling.html#cb26-4" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">n.ens =</span> <span class="dv">1000</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;Found it! Moving on...&quot;
+## [1] &quot;Found it! Moving on...&quot;</code></pre>
+<div class="blackbox">
+<div class="exercise">
+<span id="exr:plotGrandEnsemble" class="exercise"><strong>Exercise 4.3  </strong></span>Use plotChronEns() and plotModelDistributions() to visualize your multi-model age model.<br />
+
+<details>
+<summary>
+Hint #1
+</summary>
+First plot the chronEns, then use the “add.to.plot” parameter to add in the distributions.
+</details>
+<details>
+<summary>
+Hint #2
+</summary>
+<p>Something with this structure is what you’re looking for</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="agemodelling.html#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotChronEns</span>() <span class="sc">%&gt;%</span> <span class="fu">plotModelDistributions</span>()</span></code></pre></div>
+</details>
+</details>
+</div>
+</div>
+<div class="blackbox">
+<div class="exercise">
+<p><span id="exr:exploreMultiModelEnsemble" class="exercise"><strong>Exercise 4.4  </strong></span>Now that you’ve got plotting working, try changing the choices made in createMultiModelEnsemble. Specifically, what is the impact of changing, depth.interval, n.ens, or depth.sequence? Use the documentation for help!</p>
+</div>
+</div>
+<div class="blackbox">
+<div class="exercise">
+<p><span id="exr:plotAllFour" class="exercise"><strong>Exercise 4.5  </strong></span>Add your final multi model ensemble to the figure that showed the three original age models above. Does it look like a combination of the three?</p>
+</div>
+</div>
+</div>
+<div id="mapping-the-age-ensemble-to-the-paleodata-measurements" class="section level3" number="4.4.3">
+<h3><span class="header-section-number">4.4.3</span> Mapping the age ensemble to the paleoData measurements</h3>
+<p>Great, our LiPD file now has an age ensemble (actually 4 age ensembles!) that we can use in subsequent analysis. We could write out our LiPD file right now using <code>lipdR::writeLipd(tana)</code>, for future work, or share with a colleague, and when we load it back in, all of our ensembles will be there, ready to go!</p>
+<p>But for now, let’s think about the next step in our analysis. We want to look at our paleoenvironmental data in the context of the age uncertainties. So let’s take a look at the paleoData!</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="agemodelling.html#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co">#First, create a tibble from the paleoata</span></span>
+<span id="cb29-2"><a href="agemodelling.html#cb29-2" aria-hidden="true" tabindex="-1"></a>paleo <span class="ot">&lt;-</span> <span class="fu">extractTs</span>(tana) <span class="sc">%&gt;%</span> <span class="fu">ts2tibble</span>()</span>
+<span id="cb29-3"><a href="agemodelling.html#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-4"><a href="agemodelling.html#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="co">#Now you can explore that much more easily - here are all the variable names in all the measurementTables in the paleoData.</span></span>
+<span id="cb29-5"><a href="agemodelling.html#cb29-5" aria-hidden="true" tabindex="-1"></a>paleo<span class="sc">$</span>paleoData_variableName</span></code></pre></div>
+<pre><code>##  [1] &quot;core&quot;            &quot;year&quot;            &quot;age&quot;             &quot;Section&quot;        
+##  [5] &quot;Composite_depth&quot; &quot;temperature&quot;     &quot;error&quot;           &quot;depth&quot;          
+##  [9] &quot;Ti&quot;              &quot;dDwax&quot;           &quot;dDwax Corrected&quot; &quot;dD error&quot;       
+## [13] &quot;d13Cwax&quot;         &quot;d13C Error&quot;      &quot;age&quot;             &quot;depth&quot;</code></pre>
+<p>It looks like depth in this dataset is “Composite_depth,” and the median age vector is here, but the age ensemble is not! Why not? Well, the ensemble chronology in a model may or may not have values corresponding to the paleoclimatic or paleoenvironmental measurements in paleoData. Each of our models have different depth scales, and they’re all different than our paleoclimate data. So we need to “map” the model ensemble values to a measurement table in paleoData, so we can estimate the age uncertainty on each value. To do this we use the <code>mapAgeEnsembleToPaleoData()</code> function.</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="agemodelling.html#cb31-1" aria-hidden="true" tabindex="-1"></a>tana <span class="ot">&lt;-</span> <span class="fu">mapAgeEnsembleToPaleoData</span>(tana,</span>
+<span id="cb31-2"><a href="agemodelling.html#cb31-2" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">age.var =</span> <span class="st">&quot;ageEnsemble&quot;</span>,</span>
+<span id="cb31-3"><a href="agemodelling.html#cb31-3" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">model.num =</span> <span class="dv">4</span>,</span>
+<span id="cb31-4"><a href="agemodelling.html#cb31-4" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">paleo.depth.var =</span> <span class="st">&quot;Composite_depth&quot;</span>, </span>
+<span id="cb31-5"><a href="agemodelling.html#cb31-5" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">paleo.meas.table.num =</span> <span class="dv">1</span>)</span></code></pre></div>
+<p>Now let’s look at the paleoData again:</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="agemodelling.html#cb32-1" aria-hidden="true" tabindex="-1"></a>paleo <span class="ot">&lt;-</span> <span class="fu">extractTs</span>(tana) <span class="sc">%&gt;%</span> <span class="fu">ts2tibble</span>()</span>
+<span id="cb32-2"><a href="agemodelling.html#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="agemodelling.html#cb32-3" aria-hidden="true" tabindex="-1"></a>paleo<span class="sc">$</span>paleoData_variableName</span></code></pre></div>
+<pre><code>##  [1] &quot;core&quot;            &quot;year&quot;            &quot;age&quot;             &quot;Section&quot;        
+##  [5] &quot;Composite_depth&quot; &quot;temperature&quot;     &quot;error&quot;           &quot;ageEnsemble&quot;    
+##  [9] &quot;depth&quot;           &quot;Ti&quot;              &quot;dDwax&quot;           &quot;dDwax Corrected&quot;
+## [13] &quot;dD error&quot;        &quot;d13Cwax&quot;         &quot;d13C Error&quot;      &quot;age&quot;            
+## [17] &quot;depth&quot;</code></pre>
+<p>Great, now we have an ageEnsemble variable in our paleoData (and our tibble!)</p>
+</div>
+<div id="creating-a-timeseries-plot-as-a-spaghetti-plot-of-lines" class="section level3" number="4.4.4">
+<h3><span class="header-section-number">4.4.4</span> Creating a timeseries plot as a spaghetti plot of lines</h3>
+<p>Let’s visualize the reconstructed temperature with age uncertainties.</p>
+<p>First, we’ll use <code>selectData()</code> again to get our mapped ensemble and temperature data:</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="agemodelling.html#cb34-1" aria-hidden="true" tabindex="-1"></a>tana.ae <span class="ot">&lt;-</span> <span class="fu">selectData</span>(tana,<span class="at">var.name =</span> <span class="st">&quot;ageEnsemble&quot;</span>,<span class="at">meas.table.num =</span> <span class="dv">1</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;Found it! Moving on...&quot;</code></pre>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="agemodelling.html#cb36-1" aria-hidden="true" tabindex="-1"></a>tana.temp <span class="ot">&lt;-</span> <span class="fu">selectData</span>(tana,<span class="at">var.name =</span> <span class="st">&quot;temperature&quot;</span>,<span class="at">meas.table.num =</span> <span class="dv">1</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;Found it! Moving on...&quot;</code></pre>
+<p>OK, we’re ready to plot it. There are a few ways to visualize ensemble data. The simplest is to just plot multiple instances of the line. Here we will just plot the temperature data against 50 random ensemble members.</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="agemodelling.html#cb38-1" aria-hidden="true" tabindex="-1"></a>tana.ts.plot <span class="ot">&lt;-</span>  <span class="fu">plotTimeseriesEnsLines</span>(<span class="at">X =</span> tana.ae,<span class="at">Y =</span> tana.temp,<span class="at">alp =</span> <span class="fl">0.05</span>,<span class="at">n.ens.plot =</span> <span class="dv">50</span>,<span class="at">color =</span> <span class="st">&quot;blue&quot;</span>)</span>
+<span id="cb38-2"><a href="agemodelling.html#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(tana.ts.plot)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<div class="blackbox">
+<div class="exercise">
+<p><span id="exr:plotTimeseriesEnsLines" class="exercise"><strong>Exercise 4.6  </strong></span>plotTimeseriesEnsLines() has options that control the output. Take a look at the documentation, and then change the following parameters, and understand how that affects the output:</p>
+<ol style="list-style-type: lower-alpha">
+<li>alp</li>
+<li>color (What does “Blues” or “Set2” do? How does it work)</li>
+<li>n.ens.plot</li>
+<li>Change the limits of the plot to only show the Holocene (~12,000-0 yr BP)
+<details>
+<summary>
+Hint
+</summary>
+To change the limits, you’ll use the xlim() or scale_x_reverse() functions from ggplot2
+</details></li>
+</ol>
+</div>
+</div>
+</div>
+<div id="creating-a-timeseries-plot-with-a-ribbon-confidence-intervals" class="section level3" number="4.4.5">
+<h3><span class="header-section-number">4.4.5</span> Creating a timeseries plot with a ribbon confidence intervals</h3>
+<p>We can also plot this as a ribbon plot of quantiles</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="agemodelling.html#cb39-1" aria-hidden="true" tabindex="-1"></a>tana.ribbon.plot <span class="ot">&lt;-</span> <span class="fu">plotTimeseriesEnsRibbons</span>(<span class="at">X =</span> tana.ae,<span class="at">Y =</span> tana.temp)</span>
+<span id="cb39-2"><a href="agemodelling.html#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(tana.ribbon.plot)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<div class="blackbox">
+<div class="exercise">
+<p><span id="exr:plotTimeseriesEnsLines" class="exercise"><strong>Exercise 4.6  </strong></span>plotTimeseriesEnsRibbons () has many more options that control the output. Take a look at the documentation for that function, and then change the following parameters, and understand how that affects the output:</p>
+<ol style="list-style-type: lower-alpha">
+<li>probs</li>
+<li>color.high</li>
+<li>n.bins</li>
+<li>export.quantiles</li>
+<li>limit.outliers.x</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="combining-the-two-kinds-of-timeseries-plots" class="section level3" number="4.4.6">
+<h3><span class="header-section-number">4.4.6</span> Combining the two kinds of timeseries plots</h3>
+<p>Each of these approaches to age-uncertain timeseries visualization is valuable - ribbons show case the probability distributions of the data through time, given the ensembles, but tend to smooth out real variability recorded by the data. Plotting an ensemble of lines highlights this variability, but gets messy with many lines, or doesn’t showcase the true range of uncertainty with a few lines.</p>
+<p>At different times, either approach can be right, but our favorite, standard approach is to do both, using the <code>add.to.plot</code> option we used above.</p>
+<div class="blackbox">
+<div class="exercise">
+<span id="exr:ribbonsAndLines" class="exercise"><strong>Exercise 4.7  </strong></span>Use plotTimeseriesEnsRibbons(), plotTimeseriesEnsLines(), and the “add.to.plot” parameter to create a figure that shows the uncertainty ribbons in the background, and a with 5 ensemble members to highlight the variability of the data.
+<details>
+<summary>
+Hint
+</summary>
+<p>Something with this structure is what you’re looking for</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="agemodelling.html#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotTimeseriesEnsRibbons</span>() <span class="sc">%&gt;%</span> <span class="fu">plotTimeseriesEnsLines</span>()</span></code></pre></div>
+</details>
+</div>
+</div>
+</div>
+</div>
+<div id="banded-age-modelling" class="section level2" number="4.5">
+<h2><span class="header-section-number">4.5</span> Banded Age Modelling</h2>
+<p>Thus far, we’ve explored methods to derive, transfer, and visualize age models derived from age-depth observations (mostly radiocarbon data). geoChronR also includes another type of age modelling algorithm, that estimates uncertainties based on miscounting rates in layer-counted archives. Consequently, BAM does not require, or even consider, depth in its uncertainty quantification. Although BAM is intended for layer-counted archives, like corals or varves, it can be useful as a rough approximation of age-uncertainty in non-banded timeseries, where the original geochronologic data needed to create a proper age model are not available. We’ll explore this with Tana Lake dataset and see how it compares.</p>
+<p><span class="citation"><a href="#ref-BAM" role="doc-biblioref">Comboul et al.</a> (<a href="#ref-BAM" role="doc-biblioref">2014</a>)</span> is a probabilistic model of age errors in layer-counted chronologies.
+The model allows a flexible parametric representation of such errors (either as Poisson or Bernoulli processes), and separately considers the possibility of double-counting or missing a band.
+The model is parameterized in terms of the error rates associated with each event, which are intuitive parameters to geoscientists, and may be estimated via replication <span class="citation">(<a href="#ref-DeLong_Paleo3_2013" role="doc-biblioref">DeLong et al. 2013</a>)</span>.
+In cases where such rates can be estimated from the data alone, an optimization principle may be used to identify a more likely age model when a high-frequency common signal can be used as a clock <span class="citation">(<a href="#ref-BAM" role="doc-biblioref">Comboul et al. 2014</a>)</span>.
+As of now, BAM does not consider uncertainties about such parameters, representing a weakness of the method.
+BAM was coded in MATLAB, Python and R, and it is this latter version that geoChronR uses.</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="agemodelling.html#cb41-1" aria-hidden="true" tabindex="-1"></a>tana <span class="ot">&lt;-</span> <span class="fu">runBam</span>(tana,</span>
+<span id="cb41-2"><a href="agemodelling.html#cb41-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">paleo.meas.table.num =</span> <span class="dv">1</span>,</span>
+<span id="cb41-3"><a href="agemodelling.html#cb41-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">n.ens =</span> <span class="dv">1000</span>,</span>
+<span id="cb41-4"><a href="agemodelling.html#cb41-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">model.num =</span> <span class="dv">5</span>,</span>
+<span id="cb41-5"><a href="agemodelling.html#cb41-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">make.new =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb41-6"><a href="agemodelling.html#cb41-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">ens.table.number =</span> <span class="dv">1</span>,</span>
+<span id="cb41-7"><a href="agemodelling.html#cb41-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">model =</span> <span class="fu">list</span>(<span class="at">name =</span> <span class="st">&quot;poisson&quot;</span>,</span>
+<span id="cb41-8"><a href="agemodelling.html#cb41-8" aria-hidden="true" tabindex="-1"></a>                            <span class="at">param =</span> <span class="fl">0.05</span>, </span>
+<span id="cb41-9"><a href="agemodelling.html#cb41-9" aria-hidden="true" tabindex="-1"></a>                            <span class="at">resize =</span> <span class="dv">0</span>, </span>
+<span id="cb41-10"><a href="agemodelling.html#cb41-10" aria-hidden="true" tabindex="-1"></a>                            <span class="at">ns =</span> <span class="dv">1000</span>))</span></code></pre></div>
+<pre><code>## [1] &quot;Found it! Moving on...&quot;</code></pre>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="agemodelling.html#cb43-1" aria-hidden="true" tabindex="-1"></a>tana.ye <span class="ot">&lt;-</span> <span class="fu">selectData</span>(tana,<span class="at">var.name =</span> <span class="st">&quot;yearEnsemble&quot;</span>,<span class="at">meas.table.num =</span> <span class="dv">1</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;Found it! Moving on...&quot;</code></pre>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="agemodelling.html#cb45-1" aria-hidden="true" tabindex="-1"></a>tana.ae.bam <span class="ot">&lt;-</span> <span class="fu">convertAD2BP</span>(tana.ye)</span>
+<span id="cb45-2"><a href="agemodelling.html#cb45-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-3"><a href="agemodelling.html#cb45-3" aria-hidden="true" tabindex="-1"></a>tana.ribbon.plot.bam <span class="ot">&lt;-</span> <span class="fu">plotTimeseriesEnsRibbons</span>(<span class="at">X =</span> tana.ae.bam,<span class="at">Y =</span> tana.temp)</span>
+<span id="cb45-4"><a href="agemodelling.html#cb45-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-5"><a href="agemodelling.html#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="co">#we can compare this to the original age model supplied by the paper (which used the Heegaard et al., 2005 model, so a whole other approach)</span></span>
+<span id="cb45-6"><a href="agemodelling.html#cb45-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-7"><a href="agemodelling.html#cb45-7" aria-hidden="true" tabindex="-1"></a>tana.orig.age <span class="ot">&lt;-</span> <span class="fu">selectData</span>(tana,<span class="at">var.name =</span> <span class="st">&quot;age&quot;</span>,<span class="at">meas.table.num =</span> <span class="dv">1</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;Found it! Moving on...&quot;</code></pre>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="agemodelling.html#cb47-1" aria-hidden="true" tabindex="-1"></a>tana.ribbon.plot.bam <span class="ot">&lt;-</span> tana.ribbon.plot.bam <span class="sc">+</span></span>
+<span id="cb47-2"><a href="agemodelling.html#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> tana.orig.age<span class="sc">$</span>values, <span class="at">y =</span> tana.temp<span class="sc">$</span>values),<span class="at">color =</span> <span class="st">&quot;red&quot;</span>)</span>
+<span id="cb47-3"><a href="agemodelling.html#cb47-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-4"><a href="agemodelling.html#cb47-4" aria-hidden="true" tabindex="-1"></a>tana.ribbon.plot.bam</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="agemodelling.html#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(egg)</span></code></pre></div>
+<pre><code>## Loading required package: gridExtra</code></pre>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="agemodelling.html#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggarrange</span>(<span class="at">plots =</span> <span class="fu">list</span>(tana.ribbon.plot <span class="sc">+</span> <span class="fu">xlim</span>(<span class="fu">c</span>(<span class="dv">15000</span>,<span class="dv">0</span>)) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">&quot;Temperature on Multimodel age model&quot;</span>),</span>
+<span id="cb50-2"><a href="agemodelling.html#cb50-2" aria-hidden="true" tabindex="-1"></a>                            tana.ribbon.plot.bam <span class="sc">+</span> <span class="fu">xlim</span>(<span class="fu">c</span>(<span class="dv">15000</span>,<span class="dv">0</span>)) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">&quot;Temperature on BAM&quot;</span>)),</span>
+<span id="cb50-3"><a href="agemodelling.html#cb50-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">nrow =</span> <span class="dv">2</span>)</span></code></pre></div>
+<pre><code>## Scale for &#39;x&#39; is already present. Adding another scale for &#39;x&#39;, which will
+## replace the existing scale.</code></pre>
+<pre><code>## Scale for &#39;x&#39; is already present. Adding another scale for &#39;x&#39;, which will
+## replace the existing scale.</code></pre>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+</div>
+<div id="chapter-project." class="section level2" number="4.6">
+<h2><span class="header-section-number">4.6</span> Chapter project.</h2>
+<p>This chapter covers a range of age modelling approaches, how to implement them in geoChronR, how to propagate the uncertainties to data of interest, and visualization of all of the above. Now it’s time to test what you’ve learned!</p>
+<p>In addition to a temperature reconstruction, the Tana Lake dataset includes <span class="math inline">\(^{18}\)</span>O from leaf waxes. The data are measured on a different samples at different resolution, and so are stored in a different measurement table. So your project is:</p>
+<div class="blackbox">
+<div class="exercise">
+<span id="exr:ageModelProject" class="exercise"><strong>Exercise 4.8  </strong></span>Using tools learned in this chapter, create ensemble timeseries figures for <span class="math inline">\(^{18}\)</span>O leaf wax from Tana Lake using, Bacon, Bchron, OxCal and BAM. Arrange these four figures vertically into a 4 panel figure with constant x-axes to allow comparison. How does the choice of age modelling algorithm impact the record? Which parts of the dataset are most vulnerable to age uncertainties?
+<details>
+<summary>
+Hint
+</summary>
+Create plots for each model separately, and save them as variables. Then use ggarrange to combine them.
+</details>
+</div>
+</div>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-Blaauw2011BACON" class="csl-entry">
+Blaauw, M., and J. A. Christen. 2011. <span>“Flexible Paleoclimate Age-Depth Models Using an Autoregressive Gamma Process.”</span> <em>Bayesian Analysis</em> 6 (3): 457–74.
+</div>
+<div id="ref-baconPackage" class="csl-entry">
+Blaauw, Maarten, J. Andres Christen, and Marco A. Aquino L. 2020. <em>Rbacon: Age-Depth Modelling Using Bayesian Statistics</em>. <a href="https://CRAN.R-project.org/package=rbacon">https://CRAN.R-project.org/package=rbacon</a>.
+</div>
+<div id="ref-BronkRamsey95" class="csl-entry">
+Bronk Ramsey, Christopher. 1995. <span>“Radiocarbon Calibration and Analysis of Stratigraphy: The OxCal Program.”</span> <em>Radiocarbon</em> 37 (2): 425–30.
+</div>
+<div id="ref-ramsey2008deposition" class="csl-entry">
+———. 2008. <span>“Deposition Models for Chronological Records.”</span> <em>Quaternary Science Reviews</em> 27 (1-2): 42–60.
+</div>
+<div id="ref-bronkramsey2010" class="csl-entry">
+Bronk Ramsey, Christopher, Michael Dee, Sharen Lee, Takeshi Nakagawa, and Richard A Staff. 2010. <span>“Developments in the Calibration and Modeling of Radiocarbon Dates.”</span> <em>Radiocarbon</em> 52 (3): 953–61.
+</div>
+<div id="ref-BAM" class="csl-entry">
+Comboul, M., J. Emile-Geay, M. Evans, N. Mirnateghi, K. M. Cobb, and D. M. Thompson. 2014. <span>“A Probabilistic Model of Chronological Errors in Layer-Counted Climate Proxies: Applications to Annually Banded Coral Archives.”</span> Journal Article. <em>Climate of the Past</em> 10: 825–41. <a href="https://doi.org/10.5194/cp-10-825-2014">https://doi.org/10.5194/cp-10-825-2014</a>.
+</div>
+<div id="ref-PRYSM" class="csl-entry">
+Dee, S., J. Emile-Geay, M. N. Evans, A. Allam, E. J. Steig, and D. M. Thompson. 2015. <span>“<span class="nocase">PRYSM: An open-source framework for PRoxY System Modeling, with applications to oxygen-isotope systems</span>.”</span> <em>Journal of Advances in Modeling Earth Systems</em> 7 (3): 1220–47.
+</div>
+<div id="ref-DeLong_Paleo3_2013" class="csl-entry">
+DeLong, Kristine L., Terrence M. Quinn, Frederick W. Taylor, Chuan-Chou Shen, and Ke Lin. 2013. <span>“Improving Coral-Base Paleoclimate Reconstructions by Replicating 350 Years of Coral Sr/Ca Variations.”</span> <em>Palaeogeography, Palaeoclimatology, Palaeoecology</em> 373: 6–24. <a href="https://doi.org/10.1016/j.palaeo.2012.08.019">https://doi.org/10.1016/j.palaeo.2012.08.019</a>.
+</div>
+<div id="ref-bchron" class="csl-entry">
+Haslett, John, and Andrew Parnell. 2008. <span>“A Simple Monotone Process with Application to Radiocarbon-Dated Depth Chronologies.”</span> <em>Journal of the Royal Statistical Society: Series C (Applied Statistics)</em> 57 (4): 399–418. <a href="https://doi.org/10.1111/j.1467-9876.2008.00623.x">https://doi.org/10.1111/j.1467-9876.2008.00623.x</a>.
+</div>
+<div id="ref-Hu_epsl17" class="csl-entry">
+Hu, Jun, Julien Emile-Geay, and Judson Partin. 2017. <span>“Correlation-Based Interpretations of Paleoclimate Data – Where Statistics Meet Past Climates.”</span> <em>Earth and Planetary Science Letters</em> 459 (February): 362–71. <a href="https://doi.org/10.1016/j.epsl.2016.11.048">https://doi.org/10.1016/j.epsl.2016.11.048</a>.
+</div>
+<div id="ref-oxcAAR" class="csl-entry">
+Martin, Hinz, Clemens Schmid, Daniel Knitter, and Carolin Tietze. 2018. <em>oxcAAR: Interface to ’OxCal’ Radiocarbon Calibration</em>. <a href="https://CRAN.R-project.org/package=oxcAAR">https://CRAN.R-project.org/package=oxcAAR</a>.
+</div>
+<div id="ref-parnell2008flexible" class="csl-entry">
+Parnell, AC, J Haslett, JRM Allen, CE Buck, and B Huntley. 2008. <span>“A Flexible Approach to Assessing Synchroneity of Past Events Using Bayesian Reconstructions of Sedimentation History.”</span> <em>Quaternary Science Reviews</em> 27 (19-20): 1872–85.
+</div>
+<div id="ref-Parnell_QSR2011" class="csl-entry">
+Parnell, Andrew C., Caitlin E. Buck, and Thinh K. Doan. 2011. <span>“A Review of Statistical Chronology Models for High-Resolution, Proxy-Based Holocene Palaeoenvironmental Reconstruction.”</span> <em>Quaternary Science Reviews</em> 30 (21–22): 2948–60. <a href="https://doi.org/10.1016/j.quascirev.2011.07.024">https://doi.org/10.1016/j.quascirev.2011.07.024</a>.
+</div>
+<div id="ref-trachsel2017" class="csl-entry">
+Trachsel, Mathias, and Richard J Telford. 2017. <span>“All Age–Depth Models Are Wrong, but Are Getting Better.”</span> <em>The Holocene</em> 27 (6): 860–69. <a href="https://doi.org/10.1177/0959683616675939">https://doi.org/10.1177/0959683616675939</a>.
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="data.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="time-uncertain-correlation.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["Time-uncertain-data-analysis-in-R.pdf"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

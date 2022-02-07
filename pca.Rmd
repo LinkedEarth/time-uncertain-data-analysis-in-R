@@ -1,4 +1,4 @@
-# Principal Components Analysis
+# Principal Components Analysis {pca}
 
 
   

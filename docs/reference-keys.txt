@@ -73,3 +73,11 @@ plotting-the-ensemble-correlation-results
 exr:correlationThoughts
 exr:plotCorEns
 false-discovery-rate-testing
+exr:selfCor
+exr:corProject
+chapter-project
+exr:significanceOptions
+exr:plotTimeseriesEnsLines
+exr:ribbonsAndLines
+exr:ageModelProject
+principal-components-analysis-pca

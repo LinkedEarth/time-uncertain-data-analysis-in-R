@@ -4,7 +4,7 @@ author: "Nick McKay"
 date: "Last updated: `r Sys.Date()`"
 site: bookdown::bookdown_site
 documentclass: book
-bibliography: [book.bib, packages.bib]
+bibliography: [book.bib, packages.bib, geochronr.bib]
 biblio-style: apalike
 link-citations: yes
 github-repo: linkedearth/time-uncertain-data-analysis-in-R
