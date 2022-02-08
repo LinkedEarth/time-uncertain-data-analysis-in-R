@@ -127,6 +127,8 @@ TS.filtered <- indTs[nValsInRange > 20 & span > 15] %>%
 ```
 This is the first time we've seen the `filterTs()` function. It's part of the `lipdR` library, and enables *simple* filtering on lipd-ts objects. It's a weaker version of `dplyr::filter()`, and for complex queries you're much better off converting to a tibble and using dplyr. But for simple operations on lipd-ts objects, it works well enough. 
 
+### Plot the data again (#plotAgain)
+
 At this point, we should get our eyes on the data again. Let's make a timeseries plot of the existing data. 
 ```{r}
 #convert the lipd-ts object to a lipd-ts-tibble
@@ -144,6 +146,8 @@ plotTimeseriesStack(tp,time.var = "age")
 ```
 
 OK, it looks like our filtering worked as expected. We now have a lipd-timeseries object that contains only the timeseries we want to include in our PCA, and the age ensembles are included. We're ready to move forward with ensemble PCA!
+
+One thing you should notice, is that several of these temperature reconstructions come from the same site. Having multiple, semi-independent records from a single site is relatively common, and something we should consider more down the road.
 
 To conduct PCA, we need to put all of these data onto a common timescale. We will use binning to do this, although there are also other approaches. We also want to repeat the binning across our different ensemble members, recognizing that age uncertainty affects the bins! binTs will bin all the data in the TS from 10 ka to 23 ka into 5 year bins. 
 
@@ -193,6 +197,47 @@ quantileData <- plotTimeseriesEnsRibbons(X = pcout$age,Y = pcout$PCs[,1,],export
 print(quantileData)
 ```
 
+
+### Data weighting
+
+As mentioned in /@ref(plotAgain), we might want to consider the fact that multiple records are coming from the same sites. This could make some sites more influential than others in the PCA. One way to account for this is by "weighting" the analysis. Here we'll rerun the analysis, weighting each record by $1/n$, where n is the number of records at each site.
+
+```{r}
+#use pullTsVariable to pull a variable out of a lipd-ts object
+sitenames <- pullTsVariable(TS.filtered,"geo_siteName")
+
+#use purrr to weight by 1/n
+weights <- purrr::map_dbl(sitenames,~ 1/sum(.x == sitenames))
+
+names(weights) <- sitenames
+weights
+```
+
+Now let's rerun the PCA, using the weights
+
+```{r,results="hide",warning=FALSE,cache = TRUE}
+pcoutWeighted <- pcaEns(binned.TS,pca.type = "cov",weights = weights)
+```
+
+and check out the screeplot
+
+```{r}
+plotScreeEns(pcoutWeighted)
+```
+
+and PCA results again:
+
+```{r}
+plotPCA <-  plotPcaEns(pcoutWeighted,
+                       TS = TS.filtered,
+                       map.type = "line",
+                       f=.1,
+                       legend.position = c(0.5,.6),
+                       which.pcs = 1:2,
+                       which.leg = 2)
+```
+
+In this case, the results are pretty similar. But weighting your PCA input data is a good tool to have in your tool belt.
 
 ## Ensemble PCA using a correlation matrix.
 Let's repeat much of this analysis, but this time let's take a look at the data underlying the surface temperature reconstructions, $\delta^{18}O$ and Mg/Ca data.

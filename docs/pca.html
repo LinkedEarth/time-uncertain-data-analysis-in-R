@@ -221,10 +221,14 @@ div.csl-indent {
 <li class="chapter" data-level="6.1.3" data-path="pca.html"><a href="pca.html#plot-some-summary-statistics"><i class="fa fa-check"></i><b>6.1.3</b> Plot some summary statistics</a></li>
 <li class="chapter" data-level="6.1.4" data-path="pca.html"><a href="pca.html#plot-the-data"><i class="fa fa-check"></i><b>6.1.4</b> Plot the data</a></li>
 </ul></li>
-<li class="chapter" data-level="6.2" data-path="pca.html"><a href="pca.html#filter-the-data"><i class="fa fa-check"></i><b>6.2</b> Filter the data</a></li>
+<li class="chapter" data-level="6.2" data-path="pca.html"><a href="pca.html#filter-the-data"><i class="fa fa-check"></i><b>6.2</b> Filter the data</a>
+<ul>
+<li class="chapter" data-level="6.2.1" data-path="pca.html"><a href="pca.html#plot-the-data-again-plotagain"><i class="fa fa-check"></i><b>6.2.1</b> Plot the data again (#plotAgain)</a></li>
+</ul></li>
 <li class="chapter" data-level="6.3" data-path="pca.html"><a href="pca.html#calculate-an-ensemble-pca"><i class="fa fa-check"></i><b>6.3</b> Calculate an ensemble PCA</a>
 <ul>
 <li class="chapter" data-level="6.3.1" data-path="pca.html"><a href="pca.html#plot-the-ensemble-pca-results"><i class="fa fa-check"></i><b>6.3.1</b> Plot the ensemble PCA results</a></li>
+<li class="chapter" data-level="6.3.2" data-path="pca.html"><a href="pca.html#data-weighting"><i class="fa fa-check"></i><b>6.3.2</b> Data weighting</a></li>
 </ul></li>
 <li class="chapter" data-level="6.4" data-path="pca.html"><a href="pca.html#ensemble-pca-using-a-correlation-matrix."><i class="fa fa-check"></i><b>6.4</b> Ensemble PCA using a correlation matrix.</a></li>
 <li class="chapter" data-level="6.5" data-path="pca.html"><a href="pca.html#chapter-project-2"><i class="fa fa-check"></i><b>6.5</b> Chapter project</a></li>
@@ -243,7 +247,7 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="7.3.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#map-the-age-ensemble-to-the-paleodata-table"><i class="fa fa-check"></i><b>7.3.1</b> Map the age ensemble to the paleodata table</a></li>
 <li class="chapter" data-level="7.3.2" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#select-the-paleodata-age-ensemble-and-rabd-data-that-wed-like-to-regress-and-calibrate"><i class="fa fa-check"></i><b>7.3.2</b> Select the paleodata age ensemble, and RABD data that we’d like to regress and calibrate</a></li>
-<li class="chapter" data-level="7.3.3" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#now-load-in-the-instrumental-data-we-want-to-correlate-and-regress-agains"><i class="fa fa-check"></i><b>7.3.3</b> Now load in the instrumental data we want to correlate and regress agains</a></li>
+<li class="chapter" data-level="7.3.3" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#now-load-in-the-instrumental-data"><i class="fa fa-check"></i><b>7.3.3</b> Now load in the instrumental data</a></li>
 <li class="chapter" data-level="7.3.4" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#check-agetime-units-before-proceeding"><i class="fa fa-check"></i><b>7.3.4</b> Check age/time units before proceeding</a></li>
 <li class="chapter" data-level="7.3.5" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#create-a-variable-list-for-the-instrumental-data"><i class="fa fa-check"></i><b>7.3.5</b> Create a “variable list” for the instrumental data</a></li>
 <li class="chapter" data-level="7.3.6" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#calculate-an-ensemble-correlation-between-the-rabd-and-local-summer-temperature-data"><i class="fa fa-check"></i><b>7.3.6</b> Calculate an ensemble correlation between the RABD and local summer temperature data</a></li>
@@ -316,7 +320,7 @@ div.csl-indent {
 <h3><span class="header-section-number">6.1.1</span> Make a map</h3>
 <p>First, let’s take a quick look at where these records are located. geoChronR’s <code>mapLipd</code> function can create quick maps:</p>
 <div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="pca.html#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mapLipd</span>(FD,<span class="at">map.type =</span> <span class="st">&quot;line&quot;</span>,<span class="at">f =</span> <span class="fl">0.1</span>)</span></code></pre></div>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-46-1.png" width="672" /></p>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-70-1.png" width="672" /></p>
 </div>
 <div id="grab-the-age-ensembles-for-each-record." class="section level3" number="6.1.2">
 <h3><span class="header-section-number">6.1.2</span> Grab the age ensembles for each record.</h3>
@@ -344,7 +348,7 @@ div.csl-indent {
 <span id="cb87-11"><a href="pca.html#cb87-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;Age&quot;</span>)</span></code></pre></div>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-47-1.png" width="672" />
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-71-1.png" width="672" />
 OK, so it looks like the ages range from 0 to about 150. But what are the units on those?</p>
 <div class="blackbox">
 <div class="exercise">
@@ -414,6 +418,8 @@ Then use plotStack() to plot it up
 <span id="cb90-3"><a href="pca.html#cb90-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filterTs</span>(<span class="st">&quot;paleoData_variableName == surface.temp&quot;</span>) <span class="co">#and then select our variable of interest</span></span></code></pre></div>
 <pre><code>## [1] &quot;14 results after query: paleoData_variableName == surface.temp&quot;</code></pre>
 <p>This is the first time we’ve seen the <code>filterTs()</code> function. It’s part of the <code>lipdR</code> library, and enables <em>simple</em> filtering on lipd-ts objects. It’s a weaker version of <code>dplyr::filter()</code>, and for complex queries you’re much better off converting to a tibble and using dplyr. But for simple operations on lipd-ts objects, it works well enough.</p>
+<div id="plot-the-data-again-plotagain" class="section level3" number="6.2.1">
+<h3><span class="header-section-number">6.2.1</span> Plot the data again (#plotAgain)</h3>
 <p>At this point, we should get our eyes on the data again. Let’s make a timeseries plot of the existing data.</p>
 <div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb92-1"><a href="pca.html#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="co">#convert the lipd-ts object to a lipd-ts-tibble</span></span>
 <span id="cb92-2"><a href="pca.html#cb92-2" aria-hidden="true" tabindex="-1"></a>tsTib <span class="ot">&lt;-</span> <span class="fu">ts2tibble</span>(TS.filtered) </span>
@@ -427,11 +433,13 @@ Then use plotStack() to plot it up
 <span id="cb92-10"><a href="pca.html#cb92-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb92-11"><a href="pca.html#cb92-11" aria-hidden="true" tabindex="-1"></a><span class="co">#and make a timeseries stack plot</span></span>
 <span id="cb92-12"><a href="pca.html#cb92-12" aria-hidden="true" tabindex="-1"></a><span class="fu">plotTimeseriesStack</span>(tp,<span class="at">time.var =</span> <span class="st">&quot;age&quot;</span>)</span></code></pre></div>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-50-1.png" width="672" /></p>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-74-1.png" width="672" /></p>
 <p>OK, it looks like our filtering worked as expected. We now have a lipd-timeseries object that contains only the timeseries we want to include in our PCA, and the age ensembles are included. We’re ready to move forward with ensemble PCA!</p>
+<p>One thing you should notice, is that several of these temperature reconstructions come from the same site. Having multiple, semi-independent records from a single site is relatively common, and something we should consider more down the road.</p>
 <p>To conduct PCA, we need to put all of these data onto a common timescale. We will use binning to do this, although there are also other approaches. We also want to repeat the binning across our different ensemble members, recognizing that age uncertainty affects the bins! binTs will bin all the data in the TS from 10 ka to 23 ka into 5 year bins.</p>
 <div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="pca.html#cb93-1" aria-hidden="true" tabindex="-1"></a>binned.TS <span class="ot">&lt;-</span> <span class="fu">binTs</span>(TS.filtered,<span class="at">bin.vec =</span> <span class="fu">seq</span>(<span class="dv">10</span>,<span class="dv">30</span>,<span class="at">by=</span>.<span class="dv">5</span>),<span class="at">time.var =</span> <span class="st">&quot;ageEnsemble&quot;</span>)</span></code></pre></div>
 <p>We’re now ready to calculate the PCA!</p>
+</div>
 </div>
 <div id="calculate-an-ensemble-pca" class="section level2" number="6.3">
 <h2><span class="header-section-number">6.3</span> Calculate an ensemble PCA</h2>
@@ -439,7 +447,7 @@ Then use plotStack() to plot it up
 <div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb94-1"><a href="pca.html#cb94-1" aria-hidden="true" tabindex="-1"></a>pcout <span class="ot">&lt;-</span> <span class="fu">pcaEns</span>(binned.TS,<span class="at">pca.type =</span> <span class="st">&quot;cov&quot;</span>)</span></code></pre></div>
 <p>That was easy (because of all the work we did beforehand). But before we look at the results let’s take a look at a scree plot to get a sense of how many significant components we should expect.</p>
 <div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb95-1"><a href="pca.html#cb95-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotScreeEns</span>(pcout)</span></code></pre></div>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-51-1.png" width="672" /></p>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-75-1.png" width="672" /></p>
 <p>It looks like the first two components, shown in black with gray uncertainty shading, stand out above the null model (in red), but the third and beyond look marginal to insignficant. Let’s focus on the first two components.</p>
 <div id="plot-the-ensemble-pca-results" class="section level3" number="6.3.1">
 <h3><span class="header-section-number">6.3.1</span> Plot the ensemble PCA results</h3>
@@ -451,7 +459,7 @@ Then use plotStack() to plot it up
 <span id="cb96-5"><a href="pca.html#cb96-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.5</span>,.<span class="dv">6</span>),</span>
 <span id="cb96-6"><a href="pca.html#cb96-6" aria-hidden="true" tabindex="-1"></a>                       <span class="at">which.pcs =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,</span>
 <span id="cb96-7"><a href="pca.html#cb96-7" aria-hidden="true" tabindex="-1"></a>                       <span class="at">which.leg =</span> <span class="dv">2</span>)</span></code></pre></div>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-52-1.png" width="672" /></p>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-76-1.png" width="672" /></p>
 <p>Nice! A summary plot that combines the major features is produced, but all of the components, are included in the “plotPCA” list that was exported.</p>
 <p>For comparison with other datasets it can be useful to export quantile timeseries shown in the figures. <code>plotTimeseriesEnsRibbons()</code> can optionally be used to export the data rather than plotting them. The following will export the PC1 timeseries:</p>
 <div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb97-1"><a href="pca.html#cb97-1" aria-hidden="true" tabindex="-1"></a>quantileData <span class="ot">&lt;-</span> <span class="fu">plotTimeseriesEnsRibbons</span>(<span class="at">X =</span> pcout<span class="sc">$</span>age,<span class="at">Y =</span> pcout<span class="sc">$</span>PCs[,<span class="dv">1</span>,],<span class="at">export.quantiles =</span> <span class="cn">TRUE</span>)</span>
@@ -472,14 +480,45 @@ Then use plotStack() to plot it up
 ## 10  11.6    5.08   5.54  5.71   5.89    6.34
 ## # … with 190 more rows</code></pre>
 </div>
+<div id="data-weighting" class="section level3" number="6.3.2">
+<h3><span class="header-section-number">6.3.2</span> Data weighting</h3>
+<p>As mentioned in /<span class="citation">(<a href="#ref-ref" role="doc-biblioref"><strong>ref?</strong></a>)</span>(plotAgain), we might want to consider the fact that multiple records are coming from the same sites. This could make some sites more influential than others in the PCA. One way to account for this is by “weighting” the analysis. Here we’ll rerun the analysis, weighting each record by <span class="math inline">\(1/n\)</span>, where n is the number of records at each site.</p>
+<div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb99-1"><a href="pca.html#cb99-1" aria-hidden="true" tabindex="-1"></a><span class="co">#use pullTsVariable to pull a variable out of a lipd-ts object</span></span>
+<span id="cb99-2"><a href="pca.html#cb99-2" aria-hidden="true" tabindex="-1"></a>sitenames <span class="ot">&lt;-</span> <span class="fu">pullTsVariable</span>(TS.filtered,<span class="st">&quot;geo_siteName&quot;</span>)</span>
+<span id="cb99-3"><a href="pca.html#cb99-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-4"><a href="pca.html#cb99-4" aria-hidden="true" tabindex="-1"></a><span class="co">#use purrr to weight by 1/n</span></span>
+<span id="cb99-5"><a href="pca.html#cb99-5" aria-hidden="true" tabindex="-1"></a>weights <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_dbl</span>(sitenames,<span class="sc">~</span> <span class="dv">1</span><span class="sc">/</span><span class="fu">sum</span>(.x <span class="sc">==</span> sitenames))</span>
+<span id="cb99-6"><a href="pca.html#cb99-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-7"><a href="pca.html#cb99-7" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(weights) <span class="ot">&lt;-</span> sitenames</span>
+<span id="cb99-8"><a href="pca.html#cb99-8" aria-hidden="true" tabindex="-1"></a>weights</span></code></pre></div>
+<pre><code>## GeoB12615_4  GIK17940_2  GIK17940_2  GIK17961_2  GIK17961_2  GIK17961_2   MD06_3067   MD06_3067   MD06_3075   MD98_2181 
+##   1.0000000   0.5000000   0.5000000   0.3333333   0.3333333   0.3333333   0.5000000   0.5000000   1.0000000   0.5000000 
+##   MD98_2181     ODP1145    WIND_28K    WIND_28K 
+##   0.5000000   1.0000000   0.5000000   0.5000000</code></pre>
+<p>Now let’s rerun the PCA, using the weights</p>
+<div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb101-1"><a href="pca.html#cb101-1" aria-hidden="true" tabindex="-1"></a>pcoutWeighted <span class="ot">&lt;-</span> <span class="fu">pcaEns</span>(binned.TS,<span class="at">pca.type =</span> <span class="st">&quot;cov&quot;</span>,<span class="at">weights =</span> weights)</span></code></pre></div>
+<p>and check out the screeplot</p>
+<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb102-1"><a href="pca.html#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotScreeEns</span>(pcoutWeighted)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-80-1.png" width="672" /></p>
+<p>and PCA results again:</p>
+<div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb103-1"><a href="pca.html#cb103-1" aria-hidden="true" tabindex="-1"></a>plotPCA <span class="ot">&lt;-</span>  <span class="fu">plotPcaEns</span>(pcoutWeighted,</span>
+<span id="cb103-2"><a href="pca.html#cb103-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">TS =</span> TS.filtered,</span>
+<span id="cb103-3"><a href="pca.html#cb103-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">map.type =</span> <span class="st">&quot;line&quot;</span>,</span>
+<span id="cb103-4"><a href="pca.html#cb103-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">f=</span>.<span class="dv">1</span>,</span>
+<span id="cb103-5"><a href="pca.html#cb103-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.5</span>,.<span class="dv">6</span>),</span>
+<span id="cb103-6"><a href="pca.html#cb103-6" aria-hidden="true" tabindex="-1"></a>                       <span class="at">which.pcs =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,</span>
+<span id="cb103-7"><a href="pca.html#cb103-7" aria-hidden="true" tabindex="-1"></a>                       <span class="at">which.leg =</span> <span class="dv">2</span>)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-81-1.png" width="672" /></p>
+<p>In this case, the results are pretty similar. But weighting your PCA input data is a good tool to have in your tool belt.</p>
+</div>
 </div>
 <div id="ensemble-pca-using-a-correlation-matrix." class="section level2" number="6.4">
 <h2><span class="header-section-number">6.4</span> Ensemble PCA using a correlation matrix.</h2>
 <p>Let’s repeat much of this analysis, but this time let’s take a look at the data underlying the surface temperature reconstructions, <span class="math inline">\(\delta^{18}O\)</span> and Mg/Ca data.</p>
 <p>First, look at the variable names represented in our dataset. This is easiest with our tibble</p>
-<div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb99-1"><a href="pca.html#cb99-1" aria-hidden="true" tabindex="-1"></a>tib.filtered <span class="ot">&lt;-</span> indTs[nValsInRange <span class="sc">&gt;</span> <span class="dv">20</span> <span class="sc">&amp;</span> span <span class="sc">&gt;</span> <span class="dv">15</span>] <span class="sc">%&gt;%</span> <span class="fu">ts2tibble</span>()</span>
-<span id="cb99-2"><a href="pca.html#cb99-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb99-3"><a href="pca.html#cb99-3" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(tib.filtered<span class="sc">$</span>paleoData_variableName)</span></code></pre></div>
+<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb104-1"><a href="pca.html#cb104-1" aria-hidden="true" tabindex="-1"></a>tib.filtered <span class="ot">&lt;-</span> indTs[nValsInRange <span class="sc">&gt;</span> <span class="dv">20</span> <span class="sc">&amp;</span> span <span class="sc">&gt;</span> <span class="dv">15</span>] <span class="sc">%&gt;%</span> <span class="fu">ts2tibble</span>()</span>
+<span id="cb104-2"><a href="pca.html#cb104-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-3"><a href="pca.html#cb104-3" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(tib.filtered<span class="sc">$</span>paleoData_variableName)</span></code></pre></div>
 <pre><code>## 
 ##             age     ageEnsemble    benthic.d13C    benthic.d18O           CaCO3             DBD           depth    depth_merged 
 ##              28              11               5               7               2               1               1              11 
@@ -499,10 +538,10 @@ Then use plotStack() to plot it up
 </div>
 <p>Take a look at your plot, note the units, and the scale of the variability. Since we’re now dealing with variables in different units, we cannot use a covariance matrix.</p>
 <p>And calculate the ensemble PCA, this time using a covariance matrix. By using a covariance matrix, we’ll allow records that have larger variability in <span class="math inline">\(\delta^{18}O\)</span> to influence the PCA more, and those that have little variability will have little impact. This may or may not be a good idea, but it’s an important option to consider when possible.</p>
-<div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb101-1"><a href="pca.html#cb101-1" aria-hidden="true" tabindex="-1"></a>pcout2 <span class="ot">&lt;-</span> <span class="fu">pcaEns</span>(binned.TS2,<span class="at">pca.type =</span> <span class="st">&quot;corr&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb106-1"><a href="pca.html#cb106-1" aria-hidden="true" tabindex="-1"></a>pcout2 <span class="ot">&lt;-</span> <span class="fu">pcaEns</span>(binned.TS2,<span class="at">pca.type =</span> <span class="st">&quot;corr&quot;</span>)</span></code></pre></div>
 <p>Once again, let’s take a look at the scree plot:</p>
-<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb102-1"><a href="pca.html#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotScreeEns</span>(pcout2)</span></code></pre></div>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-56-1.png" width="384" /></p>
+<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="pca.html#cb107-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotScreeEns</span>(pcout2)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-84-1.png" width="384" /></p>
 <p>Once again, the first PC dominates the variability. All of the subsequent PCs are non signficant, but let’s include the second third PC in our plot this time as well.</p>
 <div class="blackbox">
 <div class="exercise">

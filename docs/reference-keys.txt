@@ -72,8 +72,10 @@ grab-the-age-ensembles-for-each-record.
 plot-some-summary-statistics
 plot-the-data
 filter-the-data
+plot-the-data-again-plotagain
 calculate-an-ensemble-pca
 plot-the-ensemble-pca-results
+data-weighting
 ensemble-pca-using-a-correlation-matrix.
 chapter-project-2
 regression-and-calibration-in-time
@@ -84,7 +86,7 @@ and-plot-the-ensemble-output
 prepare-the-data
 map-the-age-ensemble-to-the-paleodata-table
 select-the-paleodata-age-ensemble-and-rabd-data-that-wed-like-to-regress-and-calibrate
-now-load-in-the-instrumental-data-we-want-to-correlate-and-regress-agains
+now-load-in-the-instrumental-data
 check-agetime-units-before-proceeding
 create-a-variable-list-for-the-instrumental-data
 calculate-an-ensemble-correlation-between-the-rabd-and-local-summer-temperature-data

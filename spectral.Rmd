@@ -1,4 +1,4 @@
-# Spectral Analysis
+# Spectral Analysis {#spectral}
 
 In this notebook we demonstrate how to use the spectral analysis features of GeoChronR using the "ODP846" record described in:
 

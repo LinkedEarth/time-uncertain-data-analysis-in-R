@@ -221,10 +221,14 @@ div.csl-indent {
 <li class="chapter" data-level="6.1.3" data-path="pca.html"><a href="pca.html#plot-some-summary-statistics"><i class="fa fa-check"></i><b>6.1.3</b> Plot some summary statistics</a></li>
 <li class="chapter" data-level="6.1.4" data-path="pca.html"><a href="pca.html#plot-the-data"><i class="fa fa-check"></i><b>6.1.4</b> Plot the data</a></li>
 </ul></li>
-<li class="chapter" data-level="6.2" data-path="pca.html"><a href="pca.html#filter-the-data"><i class="fa fa-check"></i><b>6.2</b> Filter the data</a></li>
+<li class="chapter" data-level="6.2" data-path="pca.html"><a href="pca.html#filter-the-data"><i class="fa fa-check"></i><b>6.2</b> Filter the data</a>
+<ul>
+<li class="chapter" data-level="6.2.1" data-path="pca.html"><a href="pca.html#plot-the-data-again-plotagain"><i class="fa fa-check"></i><b>6.2.1</b> Plot the data again (#plotAgain)</a></li>
+</ul></li>
 <li class="chapter" data-level="6.3" data-path="pca.html"><a href="pca.html#calculate-an-ensemble-pca"><i class="fa fa-check"></i><b>6.3</b> Calculate an ensemble PCA</a>
 <ul>
 <li class="chapter" data-level="6.3.1" data-path="pca.html"><a href="pca.html#plot-the-ensemble-pca-results"><i class="fa fa-check"></i><b>6.3.1</b> Plot the ensemble PCA results</a></li>
+<li class="chapter" data-level="6.3.2" data-path="pca.html"><a href="pca.html#data-weighting"><i class="fa fa-check"></i><b>6.3.2</b> Data weighting</a></li>
 </ul></li>
 <li class="chapter" data-level="6.4" data-path="pca.html"><a href="pca.html#ensemble-pca-using-a-correlation-matrix."><i class="fa fa-check"></i><b>6.4</b> Ensemble PCA using a correlation matrix.</a></li>
 <li class="chapter" data-level="6.5" data-path="pca.html"><a href="pca.html#chapter-project-2"><i class="fa fa-check"></i><b>6.5</b> Chapter project</a></li>
@@ -243,7 +247,7 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="7.3.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#map-the-age-ensemble-to-the-paleodata-table"><i class="fa fa-check"></i><b>7.3.1</b> Map the age ensemble to the paleodata table</a></li>
 <li class="chapter" data-level="7.3.2" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#select-the-paleodata-age-ensemble-and-rabd-data-that-wed-like-to-regress-and-calibrate"><i class="fa fa-check"></i><b>7.3.2</b> Select the paleodata age ensemble, and RABD data that we’d like to regress and calibrate</a></li>
-<li class="chapter" data-level="7.3.3" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#now-load-in-the-instrumental-data-we-want-to-correlate-and-regress-agains"><i class="fa fa-check"></i><b>7.3.3</b> Now load in the instrumental data we want to correlate and regress agains</a></li>
+<li class="chapter" data-level="7.3.3" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#now-load-in-the-instrumental-data"><i class="fa fa-check"></i><b>7.3.3</b> Now load in the instrumental data</a></li>
 <li class="chapter" data-level="7.3.4" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#check-agetime-units-before-proceeding"><i class="fa fa-check"></i><b>7.3.4</b> Check age/time units before proceeding</a></li>
 <li class="chapter" data-level="7.3.5" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#create-a-variable-list-for-the-instrumental-data"><i class="fa fa-check"></i><b>7.3.5</b> Create a “variable list” for the instrumental data</a></li>
 <li class="chapter" data-level="7.3.6" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#calculate-an-ensemble-correlation-between-the-rabd-and-local-summer-temperature-data"><i class="fa fa-check"></i><b>7.3.6</b> Calculate an ensemble correlation between the RABD and local summer temperature data</a></li>
@@ -326,7 +330,7 @@ Bacon will optionally return a thinned subset of the stabilized MCMC accumulatio
 ## [1] &quot;Found it! Moving on...&quot;
 ## [1] &quot;plotting your chron ensemble. This make take a few seconds...&quot;</code></pre>
 <pre><code>## Scale for &#39;x&#39; is already present. Adding another scale for &#39;x&#39;, which will replace the existing scale.</code></pre>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-22-1.png" width="672" />
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-46-1.png" width="672" />
 That was easy! But you’ll have to explore the options to fully customize your figure.</p>
 <div class="blackbox">
 <div class="exercise">
@@ -362,7 +366,7 @@ geoChronR uses the same default values as the official Bchron package, and we re
 ## [1] &quot;Found it! Moving on...&quot;
 ## [1] &quot;plotting your chron ensemble. This make take a few seconds...&quot;</code></pre>
 <pre><code>## Scale for &#39;x&#39; is already present. Adding another scale for &#39;x&#39;, which will replace the existing scale.</code></pre>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-47-1.png" width="672" /></p>
 </div>
 <div id="oxcal" class="section level2" number="4.3">
 <h2><span class="header-section-number">4.3</span> OxCal</h2>
@@ -422,7 +426,7 @@ geoChronR uses this feature to extract ensemble members for subsequent analysis.
 ## [1] &quot;Found it! Moving on...&quot;
 ## [1] &quot;plotting your chron ensemble. This make take a few seconds...&quot;</code></pre>
 <pre><code>## Scale for &#39;x&#39; is already present. Adding another scale for &#39;x&#39;, which will replace the existing scale.</code></pre>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-48-1.png" width="672" /></p>
 <div id="lets-compare-these-models." class="section level3" number="4.3.1">
 <h3><span class="header-section-number">4.3.1</span> Let’s compare these models.</h3>
 <p>First, lets use <code>selectData()</code> to pull the depth and ageEnsemble variables for each model. The <code>selectData()</code> function is introduced in section  .</p>
@@ -473,7 +477,7 @@ geoChronR uses this feature to extract ensemble members for subsequent analysis.
 <span id="cb51-9"><a href="agemodelling.html#cb51-9" aria-hidden="true" tabindex="-1"></a>                         <span class="at">color.line =</span> <span class="st">&quot;Blue&quot;</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb51-10"><a href="agemodelling.html#cb51-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plotModelDistributions</span>(tana,<span class="at">add.to.plot =</span> .) <span class="sc">+</span> <span class="co">#here we use the ggplot +</span></span>
 <span id="cb51-11"><a href="agemodelling.html#cb51-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_reverse</span>()</span></code></pre></div>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-26-1.png" width="672" />
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-50-1.png" width="672" />
 All geoChronR plotting functions return ggplot2 objects, so we can modify the scale by adding a layer using <code>+</code> using the ggplot2 model.</p>
 <div class="blackbox">
 <div class="exercise">
@@ -568,7 +572,7 @@ Hint #2
 <p>OK, we’re ready to plot it. There are a few ways to visualize ensemble data. The simplest is to just plot multiple instances of the line. Here we will just plot the temperature data against 50 random ensemble members.</p>
 <div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="agemodelling.html#cb64-1" aria-hidden="true" tabindex="-1"></a>tana.ts.plot <span class="ot">&lt;-</span>  <span class="fu">plotTimeseriesEnsLines</span>(<span class="at">X =</span> tana.ae,<span class="at">Y =</span> tana.temp,<span class="at">alp =</span> <span class="fl">0.05</span>,<span class="at">n.ens.plot =</span> <span class="dv">50</span>,<span class="at">color =</span> <span class="st">&quot;blue&quot;</span>)</span>
 <span id="cb64-2"><a href="agemodelling.html#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(tana.ts.plot)</span></code></pre></div>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-57-1.png" width="672" /></p>
 <div class="blackbox">
 <div class="exercise">
 <p><span id="exr:plotTimeseriesEnsLines" class="exercise"><strong>Exercise 4.6  </strong></span>plotTimeseriesEnsLines() has options that control the output. Take a look at the documentation, and then change the following parameters, and understand how that affects the output:</p>
@@ -592,7 +596,7 @@ To change the limits, you’ll use the xlim() or scale_x_reverse() functions fro
 <p>We can also plot this as a ribbon plot of quantiles</p>
 <div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="agemodelling.html#cb65-1" aria-hidden="true" tabindex="-1"></a>tana.ribbon.plot <span class="ot">&lt;-</span> <span class="fu">plotTimeseriesEnsRibbons</span>(<span class="at">X =</span> tana.ae,<span class="at">Y =</span> tana.temp)</span>
 <span id="cb65-2"><a href="agemodelling.html#cb65-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(tana.ribbon.plot)</span></code></pre></div>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-34-1.png" width="672" /></p>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-58-1.png" width="672" /></p>
 <div class="blackbox">
 <div class="exercise">
 <p><span id="exr:plotTimeseriesEnsLines2" class="exercise"><strong>Exercise 4.7  </strong></span>plotTimeseriesEnsRibbons () has many more options that control the output. Take a look at the documentation for that function, and then change the following parameters, and understand how that affects the output:</p>
@@ -658,14 +662,14 @@ BAM was coded in MATLAB, Python and R, and it is this latter version that geoChr
 <span id="cb73-2"><a href="agemodelling.html#cb73-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> tana.orig.age<span class="sc">$</span>values, <span class="at">y =</span> tana.temp<span class="sc">$</span>values),<span class="at">color =</span> <span class="st">&quot;red&quot;</span>)</span>
 <span id="cb73-3"><a href="agemodelling.html#cb73-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb73-4"><a href="agemodelling.html#cb73-4" aria-hidden="true" tabindex="-1"></a>tana.ribbon.plot.bam</span></code></pre></div>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-37-1.png" width="672" /></p>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-61-1.png" width="672" /></p>
 <div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="agemodelling.html#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(egg)</span>
 <span id="cb74-2"><a href="agemodelling.html#cb74-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggarrange</span>(<span class="at">plots =</span> <span class="fu">list</span>(tana.ribbon.plot <span class="sc">+</span> <span class="fu">xlim</span>(<span class="fu">c</span>(<span class="dv">15000</span>,<span class="dv">0</span>)) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">&quot;Temperature on Multimodel age model&quot;</span>),</span>
 <span id="cb74-3"><a href="agemodelling.html#cb74-3" aria-hidden="true" tabindex="-1"></a>                            tana.ribbon.plot.bam <span class="sc">+</span> <span class="fu">xlim</span>(<span class="fu">c</span>(<span class="dv">15000</span>,<span class="dv">0</span>)) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">&quot;Temperature on BAM&quot;</span>)),</span>
 <span id="cb74-4"><a href="agemodelling.html#cb74-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">nrow =</span> <span class="dv">2</span>)</span></code></pre></div>
 <pre><code>## Scale for &#39;x&#39; is already present. Adding another scale for &#39;x&#39;, which will replace the existing scale.
 ## Scale for &#39;x&#39; is already present. Adding another scale for &#39;x&#39;, which will replace the existing scale.</code></pre>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-38-1.png" width="672" /></p>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-62-1.png" width="672" /></p>
 </div>
 <div id="chapter-project" class="section level2" number="4.5">
 <h2><span class="header-section-number">4.5</span> Chapter project</h2>

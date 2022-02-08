@@ -221,10 +221,14 @@ div.csl-indent {
 <li class="chapter" data-level="6.1.3" data-path="pca.html"><a href="pca.html#plot-some-summary-statistics"><i class="fa fa-check"></i><b>6.1.3</b> Plot some summary statistics</a></li>
 <li class="chapter" data-level="6.1.4" data-path="pca.html"><a href="pca.html#plot-the-data"><i class="fa fa-check"></i><b>6.1.4</b> Plot the data</a></li>
 </ul></li>
-<li class="chapter" data-level="6.2" data-path="pca.html"><a href="pca.html#filter-the-data"><i class="fa fa-check"></i><b>6.2</b> Filter the data</a></li>
+<li class="chapter" data-level="6.2" data-path="pca.html"><a href="pca.html#filter-the-data"><i class="fa fa-check"></i><b>6.2</b> Filter the data</a>
+<ul>
+<li class="chapter" data-level="6.2.1" data-path="pca.html"><a href="pca.html#plot-the-data-again-plotagain"><i class="fa fa-check"></i><b>6.2.1</b> Plot the data again (#plotAgain)</a></li>
+</ul></li>
 <li class="chapter" data-level="6.3" data-path="pca.html"><a href="pca.html#calculate-an-ensemble-pca"><i class="fa fa-check"></i><b>6.3</b> Calculate an ensemble PCA</a>
 <ul>
 <li class="chapter" data-level="6.3.1" data-path="pca.html"><a href="pca.html#plot-the-ensemble-pca-results"><i class="fa fa-check"></i><b>6.3.1</b> Plot the ensemble PCA results</a></li>
+<li class="chapter" data-level="6.3.2" data-path="pca.html"><a href="pca.html#data-weighting"><i class="fa fa-check"></i><b>6.3.2</b> Data weighting</a></li>
 </ul></li>
 <li class="chapter" data-level="6.4" data-path="pca.html"><a href="pca.html#ensemble-pca-using-a-correlation-matrix."><i class="fa fa-check"></i><b>6.4</b> Ensemble PCA using a correlation matrix.</a></li>
 <li class="chapter" data-level="6.5" data-path="pca.html"><a href="pca.html#chapter-project-2"><i class="fa fa-check"></i><b>6.5</b> Chapter project</a></li>
@@ -243,7 +247,7 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="7.3.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#map-the-age-ensemble-to-the-paleodata-table"><i class="fa fa-check"></i><b>7.3.1</b> Map the age ensemble to the paleodata table</a></li>
 <li class="chapter" data-level="7.3.2" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#select-the-paleodata-age-ensemble-and-rabd-data-that-wed-like-to-regress-and-calibrate"><i class="fa fa-check"></i><b>7.3.2</b> Select the paleodata age ensemble, and RABD data that we’d like to regress and calibrate</a></li>
-<li class="chapter" data-level="7.3.3" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#now-load-in-the-instrumental-data-we-want-to-correlate-and-regress-agains"><i class="fa fa-check"></i><b>7.3.3</b> Now load in the instrumental data we want to correlate and regress agains</a></li>
+<li class="chapter" data-level="7.3.3" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#now-load-in-the-instrumental-data"><i class="fa fa-check"></i><b>7.3.3</b> Now load in the instrumental data</a></li>
 <li class="chapter" data-level="7.3.4" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#check-agetime-units-before-proceeding"><i class="fa fa-check"></i><b>7.3.4</b> Check age/time units before proceeding</a></li>
 <li class="chapter" data-level="7.3.5" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#create-a-variable-list-for-the-instrumental-data"><i class="fa fa-check"></i><b>7.3.5</b> Create a “variable list” for the instrumental data</a></li>
 <li class="chapter" data-level="7.3.6" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#calculate-an-ensemble-correlation-between-the-rabd-and-local-summer-temperature-data"><i class="fa fa-check"></i><b>7.3.6</b> Calculate an ensemble correlation between the RABD and local summer temperature data</a></li>
@@ -334,11 +338,11 @@ and select the file interactively.
 ## [1] &quot;Found it! Moving on...&quot;
 ## [1] &quot;Found it! Moving on...&quot;
 ## [1] &quot;Found it! Moving on...&quot;</code></pre>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="data.html#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(summary_plot)</span></code></pre></div>
 <pre><code>## TableGrob (4 x 4) &quot;arrange&quot;: 4 grobs
 ##   z     cells    name                   grob
-## 1 1 (1-1,1-2) arrange gTree[GRID.gTree.3562]
+## 1 1 (1-1,1-2) arrange gTree[GRID.gTree.8340]
 ## 2 2 (1-2,3-4) arrange         gtable[layout]
 ## 3 3 (2-4,1-2) arrange         gtable[layout]
 ## 4 4 (3-4,3-4) arrange         gtable[layout]</code></pre>
@@ -407,14 +411,14 @@ and select the file interactively.
 <p>If you load multiple files, it will create an object called a “multi-lipd,” which is just a list of lipd objects. And we can use some of the same functions.</p>
 <p>For example, let’s make a map of our multi-lipd object:</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="data.html#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mapLipd</span>(eur,<span class="at">projection =</span> <span class="st">&quot;mollweide&quot;</span>,<span class="at">global =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-14-1.png" width="672" />
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-38-1.png" width="672" />
 These multi-lipd objects are convenient for getting a lot of data into R, but trying to work with the data inside can get pretty tricky pretty fast. When working with multiple datasets, you’ll almost always want to create a timeseries (TS) object, or formally a “lipd-ts” object. You can do that using the ‘extractTs()’ function or ’as.lipdTs()` from the lipdR package.</p>
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="data.html#cb24-1" aria-hidden="true" tabindex="-1"></a>TS <span class="ot">&lt;-</span> <span class="fu">extractTs</span>(eur)</span>
 <span id="cb24-2"><a href="data.html#cb24-2" aria-hidden="true" tabindex="-1"></a>TS <span class="ot">&lt;-</span> <span class="fu">as.lipdTs</span>(eur)</span></code></pre></div>
 <p>The LiPD-TS object is a “flattened” version of the dataset, it’s much less hierarchical and each entry corresponds to a column in a table. By default, <code>extractTs()</code> will get all the variables in measurementTables in paleoData objects, but you can also get variables from other tables and from the chronData objects by changing the options. See <code>?extractTs</code> for details.</p>
 <p>Now we can use the TS version of plotSummary to summarize the whole collection of data.</p>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="data.html#cb25-1" aria-hidden="true" tabindex="-1"></a>summ <span class="ot">&lt;-</span> <span class="fu">plotSummaryTs</span>(TS,<span class="at">age.var =</span> <span class="st">&quot;year&quot;</span>)</span></code></pre></div>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-16-1.png" width="672" />
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-40-1.png" width="672" />
 Let’s take a deeper look at the options:</p>
 <div class="blackbox">
 <div class="exercise">
@@ -437,7 +441,7 @@ Let’s take a deeper look at the options:</p>
 <p>Let’s take a look at the result!</p>
 <div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="data.html#cb28-1" aria-hidden="true" tabindex="-1"></a>nTS <span class="ot">&lt;-</span> <span class="fu">as.lipdTs</span>(filtered.tib) <span class="co">#convert it back (for now)</span></span>
 <span id="cb28-2"><a href="data.html#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plotSummaryTs</span>(nTS,<span class="at">age.var =</span> <span class="st">&quot;year&quot;</span>,<span class="at">f =</span> .<span class="dv">1</span>)</span></code></pre></div>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-43-1.png" width="672" /></p>
 <pre><code>## TableGrob (5 x 3) &quot;arrange&quot;: 2 grobs
 ##   z     cells    name           grob
 ## 1 1 (1-3,1-3) arrange gtable[layout]
