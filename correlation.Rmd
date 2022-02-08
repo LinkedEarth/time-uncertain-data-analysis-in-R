@@ -1,4 +1,4 @@
-# Time-uncertain correlation
+# Time-uncertain correlation {#correlation}
 
 Correlation is perhaps the most commonly used statistical tool in the paleogeosciences. This makes sense, because we often see similar patterns between datasets, but want to know whether the apparent relationship is robust, or could be spurious. And of course, age uncertainty can have immense impacts on correlation.
 
@@ -50,7 +50,7 @@ Create a figure that that uses ensemble timeseries plots to compares the Hulu Ca
 ::::
 
 
-```{r,echo=FALSE,results='hide',message=FALSE,warning=FALSE}
+```{r getCorData,echo=FALSE,results='hide',message=FALSE,warning=FALSE}
 hulu <- readLipd("~/Dropbox/Hulucave.Wang.2001-ens.lpd")
 gisp2 <- readLipd("~/Dropbox/GISP2.Alley.2000-ens.lpd")
 
@@ -143,7 +143,7 @@ Let's take another look at the the two timeseries over the period of overlap.
 To calculate age uncertain correlation let use geoChronR's `corEns` function. 
 I'm going to run this with 1000 ensemble members, but you may want to run it with only 200 ensemble members for now, since we have multiple significance testing options turned on and it can be a little slow.
 
-```{r, results='hide',warning = FALSE, message = FALSE,cache = TRUE}
+```{r corEns, results='hide',warning = FALSE, message = FALSE,cache = TRUE}
 corout <- corEns(time.1 = gisp2.ae,
                  values.1 = gisp2.d18O,
                  time.2 = hulu.ae,

@@ -19,7 +19,7 @@ sessionInfo()
 
 The `lipdR` package is your gateway to working with LiPD data. To install `lipdR`, you'll need the remotes package if you don't already have it.
 
-```{r, echo=TRUE, eval=FALSE}
+```{r, echo=TRUE, eval=TRUE}
 install.packages("remotes")
 remotes::install_github("nickmckay/lipdR")
 ```
@@ -29,7 +29,7 @@ remotes::install_github("nickmckay/lipdR")
 
 Finally, you can install geoChronR using a similar command:
 ```{r, echo=TRUE, eval=FALSE}
-remotes::install_github("nickmckay/lipdR")
+remotes::install_github("nickmckay/GeoChronR")
 ```
 
 

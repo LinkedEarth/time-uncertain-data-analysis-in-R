@@ -1,6 +1,6 @@
 # Principal Components Analysis {pca}
 
-
+As always, let's start by loading the packages we need. 
   
 ```{r, results = 'hide', warning = FALSE, message= FALSE }
 library(lipdR)
@@ -8,75 +8,122 @@ library(geoChronR)
 library(magrittr)
 library(dplyr)
 library(purrr)
+library(ggplot2)
 ```
   
-# Age-Uncertain Principal Component Analysis
-  
-This vignette showcases the ability to perform principal component analysis (PCA, also known as empirical orthogonal function (EOF) analysis. Data are from the [Arctic 2k](https://www.nature.com/articles/sdata201426) compilation, which we load here:    
+This vignette showcases the ability to perform principal component analysis (PCA, also known as empirical orthogonal function (EOF) analysis. Data are from the [PalMod](pa) compilation. We'll just load a subset of it here, but the rest is available on the LiPDverse()    
 
-```{r,cache=TRUE}
-  FD <- lipdR::readLipd("http://lipdverse.org/geoChronR-examples/arc2k/Arctic2k.zip") 
+```{r indianOceanData,cache=TRUE}
+  FD <- lipdR::readLipd("http://lipdverse.org/geoChronR-examples/PalMod-IndianOcean/PalMod-IndianOcean.zip") 
 ```
+
 
 ## Make a map
 First, let's take a quick look at where these records are located. geoChronR's `mapLipd` function can create quick maps:
 
 ```{r,results="hide",fig.keep="all"}
-mapLipd(FD,map.type = "line",projection = "stereo",f = 0.1)
+mapLipd(FD,map.type = "line",f = 0.1)
 ```
 
-More map projections are available too. A list is available here:
-`?mapproject`
-
-## Prepare the data for PCA
-
 ### Grab the age ensembles for each record. 
-Now we need to "map" (I know, a different kind of mapping) the age ensembles to paleo for all of these datasets. We'll use purrr::map for this, but you could also do it with sapply(). In this case we're going to specify that all of the age ensembles are named "ageEnsemble", and that they don't have a depth variable because they're layer counted.
-```{r,results="hide",message=FALSE}
+Now we need to map the age ensembles to paleo for all of these datasets. We'll use purrr::map for this, but you could also do it with sapply(). In this case we're going to specify that all of the age ensembles are named "ageEnsemble", and the chron and paleo depth variables. Fortunately, the naming is consistent across PalMod, making this straightforward.
+```{r mapIOD,results="hide",message=FALSE}
 FD2 = purrr::map(FD,
                  mapAgeEnsembleToPaleoData,
                  strict.search = TRUE,
-                 age.var = "ageEnsemble",
-                 depth.var = NULL )
+                 paleo.depth.var = "depth_merged",
+                 chron.depth.var = "depth",
+                 age.var = "ageEnsemble" )
 ```
 
-Now extract all the "timeseries" into at "TS object" that will facilitate working with multiple records.
+
+### Filter the data
+
+In this analysis, we're interested in spatiotemporal patterns in the Indian Ocean during the Last Deglaciation. Not all of these records cover that time interval, so let's take a look at the temporal coverage. 
 
 ```{r}
-TS <- extractTs(FD2)
+indTib <- FD2 %>% extractTs() %>% ts2tibble() #create a lipd-timeseries-tibble
+
+#use purrr to extract the minimum and maximum ages for each record
+minAge <- map_dbl(indTib$age,min,na.rm = TRUE)
+maxAge <- map_dbl(indTib$age,max,na.rm = TRUE)
+
+#plot the distributions of the ages.
+ggplot()+ geom_histogram(aes(x = minAge,fill = "Min age")) + 
+  geom_histogram(aes(x = maxAge,fill = "Max age"),alpha = 0.5) +
+  scale_fill_manual("",values = c("red","black")) +
+  xlab("Age")
+                   
 ```
+OK, so it looks like the ages range from 0 to about 150. But what are the units on those?
 
-and filter the TS object to only include variables that have been interpreted as temperature. Here we'll use `lipdR::filterTs` to filter the TS object.
+:::: {.blackbox data-latex=""}
+::: {.exercise #units}
+Explore the LiPD data to determine the units on the ages, and update your histogram appropriately. 
+:::
+::::
 
-```{r,results="hide",fig.keep="all"}
-TS.filtered <- filterTs(TS,"interpretation1_variable == T")
+Since we're interested in the deglaciation, we need to find which datasets span the range from at least 10,000 to 30,000 years ago, and that have enough data in that range to be useful. 
+
+There are a few ways to go about this. Here's one:
+
+```{r, warning=FALSE}
+indTs <- extractTs(FD2) #create a lipd-timeseries
+
+# create some variables for screening
+startYear <- 10
+endYear <- 30
+
+#write a function to determine if the dataset has enough values within the target time frame
+nGoodVals <- function(x,startYear,endYear){
+  agesWithValues <- x$age[is.finite(x$paleoData_values)]
+  gv <- which(agesWithValues >= startYear & agesWithValues <= endYear)
+  return(length(gv))
+}
+
+#write a function to determine how much coverage the data has within that target frame
+span <- function(x,startYear,endYear){
+  agesWithValues <- x$age[is.finite(x$paleoData_values)]
+  agesWithValues <- agesWithValues[agesWithValues >= startYear & agesWithValues <= endYear]
+  sout <- abs(diff(range(agesWithValues,na.rm = TRUE)))
+  return(sout)
+}
+
+#use purrr to run those functions over each item in the list
+nValsInRange <- map_dbl(indTs,nGoodVals,startYear,endYear)
+span <- map_dbl(indTs,span,startYear,endYear)
 ```
-OK, let's make a quick plot stack to see what we're dealing with.
+OK, now we can see for each of these timeseries how many values are between 10 and 30 ka, and how much time range that span corresponds to. 
 
-The `lipdR::tidyTs` function will convert a TS into a long, "tidy" data.frame, where each observation has a row in a data.frame. This can be verbose, but is also useful for data analysis in the tidyverse framework. 
-
-```{r,results="hide",fig.keep="all"}
-tidyDf <- lipdR::tidyTs(TS.filtered,age.var = "year")
-```
-
-A tidy data.frame is also the input for the `plotTimeseriesStack` function in geoChronR.
-
+We can now filter our TS object down to something closer to what we're looking for, and then select on the variable we're looking for, in this, "surface.temp"
 
 ```{r}
-plotTimeseriesStack(tidyDf, 
-                    color.var = "paleoData_variableName", 
-                    color.ramp = c("DarkBlue","Orange","Black","Dark Green"),
-                    line.size = .1, 
-                    fill.alpha = .05,
-                    lab.size = 2,
-                    lab.space = 3)
+#use our indices from above to select only the good timeseries
+TS.filtered <- indTs[nValsInRange > 20 & span > 15] %>% 
+  filterTs("paleoData_variableName == surface.temp") #and then select our variable of interest
 ```
 
 
-Now bin all the data in the TS from 1400 to 2000, an interval of pretty good data coverage, into 5 year bins. 
+At this point, we should get our eyes on the data. Let's make a timeseries plot of the existing data. 
+```{r}
+tsTib <- ts2tibble(TS.filtered) 
 
-```{r,results="hide",cache=TRUE}
-binned.TS <- binTs(TS.filtered,bin.vec = seq(1400,2000,by=5),time.var = "ageEnsemble")
+tp <- tidyTs(tsTib,age.var = "age")
+
+#filter it only to our time range
+tp <- tp %>% 
+  filter(between(age,10,30))
+
+
+plotTimeseriesStack(tp,time.var = "age")
+```
+
+OK, it looks like our filtering worked as expected. We now have a lipd-timeseries object that contains only the timeseries we want to include in our PCA, and the age ensembles are included. We're ready to move forward with ensemble PCA!
+
+To conduct PCA, we need to put all of these data onto a common timescale. We will use binning to do this, although there are also other approaches. We also want to repeat the binning across our different ensemble members, recognizing that age uncertainty affects the bins! binTs will bin all the data in the TS from 10 ka to 23 ka into 5 year bins. 
+
+```{r binTS1,results="hide",cache=TRUE}
+binned.TS <- binTs(TS.filtered,bin.vec = seq(10,30,by=.5),time.var = "ageEnsemble")
 ```
 
 We're now ready to calculate the PCA!
@@ -84,8 +131,8 @@ We're now ready to calculate the PCA!
 ## Calculate the ensemble PCA
 
 Calculate PCA on each ensemble member:
-```{r,results="hide",warning=FALSE}
-pcout <- pcaEns(binned.TS)
+```{r pcaEns1,results="hide",warning=FALSE,cache = TRUE}
+pcout <- pcaEns(binned.TS,pca.type = "cov")
 ```
 
 That was easy (because of all the work we did beforehand). But before we look at the results let's take a look at a scree plot to get a sense of how many significant components we should expect. 
@@ -102,7 +149,13 @@ It looks like the first two components, shown in black with gray uncertainty sha
 Now let's visualize the results. The `plotPcaEns` function will create multiple diagnostic figures of the results, and stitch them together. 
 
 ```{r}
-plotPCA <-  plotPcaEns(pcout,TS = TS.filtered,map.type = "line",projection = "stereo",bound.circ = T,restrict.map.range = T,f=.1,legend.position = c(0.5,.6),which.pcs = 1:2,which.leg = 2)
+plotPCA <-  plotPcaEns(pcout,
+                       TS = TS.filtered,
+                       map.type = "line",
+                       f=.1,
+                       legend.position = c(0.5,.6),
+                       which.pcs = 1:2,
+                       which.leg = 2)
 ```
 
 Nice! A summary plot that combines the major features is produced, but all of the components, are included in the "plotPCA" list that was exported. 
@@ -116,70 +169,47 @@ print(quantileData)
 ```
 
 
-## Ensemble PCA take two - using a covariance matrix.
-Let's repeat much of this analysis, but this time we're only going to analyze the $\delta^{18}O$ data, keep them in their native values, and use a covariance matrix in the PCA analysis. 
+## Ensemble PCA using a correlation matrix.
+Let's repeat much of this analysis, but this time let's take a look at the data underlying the surface temperature reconstructions, $\delta^{18}O$ and Mg/Ca data.
 
-First, it looks like let's look at all the names in the TS
+First, look at the variable names represented in our dataset. This is easiest with our tibble 
 ```{r}
-var.names <- pullTsVariable(TS, "variableName")
-```
-Oops - looks like we didn't use quite the correct name. Next time use: 
+tib.filtered <- indTs[nValsInRange > 20 & span > 15] %>% ts2tibble()
 
-```{r}
-var.names <- pullTsVariable(TS, "paleoData_variableName")
+table(tib.filtered$paleoData_variableName)
 ```
 
-and take a look at the unique variableNames in the TS
+OK. Let's filter the timeseries again, this time pulling all the $\delta^{18}O$ and Mg/Ca data.
 
-```{r}
-unique(var.names)
+:::: {.blackbox data-latex=""}
+::: {.exercise #d18OMgCafilter}
+Write code to filter tib.filtered to only includes the planktonic d18O and $\delta^{18}O$ and Mg/Ca data.
+:::
+::::
+
+```{r,results="hide",eval = TRUE,echo = FALSE}
+newTS <- tib.filtered %>% 
+  filter(paleoData_variableName == "planktonic.d18O" | paleoData_variableName == "planktonic.MgCa") %>% 
+  as.lipdTs()
 ```
 
-OK. Let's filter the timeseries again, this time pulling all the $\delta^{18}O$ data.
+Great. It's pretty easy to filter the data if you're used to dplyr, and if you're not, it's not too hard to learn. Now let's take a look at the data. 
 
-```{r,results="hide"}
-d18OTS = filterTs(TS,"paleoData_variableName == d18O")
+:::: {.blackbox data-latex=""}
+::: {.exercise #d18OMgCaPlotstack}
+Create a plotStack visualizing these data. Color the timeseries by variable name. 
+:::
+::::
+
+Take a look at your plot, note the units, and the scale of the variability. Since we're now dealing with variables in different units, we cannot use a covariance matrix.
+```{r binTs2,results="hide",eval = TRUE,echo = FALSE, cache = TRUE}
+binned.TS2 <- binTs(newTS,bin.vec = seq(10,30,by=.5),time.var = "ageEnsemble")
 ```
 
-And we'll tidy up the data for a plotStack
+And calculate the ensemble PCA, this time using a covariance matrix. By using a covariance matrix, we'll allow records that have larger variability in $\delta^{18}O$ to influence the PCA more, and those that have little variability will have little impact. This may or may not be a good idea, but it's an important option to consider when possible. 
 
-```{r,results="hide"}
-tidyd18O <- tidyTs(d18OTS,age.var = "year")
-
-```
-
-Before plotting, let's do some tidyverse gymnastics to reorder the data by the length of the observations
-```{r}
-#arrange the tidy dataframe by record length
-tidyd18O <- tidyd18O %>% #use the magrittr pipe for clarity
-  group_by(paleoData_TSid) %>% #group the data by column
-  mutate(duration = max(year) - min(year)) %>% #create a new column for the duration
-  arrange(duration) # and arrange the data by duration
-
-```
-
-Again we'll use `plotTimeseriesStack` to show all the data, now nicely arranged.
-```{r}
-plotTimeseriesStack(tidyd18O, 
-                    color.var = "paleoData_variableName", # Color the data by the variable name (all the same in the case)
-                    color.ramp = "DarkBlue", #colors to use
-                    line.size = .1, 
-                    fill.alpha = .05,
-                    lab.size = 2,
-                    lab.space = 2,
-                    lab.buff = 0.03)
-```
-
-Well that sure is nice and tidy. Again, it looks like binning from 1400-2000 will give us good data coverage. 
-
-```{r,results="hide"}
-binned.TS2 <- binTs(d18OTS,bin.vec = seq(1400,2000,by=5),na.col.rm = T)
-```
-
-And calculate the ensemble PCA, this time using a covariance matrix. By using a covariance, we'll allow records that have larger variability in $\delta^{18}O$ to influence the PCA more, and those that have little variability will have little impact. This may or may not be a good idea, but it's an important option to consider when possible. 
-
-```{r,results="hide",warning = FALSE}
-pcout2 <- pcaEns(binned.TS2,pca.type = "cov")
+```{r pcaEns2,results="hide",warning = FALSE}
+pcout2 <- pcaEns(binned.TS2,pca.type = "corr")
 ```
 
 Once again, let's take a look at the scree plot:
@@ -188,17 +218,48 @@ Once again, let's take a look at the scree plot:
 plotScreeEns(pcout2)
 ```
 
-Once again, the first two components look good, but the third also looks to be likely above the 95% significance level, so let's include the third PC in our plot this time as well. 
+Once again, the first PC dominates the variability. All of the subsequent PCs are non signficant, but let's include the second third PC in our plot this time as well. 
 
-```{r,fig.width = 8,fig.height = 6,warning = FALSE}
+:::: {.blackbox data-latex=""}
+::: {.exercise #d18OMgCaPlotPca}
+Create a PCA plot showing the output of your data. This time let's explore the options. 
+
+
+1. Show the first 3 PCs
+2. Select a different map background
+3. Change the shapes
+4. Change the color scale. 
+:::
+::::
+
+```{r,fig.width = 8,fig.height = 6,warning = FALSE,echo=FALSE,eval=FALSE}
 plotPCA2 <-  plotPcaEns(pcout2,
-                        TS = d18OTS,
+                        TS = newTS,
                         which.pcs = 1:3,  
-                        map.type = "line",
-                        projection = "stereo",
-                        bound.circ = T,
-                        restrict.map.range = T,
+                        map.type = "stamen",
+                        dot.size = 7,
+                        shape.by.archive = FALSE,
+                        high.color = "purple",
+                        low.color = "green",
                         f=.2)
 ```
 
-Using only the $\delta^{18}O$ data and a covariance matrix, we get somewhat different results. The first PC timeseries looks similar to the first one, but the spatial pattern is somewhat difference, with stronger loadings in the northeast. The second PC looks to be a new pattern, although the third resembles PC2 from the first analysis. 
+Again, the scree plot tells us that only the first EOF pattern is worth interpreting, so let's interpret it!
+
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #interpret}
+1. Is the timeseries more or less what you expected? How does it compare from what we got from the surface temperature data?
+2. The spatial pattern show high positive and high negative values? How does this compare with our previous analysis? What might be the origin of this pattern?
+:::
+::::
+
+## Chapter project
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #pcaProject}
+For your chapter project for PCA, we're going to take a bigger picture look at planktonic $\delta^{18}O$. Specifically, I'd like you to conduct time-uncertain PCA on global planktonic $\delta^{18}O$ data that span from 130ka up to the present. I've prepared a subset of the compilation that has at least 100 observations between 130 ka and the present, and that spans at least 100 kyr during that interval, which is a great start. [That subset is here](https://lipdverse.org/geoChronR-examples/Palmod-Global-d18O/Palmod-Global-d18O.zip). You'll have to make some decisions along the way. Go ahead and make your choices, just have a good reason for each choice you make!  
+:::
+::::
+
+

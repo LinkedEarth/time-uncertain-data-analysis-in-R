@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 6 Principal Components Analysis {pca} | Time-uncertain data analysis in R</title>
+  <meta name="description" content="This book covers time-uncertain data analysis in R, primarily relying on the geoChronR package" />
+  <meta name="generator" content="bookdown 0.22 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 6 Principal Components Analysis {pca} | Time-uncertain data analysis in R" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This book covers time-uncertain data analysis in R, primarily relying on the geoChronR package" />
+  <meta name="github-repo" content="linkedearth/time-uncertain-data-analysis-in-R" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 6 Principal Components Analysis {pca} | Time-uncertain data analysis in R" />
+  
+  <meta name="twitter:description" content="This book covers time-uncertain data analysis in R, primarily relying on the geoChronR package" />
+  
+
+<meta name="author" content="Nick McKay" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="correlation.html"/>
+<link rel="next" href="regression-and-calibration-in-time.html"/>
+<script src="libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">geoChronR Tutorial</a></li>
+<li><a href="http://nickmckay.github.io/GeoChronR>geoChronR manual</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Welcome!</a></li>
+<li class="chapter" data-level="2" data-path="installation.html"><a href="installation.html"><i class="fa fa-check"></i><b>2</b> Installing the software you need</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="installation.html"><a href="installation.html#installing-lipdr"><i class="fa fa-check"></i><b>2.1</b> Installing lipdR</a></li>
+<li class="chapter" data-level="2.2" data-path="installation.html"><a href="installation.html#installing-geochronr"><i class="fa fa-check"></i><b>2.2</b> Installing geoChronR</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="data.html"><a href="data.html"><i class="fa fa-check"></i><b>3</b> Data in geoChronR</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="data.html"><a href="data.html#loading-a-lipd-file"><i class="fa fa-check"></i><b>3.1</b> Loading a LiPD file</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="data.html"><a href="data.html#selectData"><i class="fa fa-check"></i><b>3.1.1</b> Extract a variable from a LiPD object</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="data.html"><a href="data.html#loading-multiple-lipd-datasets"><i class="fa fa-check"></i><b>3.2</b> Loading multiple LiPD datasets</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="data.html"><a href="data.html#filtering"><i class="fa fa-check"></i><b>3.2.1</b> Filtering</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="agemodelling.html"><a href="agemodelling.html"><i class="fa fa-check"></i><b>4</b> Age modelling in geoChronR</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="agemodelling.html"><a href="agemodelling.html#bacon"><i class="fa fa-check"></i><b>4.1</b> Bacon</a></li>
+<li class="chapter" data-level="4.2" data-path="agemodelling.html"><a href="agemodelling.html#bchron"><i class="fa fa-check"></i><b>4.2</b> BChron</a></li>
+<li class="chapter" data-level="4.3" data-path="agemodelling.html"><a href="agemodelling.html#oxcal"><i class="fa fa-check"></i><b>4.3</b> OxCal</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="agemodelling.html"><a href="agemodelling.html#lets-compare-these-models."><i class="fa fa-check"></i><b>4.3.1</b> Let’s compare these models.</a></li>
+<li class="chapter" data-level="4.3.2" data-path="agemodelling.html"><a href="agemodelling.html#creating-a-multimodel-ensemble"><i class="fa fa-check"></i><b>4.3.2</b> Creating a multimodel ensemble</a></li>
+<li class="chapter" data-level="4.3.3" data-path="agemodelling.html"><a href="agemodelling.html#mapping-the-age-ensemble-to-the-paleodata-measurements"><i class="fa fa-check"></i><b>4.3.3</b> Mapping the age ensemble to the paleoData measurements</a></li>
+<li class="chapter" data-level="4.3.4" data-path="agemodelling.html"><a href="agemodelling.html#creating-a-timeseries-plot-as-a-spaghetti-plot-of-lines"><i class="fa fa-check"></i><b>4.3.4</b> Creating a timeseries plot as a spaghetti plot of lines</a></li>
+<li class="chapter" data-level="4.3.5" data-path="agemodelling.html"><a href="agemodelling.html#creating-a-timeseries-plot-with-a-ribbon-confidence-intervals"><i class="fa fa-check"></i><b>4.3.5</b> Creating a timeseries plot with a ribbon confidence intervals</a></li>
+<li class="chapter" data-level="4.3.6" data-path="agemodelling.html"><a href="agemodelling.html#combining-the-two-kinds-of-timeseries-plots"><i class="fa fa-check"></i><b>4.3.6</b> Combining the two kinds of timeseries plots</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="agemodelling.html"><a href="agemodelling.html#banded-age-modelling"><i class="fa fa-check"></i><b>4.4</b> Banded Age Modelling</a></li>
+<li class="chapter" data-level="4.5" data-path="agemodelling.html"><a href="agemodelling.html#chapter-project."><i class="fa fa-check"></i><b>4.5</b> Chapter project.</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="correlation.html"><a href="correlation.html"><i class="fa fa-check"></i><b>5</b> Time-uncertain correlation</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="correlation.html"><a href="correlation.html#first-look"><i class="fa fa-check"></i><b>5.1</b> First look</a></li>
+<li class="chapter" data-level="5.2" data-path="correlation.html"><a href="correlation.html#correlateResponsibly"><i class="fa fa-check"></i><b>5.2</b> How to correlate responsibly</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="correlation.html"><a href="correlation.html#binning"><i class="fa fa-check"></i><b>5.2.1</b> Binning</a></li>
+<li class="chapter" data-level="5.2.2" data-path="correlation.html"><a href="correlation.html#autocorrelation"><i class="fa fa-check"></i><b>5.2.2</b> Autocorrelation</a></li>
+<li class="chapter" data-level="5.2.3" data-path="correlation.html"><a href="correlation.html#test-multiplicity"><i class="fa fa-check"></i><b>5.2.3</b> Test multiplicity</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="correlation.html"><a href="correlation.html#the-corens-function"><i class="fa fa-check"></i><b>5.3</b> The corEns() function</a></li>
+<li class="chapter" data-level="5.4" data-path="correlation.html"><a href="correlation.html#plotting-the-ensemble-correlation-results"><i class="fa fa-check"></i><b>5.4</b> Plotting the ensemble correlation results</a>
+<ul>
+<li class="chapter" data-level="5.4.1" data-path="correlation.html"><a href="correlation.html#significance-testing-options"><i class="fa fa-check"></i><b>5.4.1</b> Significance testing options</a></li>
+<li class="chapter" data-level="5.4.2" data-path="correlation.html"><a href="correlation.html#false-discovery-rate-testing"><i class="fa fa-check"></i><b>5.4.2</b> False-discovery rate testing</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="correlation.html"><a href="correlation.html#judging-the-overall-significance-of-an-age-uncertain-correlation"><i class="fa fa-check"></i><b>5.5</b> Judging the overall significance of an age-uncertain correlation</a></li>
+<li class="chapter" data-level="5.6" data-path="correlation.html"><a href="correlation.html#chapter-project"><i class="fa fa-check"></i><b>5.6</b> Chapter Project</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html"><i class="fa fa-check"></i><b>6</b> Principal Components Analysis {pca}</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#make-a-map"><i class="fa fa-check"></i><b>6.1</b> Make a map</a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#grab-the-age-ensembles-for-each-record."><i class="fa fa-check"></i><b>6.1.1</b> Grab the age ensembles for each record.</a></li>
+<li class="chapter" data-level="6.1.2" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#filter-the-data"><i class="fa fa-check"></i><b>6.1.2</b> Filter the data</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#calculate-the-ensemble-pca"><i class="fa fa-check"></i><b>6.2</b> Calculate the ensemble PCA</a>
+<ul>
+<li class="chapter" data-level="6.2.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#plot-the-ensemble-pca-results"><i class="fa fa-check"></i><b>6.2.1</b> Plot the ensemble PCA results</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#ensemble-pca-using-a-correlation-matrix."><i class="fa fa-check"></i><b>6.3</b> Ensemble PCA using a correlation matrix.</a></li>
+<li class="chapter" data-level="6.4" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#chapter-project-1"><i class="fa fa-check"></i><b>6.4</b> Chapter project</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html"><i class="fa fa-check"></i><b>7</b> Regression and Calibration-in-time</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#load-the-lipd-file"><i class="fa fa-check"></i><b>7.1</b> Load the LiPD file</a></li>
+<li class="chapter" data-level="7.2" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#check-out-the-contents"><i class="fa fa-check"></i><b>7.2</b> Check out the contents</a></li>
+<li class="chapter" data-level="7.3" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#create-an-age-model-with-bacon"><i class="fa fa-check"></i><b>7.3</b> Create an age model with Bacon</a></li>
+<li class="chapter" data-level="7.4" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-ensemble-output"><i class="fa fa-check"></i><b>7.4</b> And plot the ensemble output</a></li>
+<li class="chapter" data-level="7.5" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#map-the-age-ensemble-to-the-paleodata-table"><i class="fa fa-check"></i><b>7.5</b> Map the age ensemble to the paleodata table</a></li>
+<li class="chapter" data-level="7.6" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#select-the-paleodata-age-ensemble-and-rabd-data-that-wed-like-to-regress-and-calibrate"><i class="fa fa-check"></i><b>7.6</b> Select the paleodata age ensemble, and RABD data that we’d like to regress and calibrate</a></li>
+<li class="chapter" data-level="7.7" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#now-load-in-the-instrumental-data-we-want-to-correlate-and-regress-agains"><i class="fa fa-check"></i><b>7.7</b> Now load in the instrumental data we want to correlate and regress agains</a></li>
+<li class="chapter" data-level="7.8" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#check-agetime-units-before-proceeding"><i class="fa fa-check"></i><b>7.8</b> Check age/time units before proceeding</a></li>
+<li class="chapter" data-level="7.9" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#create-a-variable-list-for-the-instrumental-data"><i class="fa fa-check"></i><b>7.9</b> Create a “variable list” for the instrumental data</a></li>
+<li class="chapter" data-level="7.10" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#calculate-an-ensmeble-correlation-between-the-rabd-and-local-summer-temperature-data"><i class="fa fa-check"></i><b>7.10</b> Calculate an ensmeble correlation between the RABD and local summer temperature data</a></li>
+<li class="chapter" data-level="7.11" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-output"><i class="fa fa-check"></i><b>7.11</b> And plot the output</a></li>
+<li class="chapter" data-level="7.12" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#perform-ensemble-regression"><i class="fa fa-check"></i><b>7.12</b> Perform ensemble regression</a></li>
+<li class="chapter" data-level="7.13" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-output-1"><i class="fa fa-check"></i><b>7.13</b> And plot the output</a>
+<ul>
+<li class="chapter" data-level="7.13.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#lomb-scargle-periodogram"><i class="fa fa-check"></i><b>7.13.1</b> Lomb-Scargle periodogram</a></li>
+<li class="chapter" data-level="7.13.2" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#multi-taper-method"><i class="fa fa-check"></i><b>7.13.2</b> Multi-taper Method</a></li>
+<li class="chapter" data-level="7.13.3" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#weighted-wavelet-z-transform-nuspectral"><i class="fa fa-check"></i><b>7.13.3</b> Weighted Wavelet Z-transform (<em>nuspectral</em>)</a></li>
+</ul></li>
+<li class="chapter" data-level="7.14" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#time-uncertain-spectral-analysis"><i class="fa fa-check"></i><b>7.14</b> Time-uncertain spectral analysis</a></li>
+<li class="chapter" data-level="7.15" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#conclusion"><i class="fa fa-check"></i><b>7.15</b> Conclusion</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Time-uncertain data analysis in R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="principal-components-analysis-pca" class="section level1" number="6">
+<h1><span class="header-section-number">Chapter 6</span> Principal Components Analysis {pca}</h1>
+<p>As always, let’s start by loading the packages we need.</p>
+<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="principal-components-analysis-pca.html#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lipdR)</span>
+<span id="cb93-2"><a href="principal-components-analysis-pca.html#cb93-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geoChronR)</span>
+<span id="cb93-3"><a href="principal-components-analysis-pca.html#cb93-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(magrittr)</span>
+<span id="cb93-4"><a href="principal-components-analysis-pca.html#cb93-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb93-5"><a href="principal-components-analysis-pca.html#cb93-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
+<span id="cb93-6"><a href="principal-components-analysis-pca.html#cb93-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span></code></pre></div>
+<p>This vignette showcases the ability to perform principal component analysis (PCA, also known as empirical orthogonal function (EOF) analysis. Data are from the <a href="pa">PalMod</a> compilation. We’ll just load a subset of it here, but the rest is available on the LiPDverse()</p>
+<div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb94-1"><a href="principal-components-analysis-pca.html#cb94-1" aria-hidden="true" tabindex="-1"></a>  FD <span class="ot">&lt;-</span> lipdR<span class="sc">::</span><span class="fu">readLipd</span>(<span class="st">&quot;http://lipdverse.org/geoChronR-examples/PalMod-IndianOcean/PalMod-IndianOcean.zip&quot;</span>) </span></code></pre></div>
+<pre><code>## [1] &quot;reading: 182_1132B.lpd&quot;
+## [1] &quot;reading: GeoB12615_4.lpd&quot;
+## [1] &quot;reading: GIK17940_2.lpd&quot;
+## [1] &quot;reading: GIK17961_2.lpd&quot;
+## [1] &quot;reading: GIK18471_1.lpd&quot;
+## [1] &quot;reading: MD01_2378.lpd&quot;
+## [1] &quot;reading: MD02_2589.lpd&quot;
+## [1] &quot;reading: MD06_3067.lpd&quot;
+## [1] &quot;reading: MD06_3075.lpd&quot;
+## [1] &quot;reading: MD73_025.lpd&quot;
+## [1] &quot;reading: MD84_527.lpd&quot;
+## [1] &quot;reading: MD88_770.lpd&quot;
+## [1] &quot;reading: MD98_2181.lpd&quot;
+## [1] &quot;reading: ODP1145.lpd&quot;
+## [1] &quot;reading: SK157_14.lpd&quot;
+## [1] &quot;reading: SO42_74KL.lpd&quot;
+## [1] &quot;reading: WIND_28K.lpd&quot;</code></pre>
+<div id="make-a-map" class="section level2" number="6.1">
+<h2><span class="header-section-number">6.1</span> Make a map</h2>
+<p>First, let’s take a quick look at where these records are located. geoChronR’s <code>mapLipd</code> function can create quick maps:</p>
+<div class="sourceCode" id="cb96"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb96-1"><a href="principal-components-analysis-pca.html#cb96-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mapLipd</span>(FD,<span class="at">map.type =</span> <span class="st">&quot;line&quot;</span>,<span class="at">f =</span> <span class="fl">0.1</span>)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-46-1.png" width="672" /></p>
+<div id="grab-the-age-ensembles-for-each-record." class="section level3" number="6.1.1">
+<h3><span class="header-section-number">6.1.1</span> Grab the age ensembles for each record.</h3>
+<p>Now we need to map the age ensembles to paleo for all of these datasets. We’ll use purrr::map for this, but you could also do it with sapply(). In this case we’re going to specify that all of the age ensembles are named “ageEnsemble,” and the chron and paleo depth variables. Fortunately, the naming is consistent across PalMod, making this straightforward.</p>
+<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb97-1"><a href="principal-components-analysis-pca.html#cb97-1" aria-hidden="true" tabindex="-1"></a>FD2 <span class="ot">=</span> purrr<span class="sc">::</span><span class="fu">map</span>(FD,</span>
+<span id="cb97-2"><a href="principal-components-analysis-pca.html#cb97-2" aria-hidden="true" tabindex="-1"></a>                 mapAgeEnsembleToPaleoData,</span>
+<span id="cb97-3"><a href="principal-components-analysis-pca.html#cb97-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">strict.search =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb97-4"><a href="principal-components-analysis-pca.html#cb97-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">paleo.depth.var =</span> <span class="st">&quot;depth_merged&quot;</span>,</span>
+<span id="cb97-5"><a href="principal-components-analysis-pca.html#cb97-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">chron.depth.var =</span> <span class="st">&quot;depth&quot;</span>,</span>
+<span id="cb97-6"><a href="principal-components-analysis-pca.html#cb97-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">age.var =</span> <span class="st">&quot;ageEnsemble&quot;</span> )</span></code></pre></div>
+</div>
+<div id="filter-the-data" class="section level3" number="6.1.2">
+<h3><span class="header-section-number">6.1.2</span> Filter the data</h3>
+<p>In this analysis, we’re interested in spatiotemporal patterns in the Indian Ocean during the Last Deglaciation. Not all of these records cover that time interval, so let’s take a look at the temporal coverage.</p>
+<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb98-1"><a href="principal-components-analysis-pca.html#cb98-1" aria-hidden="true" tabindex="-1"></a>indTib <span class="ot">&lt;-</span> FD2 <span class="sc">%&gt;%</span> <span class="fu">extractTs</span>() <span class="sc">%&gt;%</span> <span class="fu">ts2tibble</span>() <span class="co">#create a lipd-timeseries-tibble</span></span>
+<span id="cb98-2"><a href="principal-components-analysis-pca.html#cb98-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb98-3"><a href="principal-components-analysis-pca.html#cb98-3" aria-hidden="true" tabindex="-1"></a><span class="co">#use purrr to extract the minimum and maximum ages for each record</span></span>
+<span id="cb98-4"><a href="principal-components-analysis-pca.html#cb98-4" aria-hidden="true" tabindex="-1"></a>minAge <span class="ot">&lt;-</span> <span class="fu">map_dbl</span>(indTib<span class="sc">$</span>age,min,<span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb98-5"><a href="principal-components-analysis-pca.html#cb98-5" aria-hidden="true" tabindex="-1"></a>maxAge <span class="ot">&lt;-</span> <span class="fu">map_dbl</span>(indTib<span class="sc">$</span>age,max,<span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb98-6"><a href="principal-components-analysis-pca.html#cb98-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb98-7"><a href="principal-components-analysis-pca.html#cb98-7" aria-hidden="true" tabindex="-1"></a><span class="co">#plot the distributions of the ages.</span></span>
+<span id="cb98-8"><a href="principal-components-analysis-pca.html#cb98-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>()<span class="sc">+</span> <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">x =</span> minAge,<span class="at">fill =</span> <span class="st">&quot;Min age&quot;</span>)) <span class="sc">+</span> </span>
+<span id="cb98-9"><a href="principal-components-analysis-pca.html#cb98-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">x =</span> maxAge,<span class="at">fill =</span> <span class="st">&quot;Max age&quot;</span>),<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb98-10"><a href="principal-components-analysis-pca.html#cb98-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="st">&quot;&quot;</span>,<span class="at">values =</span> <span class="fu">c</span>(<span class="st">&quot;red&quot;</span>,<span class="st">&quot;black&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb98-11"><a href="principal-components-analysis-pca.html#cb98-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;Age&quot;</span>)</span></code></pre></div>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-47-1.png" width="672" />
+OK, so it looks like the ages range from 0 to about 150. But what are the units on those?</p>
+<div class="blackbox">
+<div class="exercise">
+<p><span id="exr:units" class="exercise"><strong>Exercise 6.1  </strong></span>Explore the LiPD data to determine the units on the ages, and update your histogram appropriately.</p>
+</div>
+</div>
+<p>Since we’re interested in the deglaciation, we need to find which datasets span the range from at least 10,000 to 30,000 years ago, and that have enough data in that range to be useful.</p>
+<p>There are a few ways to go about this. Here’s one:</p>
+<div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb100-1"><a href="principal-components-analysis-pca.html#cb100-1" aria-hidden="true" tabindex="-1"></a>indTs <span class="ot">&lt;-</span> <span class="fu">extractTs</span>(FD2) <span class="co">#create a lipd-timeseries</span></span>
+<span id="cb100-2"><a href="principal-components-analysis-pca.html#cb100-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb100-3"><a href="principal-components-analysis-pca.html#cb100-3" aria-hidden="true" tabindex="-1"></a><span class="co"># create some variables for screening</span></span>
+<span id="cb100-4"><a href="principal-components-analysis-pca.html#cb100-4" aria-hidden="true" tabindex="-1"></a>startYear <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb100-5"><a href="principal-components-analysis-pca.html#cb100-5" aria-hidden="true" tabindex="-1"></a>endYear <span class="ot">&lt;-</span> <span class="dv">30</span></span>
+<span id="cb100-6"><a href="principal-components-analysis-pca.html#cb100-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb100-7"><a href="principal-components-analysis-pca.html#cb100-7" aria-hidden="true" tabindex="-1"></a><span class="co">#write a function to determine if the dataset has enough values within the target time frame</span></span>
+<span id="cb100-8"><a href="principal-components-analysis-pca.html#cb100-8" aria-hidden="true" tabindex="-1"></a>nGoodVals <span class="ot">&lt;-</span> <span class="cf">function</span>(x,startYear,endYear){</span>
+<span id="cb100-9"><a href="principal-components-analysis-pca.html#cb100-9" aria-hidden="true" tabindex="-1"></a>  agesWithValues <span class="ot">&lt;-</span> x<span class="sc">$</span>age[<span class="fu">is.finite</span>(x<span class="sc">$</span>paleoData_values)]</span>
+<span id="cb100-10"><a href="principal-components-analysis-pca.html#cb100-10" aria-hidden="true" tabindex="-1"></a>  gv <span class="ot">&lt;-</span> <span class="fu">which</span>(agesWithValues <span class="sc">&gt;=</span> startYear <span class="sc">&amp;</span> agesWithValues <span class="sc">&lt;=</span> endYear)</span>
+<span id="cb100-11"><a href="principal-components-analysis-pca.html#cb100-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">length</span>(gv))</span>
+<span id="cb100-12"><a href="principal-components-analysis-pca.html#cb100-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb100-13"><a href="principal-components-analysis-pca.html#cb100-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb100-14"><a href="principal-components-analysis-pca.html#cb100-14" aria-hidden="true" tabindex="-1"></a><span class="co">#write a function to determine how much coverage the data has within that target frame</span></span>
+<span id="cb100-15"><a href="principal-components-analysis-pca.html#cb100-15" aria-hidden="true" tabindex="-1"></a>span <span class="ot">&lt;-</span> <span class="cf">function</span>(x,startYear,endYear){</span>
+<span id="cb100-16"><a href="principal-components-analysis-pca.html#cb100-16" aria-hidden="true" tabindex="-1"></a>  agesWithValues <span class="ot">&lt;-</span> x<span class="sc">$</span>age[<span class="fu">is.finite</span>(x<span class="sc">$</span>paleoData_values)]</span>
+<span id="cb100-17"><a href="principal-components-analysis-pca.html#cb100-17" aria-hidden="true" tabindex="-1"></a>  agesWithValues <span class="ot">&lt;-</span> agesWithValues[agesWithValues <span class="sc">&gt;=</span> startYear <span class="sc">&amp;</span> agesWithValues <span class="sc">&lt;=</span> endYear]</span>
+<span id="cb100-18"><a href="principal-components-analysis-pca.html#cb100-18" aria-hidden="true" tabindex="-1"></a>  sout <span class="ot">&lt;-</span> <span class="fu">abs</span>(<span class="fu">diff</span>(<span class="fu">range</span>(agesWithValues,<span class="at">na.rm =</span> <span class="cn">TRUE</span>)))</span>
+<span id="cb100-19"><a href="principal-components-analysis-pca.html#cb100-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(sout)</span>
+<span id="cb100-20"><a href="principal-components-analysis-pca.html#cb100-20" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb100-21"><a href="principal-components-analysis-pca.html#cb100-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb100-22"><a href="principal-components-analysis-pca.html#cb100-22" aria-hidden="true" tabindex="-1"></a><span class="co">#use purrr to run those functions over each item in the list</span></span>
+<span id="cb100-23"><a href="principal-components-analysis-pca.html#cb100-23" aria-hidden="true" tabindex="-1"></a>nValsInRange <span class="ot">&lt;-</span> <span class="fu">map_dbl</span>(indTs,nGoodVals,startYear,endYear)</span>
+<span id="cb100-24"><a href="principal-components-analysis-pca.html#cb100-24" aria-hidden="true" tabindex="-1"></a>span <span class="ot">&lt;-</span> <span class="fu">map_dbl</span>(indTs,span,startYear,endYear)</span></code></pre></div>
+<p>OK, now we can see for each of these timeseries how many values are between 10 and 30 ka, and how much time range that span corresponds to.</p>
+<p>We can now filter our TS object down to something closer to what we’re looking for, and then select on the variable we’re looking for, in this, “surface.temp”</p>
+<div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb101-1"><a href="principal-components-analysis-pca.html#cb101-1" aria-hidden="true" tabindex="-1"></a><span class="co">#use our indices from above to select only the good timeseries</span></span>
+<span id="cb101-2"><a href="principal-components-analysis-pca.html#cb101-2" aria-hidden="true" tabindex="-1"></a>TS.filtered <span class="ot">&lt;-</span> indTs[nValsInRange <span class="sc">&gt;</span> <span class="dv">20</span> <span class="sc">&amp;</span> span <span class="sc">&gt;</span> <span class="dv">15</span>] <span class="sc">%&gt;%</span> </span>
+<span id="cb101-3"><a href="principal-components-analysis-pca.html#cb101-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filterTs</span>(<span class="st">&quot;paleoData_variableName == surface.temp&quot;</span>) <span class="co">#and then select our variable of interest</span></span></code></pre></div>
+<pre><code>## [1] &quot;14 results after query: paleoData_variableName == surface.temp&quot;</code></pre>
+<p>At this point, we should get our eyes on the data. Let’s make a timeseries plot of the existing data.</p>
+<div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb103-1"><a href="principal-components-analysis-pca.html#cb103-1" aria-hidden="true" tabindex="-1"></a>tsTib <span class="ot">&lt;-</span> <span class="fu">ts2tibble</span>(TS.filtered) </span>
+<span id="cb103-2"><a href="principal-components-analysis-pca.html#cb103-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb103-3"><a href="principal-components-analysis-pca.html#cb103-3" aria-hidden="true" tabindex="-1"></a>tp <span class="ot">&lt;-</span> <span class="fu">tidyTs</span>(tsTib,<span class="at">age.var =</span> <span class="st">&quot;age&quot;</span>)</span>
+<span id="cb103-4"><a href="principal-components-analysis-pca.html#cb103-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb103-5"><a href="principal-components-analysis-pca.html#cb103-5" aria-hidden="true" tabindex="-1"></a><span class="co">#filter it only to our time range</span></span>
+<span id="cb103-6"><a href="principal-components-analysis-pca.html#cb103-6" aria-hidden="true" tabindex="-1"></a>tp <span class="ot">&lt;-</span> tp <span class="sc">%&gt;%</span> </span>
+<span id="cb103-7"><a href="principal-components-analysis-pca.html#cb103-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">between</span>(age,<span class="dv">10</span>,<span class="dv">30</span>))</span>
+<span id="cb103-8"><a href="principal-components-analysis-pca.html#cb103-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb103-9"><a href="principal-components-analysis-pca.html#cb103-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb103-10"><a href="principal-components-analysis-pca.html#cb103-10" aria-hidden="true" tabindex="-1"></a><span class="fu">plotTimeseriesStack</span>(tp,<span class="at">time.var =</span> <span class="st">&quot;age&quot;</span>)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-50-1.png" width="672" /></p>
+<p>OK, it looks like our filtering worked as expected. We now have a lipd-timeseries object that contains only the timeseries we want to include in our PCA, and the age ensembles are included. We’re ready to move forward with ensemble PCA!</p>
+<p>To conduct PCA, we need to put all of these data onto a common timescale. We will use binning to do this, although there are also other approaches. We also want to repeat the binning across our different ensemble members, recognizing that age uncertainty affects the bins! binTs will bin all the data in the TS from 10 ka to 23 ka into 5 year bins.</p>
+<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb104-1"><a href="principal-components-analysis-pca.html#cb104-1" aria-hidden="true" tabindex="-1"></a>binned.TS <span class="ot">&lt;-</span> <span class="fu">binTs</span>(TS.filtered,<span class="at">bin.vec =</span> <span class="fu">seq</span>(<span class="dv">10</span>,<span class="dv">30</span>,<span class="at">by=</span>.<span class="dv">5</span>),<span class="at">time.var =</span> <span class="st">&quot;ageEnsemble&quot;</span>)</span></code></pre></div>
+<p>We’re now ready to calculate the PCA!</p>
+</div>
+</div>
+<div id="calculate-the-ensemble-pca" class="section level2" number="6.2">
+<h2><span class="header-section-number">6.2</span> Calculate the ensemble PCA</h2>
+<p>Calculate PCA on each ensemble member:</p>
+<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb105-1"><a href="principal-components-analysis-pca.html#cb105-1" aria-hidden="true" tabindex="-1"></a>pcout <span class="ot">&lt;-</span> <span class="fu">pcaEns</span>(binned.TS,<span class="at">pca.type =</span> <span class="st">&quot;cov&quot;</span>)</span></code></pre></div>
+<p>That was easy (because of all the work we did beforehand). But before we look at the results let’s take a look at a scree plot to get a sense of how many significant components we should expect.</p>
+<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb106-1"><a href="principal-components-analysis-pca.html#cb106-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotScreeEns</span>(pcout)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-51-1.png" width="672" /></p>
+<p>It looks like the first two components, shown in black with gray uncertainty shading, stand out above the null model (in red), but the third and beyond look marginal to insignficant. Let’s focus on the first two components.</p>
+<div id="plot-the-ensemble-pca-results" class="section level3" number="6.2.1">
+<h3><span class="header-section-number">6.2.1</span> Plot the ensemble PCA results</h3>
+<p>Now let’s visualize the results. The <code>plotPcaEns</code> function will create multiple diagnostic figures of the results, and stitch them together.</p>
+<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="principal-components-analysis-pca.html#cb107-1" aria-hidden="true" tabindex="-1"></a>plotPCA <span class="ot">&lt;-</span>  <span class="fu">plotPcaEns</span>(pcout,</span>
+<span id="cb107-2"><a href="principal-components-analysis-pca.html#cb107-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">TS =</span> TS.filtered,</span>
+<span id="cb107-3"><a href="principal-components-analysis-pca.html#cb107-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">map.type =</span> <span class="st">&quot;line&quot;</span>,</span>
+<span id="cb107-4"><a href="principal-components-analysis-pca.html#cb107-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">f=</span>.<span class="dv">1</span>,</span>
+<span id="cb107-5"><a href="principal-components-analysis-pca.html#cb107-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.5</span>,.<span class="dv">6</span>),</span>
+<span id="cb107-6"><a href="principal-components-analysis-pca.html#cb107-6" aria-hidden="true" tabindex="-1"></a>                       <span class="at">which.pcs =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,</span>
+<span id="cb107-7"><a href="principal-components-analysis-pca.html#cb107-7" aria-hidden="true" tabindex="-1"></a>                       <span class="at">which.leg =</span> <span class="dv">2</span>)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-52-1.png" width="672" /></p>
+<p>Nice! A summary plot that combines the major features is produced, but all of the components, are included in the “plotPCA” list that was exported.</p>
+<p>For comparison with other datasets it can be useful to export quantile timeseries shown in the figures. <code>plotTimeseriesEnsRibbons()</code> can optionally be used to export the data rather than plotting them. The following will export the PC1 timeseries:</p>
+<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb108-1"><a href="principal-components-analysis-pca.html#cb108-1" aria-hidden="true" tabindex="-1"></a>quantileData <span class="ot">&lt;-</span> <span class="fu">plotTimeseriesEnsRibbons</span>(<span class="at">X =</span> pcout<span class="sc">$</span>age,<span class="at">Y =</span> pcout<span class="sc">$</span>PCs[,<span class="dv">1</span>,],<span class="at">export.quantiles =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb108-2"><a href="principal-components-analysis-pca.html#cb108-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb108-3"><a href="principal-components-analysis-pca.html#cb108-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(quantileData)</span></code></pre></div>
+<pre><code>## # A tibble: 200 x 6
+##     ages `0.025` `0.25` `0.5` `0.75` `0.975`
+##    &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+##  1  10.8    5.05   6.01  6.62   7.24    8.32
+##  2  10.8    5.24   6.05  6.52   7.05    7.96
+##  3  10.9    5.39   6.06  6.43   6.82    7.58
+##  4  11.0    5.51   6.05  6.34   6.66    7.25
+##  5  11.1    5.56   5.99  6.26   6.56    7.02
+##  6  11.2    5.44   5.86  6.19   6.52    6.91
+##  7  11.3    5.35   5.78  6.08   6.35    6.79
+##  8  11.4    5.33   5.74  5.96   6.17    6.57
+##  9  11.5    5.26   5.67  5.82   6.02    6.41
+## 10  11.6    5.08   5.54  5.71   5.89    6.34
+## # … with 190 more rows</code></pre>
+</div>
+</div>
+<div id="ensemble-pca-using-a-correlation-matrix." class="section level2" number="6.3">
+<h2><span class="header-section-number">6.3</span> Ensemble PCA using a correlation matrix.</h2>
+<p>Let’s repeat much of this analysis, but this time let’s take a look at the data underlying the surface temperature reconstructions, <span class="math inline">\(\delta^{18}O\)</span> and Mg/Ca data.</p>
+<p>First, look at the variable names represented in our dataset. This is easiest with our tibble</p>
+<div class="sourceCode" id="cb110"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb110-1"><a href="principal-components-analysis-pca.html#cb110-1" aria-hidden="true" tabindex="-1"></a>tib.filtered <span class="ot">&lt;-</span> indTs[nValsInRange <span class="sc">&gt;</span> <span class="dv">20</span> <span class="sc">&amp;</span> span <span class="sc">&gt;</span> <span class="dv">15</span>] <span class="sc">%&gt;%</span> <span class="fu">ts2tibble</span>()</span>
+<span id="cb110-2"><a href="principal-components-analysis-pca.html#cb110-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb110-3"><a href="principal-components-analysis-pca.html#cb110-3" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(tib.filtered<span class="sc">$</span>paleoData_variableName)</span></code></pre></div>
+<pre><code>## 
+##             age     ageEnsemble    benthic.d13C    benthic.d18O           CaCO3             DBD           depth    depth_merged 
+##              28              11               5               7               2               1               1              11 
+## planktonic.d13C planktonic.d18O planktonic.MgCa    surface.temp             TOC            UK37 
+##               8              13               8              14               3               3</code></pre>
+<p>OK. Let’s filter the timeseries again, this time pulling all the <span class="math inline">\(\delta^{18}O\)</span> and Mg/Ca data.</p>
+<div class="blackbox">
+<div class="exercise">
+<p><span id="exr:d18OMgCafilter" class="exercise"><strong>Exercise 6.2  </strong></span>Write code to filter tib.filtered to only includes the planktonic d18O and <span class="math inline">\(\delta^{18}O\)</span> and Mg/Ca data.</p>
+</div>
+</div>
+<p>Great. It’s pretty easy to filter the data if you’re used to dplyr, and if you’re not, it’s not too hard to learn. Now let’s take a look at the data.</p>
+<div class="blackbox">
+<div class="exercise">
+<p><span id="exr:d18OMgCaPlotstack" class="exercise"><strong>Exercise 6.3  </strong></span>Create a plotStack visualizing these data. Color the timeseries by variable name.</p>
+</div>
+</div>
+<p>Take a look at your plot, note the units, and the scale of the variability. Since we’re now dealing with variables in different units, we cannot use a covariance matrix.</p>
+<p>And calculate the ensemble PCA, this time using a covariance matrix. By using a covariance matrix, we’ll allow records that have larger variability in <span class="math inline">\(\delta^{18}O\)</span> to influence the PCA more, and those that have little variability will have little impact. This may or may not be a good idea, but it’s an important option to consider when possible.</p>
+<div class="sourceCode" id="cb112"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb112-1"><a href="principal-components-analysis-pca.html#cb112-1" aria-hidden="true" tabindex="-1"></a>pcout2 <span class="ot">&lt;-</span> <span class="fu">pcaEns</span>(binned.TS2,<span class="at">pca.type =</span> <span class="st">&quot;corr&quot;</span>)</span></code></pre></div>
+<p>Once again, let’s take a look at the scree plot:</p>
+<div class="sourceCode" id="cb113"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb113-1"><a href="principal-components-analysis-pca.html#cb113-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotScreeEns</span>(pcout2)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-56-1.png" width="384" /></p>
+<p>Once again, the first PC dominates the variability. All of the subsequent PCs are non signficant, but let’s include the second third PC in our plot this time as well.</p>
+<div class="blackbox">
+<div class="exercise">
+<p><span id="exr:d18OMgCaPlotPca" class="exercise"><strong>Exercise 6.4  </strong></span>Create a PCA plot showing the output of your data. This time let’s explore the options.</p>
+<ol style="list-style-type: decimal">
+<li>Show the first 3 PCs</li>
+<li>Select a different map background</li>
+<li>Change the shapes</li>
+<li>Change the color scale.</li>
+</ol>
+</div>
+</div>
+<p>Again, the scree plot tells us that only the first EOF pattern is worth interpreting, so let’s interpret it!</p>
+<div class="blackbox">
+<div class="exercise">
+<ol style="list-style-type: decimal">
+<li></li>
+<li>Is the timeseries more or less what you expected? How does it compare from what we got from the surface temperature data?</li>
+<li>The spatial pattern show high positive and high negative values? How does this compare with our previous analysis? What might be the origin of this pattern?</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="chapter-project-1" class="section level2" number="6.4">
+<h2><span class="header-section-number">6.4</span> Chapter project</h2>
+<div class="blackbox">
+<div class="exercise">
+<p><span id="exr:pcaProject" class="exercise"><strong>Exercise 6.5  </strong></span>For your chapter project for PCA, we’re going to take a bigger picture look at planktonic <span class="math inline">\(\delta^{18}O\)</span>. Specifically, I’d like you to conduct time-uncertain PCA on global planktonic <span class="math inline">\(\delta^{18}O\)</span> data that span from 130ka up to the present. I’ve prepared a subset of the compilation that has at least 100 observations between 130 ka and the present, and that spans at least 100 kyr during that interval, which is a great start. <a href="https://lipdverse.org/geoChronR-examples/Palmod-Global-d18O/Palmod-Global-d18O.zip">That subset is here</a>. You’ll have to make some decisions along the way. Go ahead and make your choices, just have a good reason for each choice you make!</p>
+</div>
+</div>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="correlation.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="regression-and-calibration-in-time.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["Time-uncertain-data-analysis-in-R.pdf"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

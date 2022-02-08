@@ -19,8 +19,6 @@ tana <- readLipd("https://lipdverse.org/Temp12k/1_0_2/TanaLake.Loomis.2015.lpd")
 
 ## Bacon
 
-## Bacon
-
 The Bayesian ACcumulatiON (Bacon) algorithm  [@Blaauw2011BACON] is one of the most broadly used age-modelling techniques, and was designed to take advantage of prior knowledge about the distribution and autocorrelation structure of sedimentation rates in a sequence to better quantify uncertainty between dated levels.
 Bacon divides a sediment sequence into a parameterized number of equally-thick segments; most models use dozens to hundreds of these segments.
 Bacon then models sediment deposition, with uniform accumulation within each segment, as an autoregressive gamma process, where both the amount of autocorrelation and the shape of the gamma distribution are given prior estimates.
@@ -32,7 +30,7 @@ More recently, the authors released an R package "rbacon" [@baconPackage], which
 Bacon will optionally return a thinned subset of the stabilized MCMC accumulation rate ensemble members, which geoChronR uses to form age ensemble members for subsequent analysis.
 
 
-```{r,message=FALSE,results='hide',cache=TRUE}
+```{r runBacon,message=FALSE,results='hide',cache=TRUE,fig.show='hide',}
 tana <- runBacon(tana,
                  lab.id.var = 'LabID', 
                  age.14c.var = 'age14C',
@@ -76,7 +74,7 @@ The `thetaMhSd`, `psiMhSd`, and `muMhSd` parameters control the Metropolis-Hasti
 geoChronR uses the same default values as the official Bchron package, and we recommend that users only change them if they have good cause for doing so.
 
 
-```{r, cache=TRUE, results = 'hide',cache=TRUE}
+```{r runBchron, cache=TRUE, results = 'hide',cache=TRUE}
 tana <- runBchron(tana,
                  iter = 10000,
                  model.num = 2,
@@ -108,7 +106,7 @@ Oxcal does not typically calculate posterior ensembles for a depth sequence, but
 geoChronR uses this feature to extract ensemble members for subsequent analysis.
 
 
-```{r,cache=TRUE}
+```{r runOxcal,cache=TRUE}
 tana <- runOxcal(tana,model.num = 3,
                  lab.id.var = 'LabID', 
                  age.14c.var = 'age14C',

@@ -119,6 +119,28 @@ code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
@@ -149,80 +171,81 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li class="chapter" data-level="3.1.1" data-path="data.html"><a href="data.html#selectData"><i class="fa fa-check"></i><b>3.1.1</b> Extract a variable from a LiPD object</a></li>
 </ul></li>
-<li class="chapter" data-level="3.2" data-path="data.html"><a href="data.html#loading-multiple-lipd-datasets"><i class="fa fa-check"></i><b>3.2</b> Loading multiple LiPD datasets</a></li>
+<li class="chapter" data-level="3.2" data-path="data.html"><a href="data.html#loading-multiple-lipd-datasets"><i class="fa fa-check"></i><b>3.2</b> Loading multiple LiPD datasets</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="data.html"><a href="data.html#filtering"><i class="fa fa-check"></i><b>3.2.1</b> Filtering</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="agemodelling.html"><a href="agemodelling.html"><i class="fa fa-check"></i><b>4</b> Age modelling in geoChronR</a>
 <ul>
 <li class="chapter" data-level="4.1" data-path="agemodelling.html"><a href="agemodelling.html#bacon"><i class="fa fa-check"></i><b>4.1</b> Bacon</a></li>
-<li class="chapter" data-level="4.2" data-path="agemodelling.html"><a href="agemodelling.html#bacon-1"><i class="fa fa-check"></i><b>4.2</b> Bacon</a></li>
-<li class="chapter" data-level="4.3" data-path="agemodelling.html"><a href="agemodelling.html#bchron"><i class="fa fa-check"></i><b>4.3</b> BChron</a></li>
-<li class="chapter" data-level="4.4" data-path="agemodelling.html"><a href="agemodelling.html#oxcal"><i class="fa fa-check"></i><b>4.4</b> OxCal</a>
+<li class="chapter" data-level="4.2" data-path="agemodelling.html"><a href="agemodelling.html#bchron"><i class="fa fa-check"></i><b>4.2</b> BChron</a></li>
+<li class="chapter" data-level="4.3" data-path="agemodelling.html"><a href="agemodelling.html#oxcal"><i class="fa fa-check"></i><b>4.3</b> OxCal</a>
 <ul>
-<li class="chapter" data-level="4.4.1" data-path="agemodelling.html"><a href="agemodelling.html#lets-compare-these-models."><i class="fa fa-check"></i><b>4.4.1</b> Let’s compare these models.</a></li>
-<li class="chapter" data-level="4.4.2" data-path="agemodelling.html"><a href="agemodelling.html#creating-a-multimodel-ensemble"><i class="fa fa-check"></i><b>4.4.2</b> Creating a multimodel ensemble</a></li>
-<li class="chapter" data-level="4.4.3" data-path="agemodelling.html"><a href="agemodelling.html#mapping-the-age-ensemble-to-the-paleodata-measurements"><i class="fa fa-check"></i><b>4.4.3</b> Mapping the age ensemble to the paleoData measurements</a></li>
-<li class="chapter" data-level="4.4.4" data-path="agemodelling.html"><a href="agemodelling.html#creating-a-timeseries-plot-as-a-spaghetti-plot-of-lines"><i class="fa fa-check"></i><b>4.4.4</b> Creating a timeseries plot as a spaghetti plot of lines</a></li>
-<li class="chapter" data-level="4.4.5" data-path="agemodelling.html"><a href="agemodelling.html#creating-a-timeseries-plot-with-a-ribbon-confidence-intervals"><i class="fa fa-check"></i><b>4.4.5</b> Creating a timeseries plot with a ribbon confidence intervals</a></li>
-<li class="chapter" data-level="4.4.6" data-path="agemodelling.html"><a href="agemodelling.html#combining-the-two-kinds-of-timeseries-plots"><i class="fa fa-check"></i><b>4.4.6</b> Combining the two kinds of timeseries plots</a></li>
+<li class="chapter" data-level="4.3.1" data-path="agemodelling.html"><a href="agemodelling.html#lets-compare-these-models."><i class="fa fa-check"></i><b>4.3.1</b> Let’s compare these models.</a></li>
+<li class="chapter" data-level="4.3.2" data-path="agemodelling.html"><a href="agemodelling.html#creating-a-multimodel-ensemble"><i class="fa fa-check"></i><b>4.3.2</b> Creating a multimodel ensemble</a></li>
+<li class="chapter" data-level="4.3.3" data-path="agemodelling.html"><a href="agemodelling.html#mapping-the-age-ensemble-to-the-paleodata-measurements"><i class="fa fa-check"></i><b>4.3.3</b> Mapping the age ensemble to the paleoData measurements</a></li>
+<li class="chapter" data-level="4.3.4" data-path="agemodelling.html"><a href="agemodelling.html#creating-a-timeseries-plot-as-a-spaghetti-plot-of-lines"><i class="fa fa-check"></i><b>4.3.4</b> Creating a timeseries plot as a spaghetti plot of lines</a></li>
+<li class="chapter" data-level="4.3.5" data-path="agemodelling.html"><a href="agemodelling.html#creating-a-timeseries-plot-with-a-ribbon-confidence-intervals"><i class="fa fa-check"></i><b>4.3.5</b> Creating a timeseries plot with a ribbon confidence intervals</a></li>
+<li class="chapter" data-level="4.3.6" data-path="agemodelling.html"><a href="agemodelling.html#combining-the-two-kinds-of-timeseries-plots"><i class="fa fa-check"></i><b>4.3.6</b> Combining the two kinds of timeseries plots</a></li>
 </ul></li>
-<li class="chapter" data-level="4.5" data-path="agemodelling.html"><a href="agemodelling.html#banded-age-modelling"><i class="fa fa-check"></i><b>4.5</b> Banded Age Modelling</a></li>
-<li class="chapter" data-level="4.6" data-path="agemodelling.html"><a href="agemodelling.html#chapter-project."><i class="fa fa-check"></i><b>4.6</b> Chapter project.</a></li>
+<li class="chapter" data-level="4.4" data-path="agemodelling.html"><a href="agemodelling.html#banded-age-modelling"><i class="fa fa-check"></i><b>4.4</b> Banded Age Modelling</a></li>
+<li class="chapter" data-level="4.5" data-path="agemodelling.html"><a href="agemodelling.html#chapter-project."><i class="fa fa-check"></i><b>4.5</b> Chapter project.</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html"><i class="fa fa-check"></i><b>5</b> Time-uncertain correlation</a>
+<li class="chapter" data-level="5" data-path="correlation.html"><a href="correlation.html"><i class="fa fa-check"></i><b>5</b> Time-uncertain correlation</a>
 <ul>
-<li class="chapter" data-level="5.1" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#first-look"><i class="fa fa-check"></i><b>5.1</b> First look</a></li>
-<li class="chapter" data-level="5.2" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#correlateResponsibly"><i class="fa fa-check"></i><b>5.2</b> How to correlate responsibly</a>
+<li class="chapter" data-level="5.1" data-path="correlation.html"><a href="correlation.html#first-look"><i class="fa fa-check"></i><b>5.1</b> First look</a></li>
+<li class="chapter" data-level="5.2" data-path="correlation.html"><a href="correlation.html#correlateResponsibly"><i class="fa fa-check"></i><b>5.2</b> How to correlate responsibly</a>
 <ul>
-<li class="chapter" data-level="5.2.1" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#binning"><i class="fa fa-check"></i><b>5.2.1</b> Binning</a></li>
-<li class="chapter" data-level="5.2.2" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#autocorrelation"><i class="fa fa-check"></i><b>5.2.2</b> Autocorrelation</a></li>
-<li class="chapter" data-level="5.2.3" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#test-multiplicity"><i class="fa fa-check"></i><b>5.2.3</b> Test multiplicity</a></li>
+<li class="chapter" data-level="5.2.1" data-path="correlation.html"><a href="correlation.html#binning"><i class="fa fa-check"></i><b>5.2.1</b> Binning</a></li>
+<li class="chapter" data-level="5.2.2" data-path="correlation.html"><a href="correlation.html#autocorrelation"><i class="fa fa-check"></i><b>5.2.2</b> Autocorrelation</a></li>
+<li class="chapter" data-level="5.2.3" data-path="correlation.html"><a href="correlation.html#test-multiplicity"><i class="fa fa-check"></i><b>5.2.3</b> Test multiplicity</a></li>
 </ul></li>
-<li class="chapter" data-level="5.3" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#the-corens-function"><i class="fa fa-check"></i><b>5.3</b> The corEns() function</a></li>
-<li class="chapter" data-level="5.4" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#plotting-the-ensemble-correlation-results"><i class="fa fa-check"></i><b>5.4</b> Plotting the ensemble correlation results</a>
+<li class="chapter" data-level="5.3" data-path="correlation.html"><a href="correlation.html#the-corens-function"><i class="fa fa-check"></i><b>5.3</b> The corEns() function</a></li>
+<li class="chapter" data-level="5.4" data-path="correlation.html"><a href="correlation.html#plotting-the-ensemble-correlation-results"><i class="fa fa-check"></i><b>5.4</b> Plotting the ensemble correlation results</a>
 <ul>
-<li class="chapter" data-level="5.4.1" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#significance-testing-options"><i class="fa fa-check"></i><b>5.4.1</b> Significance testing options</a></li>
-<li class="chapter" data-level="5.4.2" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#false-discovery-rate-testing"><i class="fa fa-check"></i><b>5.4.2</b> False-discovery rate testing</a></li>
+<li class="chapter" data-level="5.4.1" data-path="correlation.html"><a href="correlation.html#significance-testing-options"><i class="fa fa-check"></i><b>5.4.1</b> Significance testing options</a></li>
+<li class="chapter" data-level="5.4.2" data-path="correlation.html"><a href="correlation.html#false-discovery-rate-testing"><i class="fa fa-check"></i><b>5.4.2</b> False-discovery rate testing</a></li>
 </ul></li>
-<li class="chapter" data-level="5.5" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#judging-the-overall-significance-of-an-age-uncertain-correlation"><i class="fa fa-check"></i><b>5.5</b> Judging the overall significance of an age-uncertain correlation</a></li>
-<li class="chapter" data-level="5.6" data-path="time-uncertain-correlation.html"><a href="time-uncertain-correlation.html#chapter-project"><i class="fa fa-check"></i><b>5.6</b> Chapter Project</a></li>
+<li class="chapter" data-level="5.5" data-path="correlation.html"><a href="correlation.html#judging-the-overall-significance-of-an-age-uncertain-correlation"><i class="fa fa-check"></i><b>5.5</b> Judging the overall significance of an age-uncertain correlation</a></li>
+<li class="chapter" data-level="5.6" data-path="correlation.html"><a href="correlation.html#chapter-project"><i class="fa fa-check"></i><b>5.6</b> Chapter Project</a></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html"><i class="fa fa-check"></i><b>6</b> Regression and Calibration-in-time</a>
+<li class="chapter" data-level="6" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html"><i class="fa fa-check"></i><b>6</b> Principal Components Analysis {pca}</a>
 <ul>
-<li class="chapter" data-level="6.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#load-the-lipd-file"><i class="fa fa-check"></i><b>6.1</b> Load the LiPD file</a></li>
-<li class="chapter" data-level="6.2" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#check-out-the-contents"><i class="fa fa-check"></i><b>6.2</b> Check out the contents</a></li>
-<li class="chapter" data-level="6.3" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#create-an-age-model-with-bacon"><i class="fa fa-check"></i><b>6.3</b> Create an age model with Bacon</a></li>
-<li class="chapter" data-level="6.4" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-ensemble-output"><i class="fa fa-check"></i><b>6.4</b> And plot the ensemble output</a></li>
-<li class="chapter" data-level="6.5" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#map-the-age-ensemble-to-the-paleodata-table"><i class="fa fa-check"></i><b>6.5</b> Map the age ensemble to the paleodata table</a></li>
-<li class="chapter" data-level="6.6" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#select-the-paleodata-age-ensemble-and-rabd-data-that-wed-like-to-regress-and-calibrate"><i class="fa fa-check"></i><b>6.6</b> Select the paleodata age ensemble, and RABD data that we’d like to regress and calibrate</a></li>
-<li class="chapter" data-level="6.7" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#now-load-in-the-instrumental-data-we-want-to-correlate-and-regress-agains"><i class="fa fa-check"></i><b>6.7</b> Now load in the instrumental data we want to correlate and regress agains</a></li>
-<li class="chapter" data-level="6.8" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#check-agetime-units-before-proceeding"><i class="fa fa-check"></i><b>6.8</b> Check age/time units before proceeding</a></li>
-<li class="chapter" data-level="6.9" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#create-a-variable-list-for-the-instrumental-data"><i class="fa fa-check"></i><b>6.9</b> Create a “variable list” for the instrumental data</a></li>
-<li class="chapter" data-level="6.10" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#calculate-an-ensmeble-correlation-between-the-rabd-and-local-summer-temperature-data"><i class="fa fa-check"></i><b>6.10</b> Calculate an ensmeble correlation between the RABD and local summer temperature data</a></li>
-<li class="chapter" data-level="6.11" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-output"><i class="fa fa-check"></i><b>6.11</b> And plot the output</a></li>
-<li class="chapter" data-level="6.12" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#perform-ensemble-regression"><i class="fa fa-check"></i><b>6.12</b> Perform ensemble regression</a></li>
-<li class="chapter" data-level="6.13" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-output-1"><i class="fa fa-check"></i><b>6.13</b> And plot the output</a></li>
-</ul></li>
-<li class="chapter" data-level="7" data-path="spectral-analysis.html"><a href="spectral-analysis.html"><i class="fa fa-check"></i><b>7</b> Spectral Analysis</a>
+<li class="chapter" data-level="6.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#make-a-map"><i class="fa fa-check"></i><b>6.1</b> Make a map</a>
 <ul>
-<li class="chapter" data-level="7.1" data-path="spectral-analysis.html"><a href="spectral-analysis.html#time-certain-spectral-analysis"><i class="fa fa-check"></i><b>7.1</b> Time-certain spectral analysis</a>
-<ul>
-<li class="chapter" data-level="7.1.1" data-path="spectral-analysis.html"><a href="spectral-analysis.html#lomb-scargle-periodogram"><i class="fa fa-check"></i><b>7.1.1</b> Lomb-Scargle periodogram</a></li>
-<li class="chapter" data-level="7.1.2" data-path="spectral-analysis.html"><a href="spectral-analysis.html#multi-taper-method"><i class="fa fa-check"></i><b>7.1.2</b> Multi-taper Method</a></li>
+<li class="chapter" data-level="6.1.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#grab-the-age-ensembles-for-each-record."><i class="fa fa-check"></i><b>6.1.1</b> Grab the age ensembles for each record.</a></li>
+<li class="chapter" data-level="6.1.2" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#filter-the-data"><i class="fa fa-check"></i><b>6.1.2</b> Filter the data</a></li>
 </ul></li>
-<li class="chapter" data-level="7.2" data-path="spectral-analysis.html"><a href="spectral-analysis.html#time-uncertain-spectral-analysis"><i class="fa fa-check"></i><b>7.2</b> Time-uncertain spectral analysis</a></li>
-</ul></li>
-<li class="chapter" data-level="8" data-path="principal-components-analysis.html"><a href="principal-components-analysis.html"><i class="fa fa-check"></i><b>8</b> Principal Components Analysis</a>
+<li class="chapter" data-level="6.2" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#calculate-the-ensemble-pca"><i class="fa fa-check"></i><b>6.2</b> Calculate the ensemble PCA</a>
 <ul>
-<li class="chapter" data-level="8.1" data-path="principal-components-analysis.html"><a href="principal-components-analysis.html#make-a-map"><i class="fa fa-check"></i><b>8.1</b> Make a map</a></li>
-<li class="chapter" data-level="8.2" data-path="principal-components-analysis.html"><a href="principal-components-analysis.html#prepare-the-data-for-pca"><i class="fa fa-check"></i><b>8.2</b> Prepare the data for PCA</a>
-<ul>
-<li class="chapter" data-level="8.2.1" data-path="principal-components-analysis.html"><a href="principal-components-analysis.html#grab-the-age-ensembles-for-each-record."><i class="fa fa-check"></i><b>8.2.1</b> Grab the age ensembles for each record.</a></li>
+<li class="chapter" data-level="6.2.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#plot-the-ensemble-pca-results"><i class="fa fa-check"></i><b>6.2.1</b> Plot the ensemble PCA results</a></li>
 </ul></li>
-<li class="chapter" data-level="8.3" data-path="principal-components-analysis.html"><a href="principal-components-analysis.html#calculate-the-ensemble-pca"><i class="fa fa-check"></i><b>8.3</b> Calculate the ensemble PCA</a>
-<ul>
-<li class="chapter" data-level="8.3.1" data-path="principal-components-analysis.html"><a href="principal-components-analysis.html#plot-the-ensemble-pca-results"><i class="fa fa-check"></i><b>8.3.1</b> Plot the ensemble PCA results</a></li>
+<li class="chapter" data-level="6.3" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#ensemble-pca-using-a-correlation-matrix."><i class="fa fa-check"></i><b>6.3</b> Ensemble PCA using a correlation matrix.</a></li>
+<li class="chapter" data-level="6.4" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#chapter-project-1"><i class="fa fa-check"></i><b>6.4</b> Chapter project</a></li>
 </ul></li>
-<li class="chapter" data-level="8.4" data-path="principal-components-analysis.html"><a href="principal-components-analysis.html#ensemble-pca-take-two---using-a-covariance-matrix."><i class="fa fa-check"></i><b>8.4</b> Ensemble PCA take two - using a covariance matrix.</a></li>
+<li class="chapter" data-level="7" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html"><i class="fa fa-check"></i><b>7</b> Regression and Calibration-in-time</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#load-the-lipd-file"><i class="fa fa-check"></i><b>7.1</b> Load the LiPD file</a></li>
+<li class="chapter" data-level="7.2" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#check-out-the-contents"><i class="fa fa-check"></i><b>7.2</b> Check out the contents</a></li>
+<li class="chapter" data-level="7.3" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#create-an-age-model-with-bacon"><i class="fa fa-check"></i><b>7.3</b> Create an age model with Bacon</a></li>
+<li class="chapter" data-level="7.4" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-ensemble-output"><i class="fa fa-check"></i><b>7.4</b> And plot the ensemble output</a></li>
+<li class="chapter" data-level="7.5" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#map-the-age-ensemble-to-the-paleodata-table"><i class="fa fa-check"></i><b>7.5</b> Map the age ensemble to the paleodata table</a></li>
+<li class="chapter" data-level="7.6" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#select-the-paleodata-age-ensemble-and-rabd-data-that-wed-like-to-regress-and-calibrate"><i class="fa fa-check"></i><b>7.6</b> Select the paleodata age ensemble, and RABD data that we’d like to regress and calibrate</a></li>
+<li class="chapter" data-level="7.7" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#now-load-in-the-instrumental-data-we-want-to-correlate-and-regress-agains"><i class="fa fa-check"></i><b>7.7</b> Now load in the instrumental data we want to correlate and regress agains</a></li>
+<li class="chapter" data-level="7.8" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#check-agetime-units-before-proceeding"><i class="fa fa-check"></i><b>7.8</b> Check age/time units before proceeding</a></li>
+<li class="chapter" data-level="7.9" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#create-a-variable-list-for-the-instrumental-data"><i class="fa fa-check"></i><b>7.9</b> Create a “variable list” for the instrumental data</a></li>
+<li class="chapter" data-level="7.10" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#calculate-an-ensmeble-correlation-between-the-rabd-and-local-summer-temperature-data"><i class="fa fa-check"></i><b>7.10</b> Calculate an ensmeble correlation between the RABD and local summer temperature data</a></li>
+<li class="chapter" data-level="7.11" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-output"><i class="fa fa-check"></i><b>7.11</b> And plot the output</a></li>
+<li class="chapter" data-level="7.12" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#perform-ensemble-regression"><i class="fa fa-check"></i><b>7.12</b> Perform ensemble regression</a></li>
+<li class="chapter" data-level="7.13" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-output-1"><i class="fa fa-check"></i><b>7.13</b> And plot the output</a>
+<ul>
+<li class="chapter" data-level="7.13.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#lomb-scargle-periodogram"><i class="fa fa-check"></i><b>7.13.1</b> Lomb-Scargle periodogram</a></li>
+<li class="chapter" data-level="7.13.2" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#multi-taper-method"><i class="fa fa-check"></i><b>7.13.2</b> Multi-taper Method</a></li>
+<li class="chapter" data-level="7.13.3" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#weighted-wavelet-z-transform-nuspectral"><i class="fa fa-check"></i><b>7.13.3</b> Weighted Wavelet Z-transform (<em>nuspectral</em>)</a></li>
+</ul></li>
+<li class="chapter" data-level="7.14" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#time-uncertain-spectral-analysis"><i class="fa fa-check"></i><b>7.14</b> Time-uncertain spectral analysis</a></li>
+<li class="chapter" data-level="7.15" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#conclusion"><i class="fa fa-check"></i><b>7.15</b> Conclusion</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -257,19 +280,17 @@ Once this functionality is operable, we’ll add a module demonstrating how this
 <div id="loading-a-lipd-file" class="section level2" number="3.1">
 <h2><span class="header-section-number">3.1</span> Loading a LiPD file</h2>
 <p>Now you can load the lipdR library, and load some data.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="data.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lipdR)</span>
-<span id="cb1-2"><a href="data.html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geoChronR)</span></code></pre></div>
-<pre><code>## Registered S3 method overwritten by &#39;spatstat.geom&#39;:
-##   method     from
-##   print.boxx cli</code></pre>
-<pre><code>## Welcome to geoChronR version 1.1.0!</code></pre>
-<pre><code>## </code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="data.html#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lipdR)</span></code></pre></div>
+<pre><code>## Registered S3 method overwritten by &#39;cli&#39;:
+##   method     from         
+##   print.boxx spatstat.geom</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="data.html#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geoChronR)</span></code></pre></div>
 <pre><code>## 
 ## Attaching package: &#39;geoChronR&#39;</code></pre>
 <pre><code>## The following objects are masked from &#39;package:lipdR&#39;:
 ## 
 ##     createTSid, pullTsVariable</code></pre>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="data.html#cb7-1" aria-hidden="true" tabindex="-1"></a>L <span class="ot">&lt;-</span> <span class="fu">readLipd</span>(<span class="st">&quot;https://lipdverse.org/Temp12k/current_version/GEOFAR_KF16_MgCa.Repschlager.2016.lpd&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="data.html#cb15-1" aria-hidden="true" tabindex="-1"></a>L <span class="ot">&lt;-</span> <span class="fu">readLipd</span>(<span class="st">&quot;https://lipdverse.org/Temp12k/current_version/GEOFAR_KF16_MgCa.Repschlager.2016.lpd&quot;</span>)</span></code></pre></div>
 <pre><code>## [1] &quot;reading: GEOFAR_KF16_MgCa.Repschlager.2016.lpd&quot;</code></pre>
 <p>You can load a LiPD file from the web, as shown above, or locally on your computer. If you leave the input blank (e.g. <code>L &lt;- readLipd()</code>), you can interactively choose a file on your computer.</p>
 <div class="blackbox">
@@ -285,7 +306,7 @@ Click for Answer to <a href="data.html#exr:LoadingLipdData">3.1</a>a
 <ol style="list-style-type: lower-alpha">
 <li>First we’ll get it directly from the web like this:</li>
 </ol>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="data.html#cb9-1" aria-hidden="true" tabindex="-1"></a>    lipd <span class="ot">&lt;-</span> <span class="fu">readLipd</span>(<span class="st">&quot;https://lipdverse.org/Temp12k/current_version/HeshangCave.Wang.2018.lpd&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="data.html#cb17-1" aria-hidden="true" tabindex="-1"></a>    lipd <span class="ot">&lt;-</span> <span class="fu">readLipd</span>(<span class="st">&quot;https://lipdverse.org/Temp12k/current_version/HeshangCave.Wang.2018.lpd&quot;</span>)</span></code></pre></div>
 <pre><code>## [1] &quot;reading: HeshangCave.Wang.2018.lpd&quot;</code></pre>
 note that the extension is “.lpd” not “.html”
 </details>
@@ -296,17 +317,18 @@ Click for Answer to <a href="data.html#exr:LoadingLipdData">3.1</a>b
 <ol start="2" style="list-style-type: lower-alpha">
 <li>This time, just go to <a href="https://lipdverse.org/Temp12k/current_version/HeshangCave.Wang.2018.html">the dataset</a> and download the data to your computer, then run</li>
 </ol>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="data.html#cb11-1" aria-hidden="true" tabindex="-1"></a>    lipd <span class="ot">&lt;-</span> <span class="fu">readLipd</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="data.html#cb19-1" aria-hidden="true" tabindex="-1"></a>    lipd <span class="ot">&lt;-</span> <span class="fu">readLipd</span>()</span></code></pre></div>
 and select the file interactively.
 </details>
 <p>Once you have a LiPD object loaded in R, there are a few things you can do. First, if you want a quick and dirty visualization of what’s inside the dataset, use <code>plotLipd()</code>.</p>
 <p>If you know what the variables are you want to plot beforehand, you can specify them like this:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="data.html#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotSummary</span>(L,<span class="at">paleo.data.var =</span> <span class="st">&quot;temperature&quot;</span>,<span class="at">chron.age.var =</span> <span class="st">&quot;age&quot;</span>,<span class="at">chron.depth.var =</span> <span class="st">&quot;depthMid&quot;</span>,<span class="at">chron.age.14c.var =</span> <span class="cn">NULL</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="data.html#cb20-1" aria-hidden="true" tabindex="-1"></a>summary_plot <span class="ot">&lt;-</span> <span class="fu">plotSummary</span>(L,<span class="at">paleo.data.var =</span> <span class="st">&quot;temperature&quot;</span>,<span class="at">chron.age.var =</span> <span class="st">&quot;age&quot;</span>,<span class="at">chron.depth.var =</span> <span class="st">&quot;depthMid&quot;</span>,<span class="at">chron.age.14c.var =</span> <span class="cn">NULL</span>)</span></code></pre></div>
 <pre><code>## [1] &quot;Found it! Moving on...&quot;
 ## [1] &quot;Found it! Moving on...&quot;
 ## [1] &quot;Found it! Moving on...&quot;
 ## [1] &quot;Found it! Moving on...&quot;</code></pre>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="data.html#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(summary_plot)</span></code></pre></div>
 <pre><code>## TableGrob (4 x 4) &quot;arrange&quot;: 4 grobs
 ##   z     cells    name                 grob
 ## 1 1 (1-1,1-2) arrange gTree[GRID.gTree.11]
@@ -314,7 +336,7 @@ and select the file interactively.
 ## 3 3 (2-4,1-2) arrange       gtable[layout]
 ## 4 4 (3-4,3-4) arrange       gtable[layout]</code></pre>
 <p>But most of the time, you’ll just run it in interactive mode and select what you want.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="data.html#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotSummary</span>(lipd)</span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="data.html#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotSummary</span>(lipd)</span></code></pre></div>
 <p>One of the components of <code>plotSummary()</code> is a site map, which is created with the function <code>mapLipd()</code>.</p>
 <div class="blackbox">
 <div class="exercise">
@@ -324,11 +346,11 @@ and select the file interactively.
 <div id="selectData" class="section level3" number="3.1.1">
 <h3><span class="header-section-number">3.1.1</span> Extract a variable from a LiPD object</h3>
 <p>In geoChronR, it is often useful to extract one or two variables from a LiPD object and then use them for subsequent analysis and visualization. The key function for this is <code>selectData()</code>. Typically, you’ll use it interactive mode to find the variable your looking for, either in the paleoData or chronData sections of the LiPD file.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="data.html#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">#grab the calibrated temperature record</span></span>
-<span id="cb16-2"><a href="data.html#cb16-2" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">&lt;-</span> <span class="fu">selectData</span>(L,<span class="at">paleo.or.chron =</span> <span class="st">&quot;paleoData&quot;</span>)</span>
-<span id="cb16-3"><a href="data.html#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-4"><a href="data.html#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co">#grab the original dates from the chronData</span></span>
-<span id="cb16-5"><a href="data.html#cb16-5" aria-hidden="true" tabindex="-1"></a>c14 <span class="ot">&lt;-</span> <span class="fu">selectData</span>(L,<span class="at">paleo.or.chron =</span> <span class="st">&quot;chronData&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="data.html#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co">#grab the calibrated temperature record</span></span>
+<span id="cb25-2"><a href="data.html#cb25-2" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">&lt;-</span> <span class="fu">selectData</span>(L,<span class="at">paleo.or.chron =</span> <span class="st">&quot;paleoData&quot;</span>)</span>
+<span id="cb25-3"><a href="data.html#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="data.html#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co">#grab the original dates from the chronData</span></span>
+<span id="cb25-5"><a href="data.html#cb25-5" aria-hidden="true" tabindex="-1"></a>c14 <span class="ot">&lt;-</span> <span class="fu">selectData</span>(L,<span class="at">paleo.or.chron =</span> <span class="st">&quot;chronData&quot;</span>)</span></code></pre></div>
 <p>If there’s a lot of variables in the file, and you kinda know what you’re looking for, you can add a <code>var.name</code> guess and it will narrow it down to options that seem likely, or select one automatically if it’s close.</p>
 <div class="blackbox">
 <div class="exercise">
@@ -336,14 +358,14 @@ and select the file interactively.
 </div>
 </div>
 <p>Of course, you can also specify all of the options in <code>selectData()</code>, and then get exactly what you want non interactively. This includes data from model ensembleTables or summaryTables, in addition to the measurementTables you use more frequently. For example:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="data.html#cb17-1" aria-hidden="true" tabindex="-1"></a>mgCa  <span class="ot">&lt;-</span> <span class="fu">selectData</span>(L,<span class="at">var.name =</span> <span class="st">&quot;mg/ca&quot;</span>,<span class="at">paleo.or.chron =</span> <span class="st">&quot;paleoData&quot;</span>,<span class="at">table.type =</span> <span class="st">&quot;meas&quot;</span>,<span class="at">meas.table.num =</span> <span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="data.html#cb26-1" aria-hidden="true" tabindex="-1"></a>mgCa  <span class="ot">&lt;-</span> <span class="fu">selectData</span>(L,<span class="at">var.name =</span> <span class="st">&quot;mg/ca&quot;</span>,<span class="at">paleo.or.chron =</span> <span class="st">&quot;paleoData&quot;</span>,<span class="at">table.type =</span> <span class="st">&quot;meas&quot;</span>,<span class="at">meas.table.num =</span> <span class="dv">1</span>)</span></code></pre></div>
 <pre><code>## [1] &quot;Found it! Moving on...&quot;</code></pre>
 </div>
 </div>
 <div id="loading-multiple-lipd-datasets" class="section level2" number="3.2">
 <h2><span class="header-section-number">3.2</span> Loading multiple LiPD datasets</h2>
 <p>In addition to loading single files, <code>readLipd()</code> can also load a whole directory, or a url that points to a zip file full of files.</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="data.html#cb19-1" aria-hidden="true" tabindex="-1"></a>eur <span class="ot">&lt;-</span> <span class="fu">readLipd</span>(<span class="st">&quot;https://lipdverse.org/geoChronR-examples/euro/Euro2k.zip&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="data.html#cb28-1" aria-hidden="true" tabindex="-1"></a>eur <span class="ot">&lt;-</span> <span class="fu">readLipd</span>(<span class="st">&quot;https://lipdverse.org/geoChronR-examples/euro/Euro2k.zip&quot;</span>)</span></code></pre></div>
 <pre><code>## [1] &quot;reading: Arc-AkademiiNaukIceCap.Opel.2013.lpd&quot;
 ## [1] &quot;reading: Arc-Forfjorddalen.McCarroll.2013.lpd&quot;
 ## [1] &quot;reading: Arc-GulfofAlaska.Wilson.2014.lpd&quot;
@@ -377,29 +399,30 @@ and select the file interactively.
 ## [1] &quot;reading: Ocn-RedSea.Felis.2000.lpd&quot;</code></pre>
 <p>If you load multiple files, it will create an object called a “multi-lipd,” which is just a list of lipd objects. And we can use some of the same functions.</p>
 <p>For example, let’s make a map of our multi-lipd object:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="data.html#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mapLipd</span>(eur,<span class="at">projection =</span> <span class="st">&quot;mollweide&quot;</span>,<span class="at">global =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-10-1.png" width="672" />
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="data.html#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mapLipd</span>(eur,<span class="at">projection =</span> <span class="st">&quot;mollweide&quot;</span>,<span class="at">global =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-14-1.png" width="672" />
 These multi-lipd objects are convenient for getting a lot of data into R, but trying to work with the data inside can get pretty tricky pretty fast. When working with multiple datasets, you’ll almost always want to create a timeseries (TS) object, or formally a “lipd-ts” object. You can do that using the ‘extractTs()’ function or ’as.lipdTs()` from the lipdR package.</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="data.html#cb22-1" aria-hidden="true" tabindex="-1"></a>TS <span class="ot">&lt;-</span> <span class="fu">extractTs</span>(eur)</span>
-<span id="cb22-2"><a href="data.html#cb22-2" aria-hidden="true" tabindex="-1"></a>TS <span class="ot">&lt;-</span> <span class="fu">as.lipdTs</span>(eur)</span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="data.html#cb31-1" aria-hidden="true" tabindex="-1"></a>TS <span class="ot">&lt;-</span> <span class="fu">extractTs</span>(eur)</span>
+<span id="cb31-2"><a href="data.html#cb31-2" aria-hidden="true" tabindex="-1"></a>TS <span class="ot">&lt;-</span> <span class="fu">as.lipdTs</span>(eur)</span></code></pre></div>
 <p>The LiPD-TS object is a “flattened” version of the dataset, it’s much less hierarchical and each entry corresponds to a column in a table. By default, <code>extractTs()</code> will get all the variables in measurementTables in paleoData objects, but you can also get variables from other tables and from the chronData objects by changing the options. See <code>?extractTs</code> for details.</p>
 <p>Now we can use the TS version of plotSummary to summarize the whole collection of data.</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="data.html#cb23-1" aria-hidden="true" tabindex="-1"></a>summ <span class="ot">&lt;-</span> <span class="fu">plotSummaryTs</span>(TS,<span class="at">age.var =</span> <span class="st">&quot;year&quot;</span>)</span></code></pre></div>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-12-1.png" width="672" />
-:::: {.blackbox data-latex=""}
-::: {.exercise #plotSummaryTs}
-Explore the options in plotSummary. Create a new version that colors the dots and availability plot by PAGES 2k Region (the variable name is geo_pages2kRegion)
-:::
-::::</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="data.html#cb32-1" aria-hidden="true" tabindex="-1"></a>summ <span class="ot">&lt;-</span> <span class="fu">plotSummaryTs</span>(TS,<span class="at">age.var =</span> <span class="st">&quot;year&quot;</span>)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-16-1.png" width="672" />
+Let’s take a deeper look at the options:</p>
+<div class="blackbox">
+<div class="exercise">
+<p><span id="exr:plotSummaryTs" class="exercise"><strong>Exercise 3.3  </strong></span>Explore the options in plotSummary. Create a new version that colors the dots and availability plot by PAGES 2k Region (the variable name is geo_pages2kRegion)</p>
+</div>
+</div>
 <p>Although LiPD-TS objects are more convenient to work with, they’re still list-based and difficult to explore visually. If you’re used to working in the <a href="http://tidyverse.org">tidyverse</a> framework, you’ll likely find it useful to convert the data into a tibble (a type of data.frame). In lipdR, this is a “lipd-ts-tibble” object, but it’s also just a tibble, so it unlocks many, many options in RStudio and tidyverse.</p>
 <p>To do so, use the <code>ts2tibble()</code> or <code>as.lipdTsTibble()</code> functions to create tibble.</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="data.html#cb24-1" aria-hidden="true" tabindex="-1"></a>ts.tib <span class="ot">&lt;-</span> <span class="fu">ts2tibble</span>(TS)</span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="data.html#cb33-1" aria-hidden="true" tabindex="-1"></a>ts.tib <span class="ot">&lt;-</span> <span class="fu">ts2tibble</span>(TS)</span></code></pre></div>
 <p>If you’re in RStudio, you can now explore the contents of the object grapically. This produces a large tibble, so it’s still a little unwieldy. Importantly, some of the columns are nested (depth, age, year, paleoData_values), so all of the timeseries data are included in each row, for each timeseries. You can learn more about <a href="https://tidyr.tidyverse.org/articles/nest.html">nested tibbles here</a>.</p>
 <p>As the tidyverse has grown, we’ve increasingly moved our lipdR and geoChronR workflows into this model. Take a look at how this unlocks some pretty efficient workflows.</p>
-<div id="filtering" class="section level4" number="3.2.0.1">
-<h4><span class="header-section-number">3.2.0.1</span> Filtering</h4>
+<div id="filtering" class="section level3" number="3.2.1">
+<h3><span class="header-section-number">3.2.1</span> Filtering</h3>
 <p>It’s often the case that the a collection of LiPD files includes far more data than we actually need. Let’s use <code>dplyr</code> to get just the data we need. Let’s say that we only want variables that are European tree ring data that were used in Pages2k. You can explore the variables in the data.frame, and the values in each field, and then compose an expression:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="data.html#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="data.html#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code></pre></div>
 <pre><code>## 
 ## Attaching package: &#39;dplyr&#39;</code></pre>
 <pre><code>## The following objects are masked from &#39;package:stats&#39;:
@@ -408,32 +431,32 @@ Explore the options in plotSummary. Create a new version that colors the dots an
 <pre><code>## The following objects are masked from &#39;package:base&#39;:
 ## 
 ##     intersect, setdiff, setequal, union</code></pre>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="data.html#cb29-1" aria-hidden="true" tabindex="-1"></a>filtered.tib <span class="ot">&lt;-</span> ts.tib <span class="sc">%&gt;%</span> </span>
-<span id="cb29-2"><a href="data.html#cb29-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(<span class="fu">between</span>(geo_latitude,<span class="dv">30</span>,<span class="dv">80</span>) <span class="sc">&amp;</span> <span class="fu">between</span>(geo_longitude,<span class="sc">-</span><span class="dv">30</span>,<span class="dv">60</span>)) <span class="sc">%&gt;%</span> <span class="co">#restrict the coordinates to just Europe</span></span>
-<span id="cb29-3"><a href="data.html#cb29-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(archiveType <span class="sc">==</span> <span class="st">&quot;tree&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb29-4"><a href="data.html#cb29-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(paleoData_useInGlobalTemperatureAnalysis <span class="sc">==</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="data.html#cb38-1" aria-hidden="true" tabindex="-1"></a>filtered.tib <span class="ot">&lt;-</span> ts.tib <span class="sc">%&gt;%</span> </span>
+<span id="cb38-2"><a href="data.html#cb38-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(<span class="fu">between</span>(geo_latitude,<span class="dv">30</span>,<span class="dv">80</span>) <span class="sc">&amp;</span> <span class="fu">between</span>(geo_longitude,<span class="sc">-</span><span class="dv">30</span>,<span class="dv">60</span>)) <span class="sc">%&gt;%</span> <span class="co">#restrict the coordinates to just Europe</span></span>
+<span id="cb38-3"><a href="data.html#cb38-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(archiveType <span class="sc">==</span> <span class="st">&quot;tree&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb38-4"><a href="data.html#cb38-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(paleoData_useInGlobalTemperatureAnalysis <span class="sc">==</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <p>Let’s take a look at the result!</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="data.html#cb30-1" aria-hidden="true" tabindex="-1"></a>nTS <span class="ot">&lt;-</span> <span class="fu">as.lipdTs</span>(filtered.tib) <span class="co">#convert it back (for now)</span></span>
-<span id="cb30-2"><a href="data.html#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plotSummaryTs</span>(nTS,<span class="at">age.var =</span> <span class="st">&quot;year&quot;</span>,<span class="at">f =</span> .<span class="dv">1</span>)</span></code></pre></div>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="data.html#cb39-1" aria-hidden="true" tabindex="-1"></a>nTS <span class="ot">&lt;-</span> <span class="fu">as.lipdTs</span>(filtered.tib) <span class="co">#convert it back (for now)</span></span>
+<span id="cb39-2"><a href="data.html#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plotSummaryTs</span>(nTS,<span class="at">age.var =</span> <span class="st">&quot;year&quot;</span>,<span class="at">f =</span> .<span class="dv">1</span>)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
 <pre><code>## TableGrob (5 x 3) &quot;arrange&quot;: 2 grobs
 ##   z     cells    name           grob
 ## 1 1 (1-3,1-3) arrange gtable[layout]
 ## 2 2 (4-5,1-3) arrange gtable[layout]</code></pre>
 <p>Great, it looks like our filtering worked! It looks like most of the data go back about 1000 years, but a few records are much longer. Next, we’d like to restrict our analysis to just 1000 - 2000 AD. This is possible in a nested tibble, but it’s often useful to have a longer version, one where every row in the data.frame corresponds to a single year-value pair, rather than a whole timeseries. This is the purpose of lipd-ts-tibble-long objects, the final lipd object type. This is useful if you want easy access to all the data in one large tibble.</p>
 <p>We can convert our data to this structure using <code>tidyTs()</code> or, you guessed it, <code>as.lipdTsTibbleLong()</code></p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="data.html#cb32-1" aria-hidden="true" tabindex="-1"></a>longTib <span class="ot">&lt;-</span> <span class="fu">as.lipdTsTibbleLong</span>(filtered.tib) <span class="sc">%&gt;%</span> </span>
-<span id="cb32-2"><a href="data.html#cb32-2" aria-hidden="true" tabindex="-1"></a>   dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="fu">between</span>(year,<span class="dv">1000</span>,<span class="dv">2000</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="data.html#cb41-1" aria-hidden="true" tabindex="-1"></a>longTib <span class="ot">&lt;-</span> <span class="fu">as.lipdTsTibbleLong</span>(filtered.tib) <span class="sc">%&gt;%</span> </span>
+<span id="cb41-2"><a href="data.html#cb41-2" aria-hidden="true" tabindex="-1"></a>   dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="fu">between</span>(year,<span class="dv">1000</span>,<span class="dv">2000</span>))</span></code></pre></div>
 <pre><code>## creating a lipdTsTibbleLong using year as the age.var</code></pre>
 <p>Take a look at our new tibble, we restricted the time range, but it still has 11,350 rows! As you can imagine, loading in a few hundred LiPD datasets and converting them into lipd-ts-tibble-long objects will result in tibbles of several million rows, which might cause your computer problems!</p>
 <p>Let’s take a quick look at these filtered data. The <code>plotTimeseriesStack()</code> function lets you make a quick version of the classic paleoclimate stack plots. Check out <a href="https://nickmckay.github.io/GeoChronR/articles/PlotTimeseriesStack.html">this tutorial</a> for a deep dive.</p>
 <p>Here we’ll just plot our data, and color it by the proxy type.</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="data.html#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotTimeseriesStack</span>(longTib,<span class="at">color.var =</span> <span class="st">&quot;paleoData_proxy&quot;</span>)</span></code></pre></div>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="data.html#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotTimeseriesStack</span>(longTib,<span class="at">color.var =</span> <span class="st">&quot;paleoData_proxy&quot;</span>)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/data-stackplot-1.png" width="672" /></p>
 <p>And there it is! Not too bad, but I don’t love that default colorscheme with only 3 values.</p>
 <div class="blackbox">
 <div class="exercise">
-<p><span id="exr:plotTimeseriesStack" class="exercise"><strong>Exercise 3.3  </strong></span>Explore the options in plotTimeseriesStack. Create a new version that:</p>
+<p><span id="exr:plotTimeseriesStack" class="exercise"><strong>Exercise 3.4  </strong></span>Explore the options in plotTimeseriesStack. Create a new version that:</p>
 <ol style="list-style-type: lower-alpha">
 <li>Has better colors!</li>
 <li>Changes the line thickness.</li>
@@ -503,6 +526,20 @@ gitbook.start({
 });
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
 
 </html>

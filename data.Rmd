@@ -61,7 +61,9 @@ Once you have a LiPD object loaded in R, there are a few things you can do. Firs
 
 If you know what the variables are you want to plot beforehand, you can specify them like this:
 ```{r}
-plotSummary(L,paleo.data.var = "temperature",chron.age.var = "age",chron.depth.var = "depthMid",chron.age.14c.var = NULL)
+summary_plot <- plotSummary(L,paleo.data.var = "temperature",chron.age.var = "age",chron.depth.var = "depthMid",chron.age.14c.var = NULL)
+
+print(summary_plot)
 ```
 
 But most of the time, you'll just run it in interactive mode and select what you want. 
@@ -132,6 +134,8 @@ Now we can use the TS version of plotSummary to summarize the whole collection o
 ```{r}
 summ <- plotSummaryTs(TS,age.var = "year")
 ```
+Let's take a deeper look at the options:
+
 :::: {.blackbox data-latex=""}
 ::: {.exercise #plotSummaryTs}
 Explore the options in plotSummary. Create a new version that colors the dots and availability plot by PAGES 2k Region (the variable name is geo_pages2kRegion)
@@ -152,7 +156,7 @@ If you're in RStudio, you can now explore the contents of the object grapically.
 
 As the tidyverse has grown, we've increasingly moved our lipdR and geoChronR workflows into this model. Take a look at how this unlocks some pretty efficient workflows.
 
-#### Filtering
+### Filtering
 
 It's often the case that the a collection of LiPD files includes far more data than we actually need. Let's use `dplyr` to get just the data we need. Let's say that we only want variables that are European tree ring data that were used in Pages2k. You can explore the variables in the data.frame, and the values in each field, and then compose an expression:
 
@@ -188,7 +192,7 @@ Let's take a quick look at these filtered data. The `plotTimeseriesStack()` func
 
 Here we'll just plot our data, and color it by the proxy type. 
 
-```{r,fig.height=15}
+```{r data-stackplot,fig.height=15}
 plotTimeseriesStack(longTib,color.var = "paleoData_proxy")
 ```
 

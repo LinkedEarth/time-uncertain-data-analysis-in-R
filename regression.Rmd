@@ -1,6 +1,6 @@
 # Regression and Calibration-in-time
 
-Here, we replicate the analysis of Boldt et al. (2015), performing age-uncertain calibration-in-time on a chlorophyll reflectance record from northern Alaska, using geoChronR.
+In this chapter, we will replicate the analysis of Boldt et al. (2015), performing age-uncertain calibration-in-time on a chlorophyll reflectance record from northern Alaska, using geoChronR.
 
 The challenge of age-uncertain calibration-in-time is that age uncertainty affects both the calibration model (the relation between the proxy data and instrumental data) and the reconstruction (the timing of events in the reconstruction). geoChronR simplifies handling these issues. 
 
@@ -29,7 +29,7 @@ print(sp)
 
 ## Create an age model with Bacon
 
-```{r,results="hide",fig.keep="all",cache=TRUE}
+```{r KurupaBacon,results="hide",fig.keep="all",cache=TRUE}
 K <- runBacon(K,
               lab.id.var = 'labID', 
               age.14c.var = 'age14C', 

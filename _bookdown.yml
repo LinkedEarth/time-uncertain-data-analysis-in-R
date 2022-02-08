@@ -25,8 +25,8 @@ rmd_files: [
   "data.Rmd",
   "ageModelling.Rmd",
   "correlation.Rmd",
+  "pca.Rmd",
   "regression.Rmd",
-  "spectral.Rmd",
-  "pca.Rmd"
+  "spectral.Rmd"
 ]
 output_dir: "docs"

@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 7 Regression and Calibration-in-time | Time-uncertain data analysis in R</title>
+  <meta name="description" content="This book covers time-uncertain data analysis in R, primarily relying on the geoChronR package" />
+  <meta name="generator" content="bookdown 0.22 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 7 Regression and Calibration-in-time | Time-uncertain data analysis in R" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This book covers time-uncertain data analysis in R, primarily relying on the geoChronR package" />
+  <meta name="github-repo" content="linkedearth/time-uncertain-data-analysis-in-R" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 7 Regression and Calibration-in-time | Time-uncertain data analysis in R" />
+  
+  <meta name="twitter:description" content="This book covers time-uncertain data analysis in R, primarily relying on the geoChronR package" />
+  
+
+<meta name="author" content="Nick McKay" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="principal-components-analysis-pca.html"/>
+
+<script src="libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">geoChronR Tutorial</a></li>
+<li><a href="http://nickmckay.github.io/GeoChronR>geoChronR manual</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Welcome!</a></li>
+<li class="chapter" data-level="2" data-path="installation.html"><a href="installation.html"><i class="fa fa-check"></i><b>2</b> Installing the software you need</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="installation.html"><a href="installation.html#installing-lipdr"><i class="fa fa-check"></i><b>2.1</b> Installing lipdR</a></li>
+<li class="chapter" data-level="2.2" data-path="installation.html"><a href="installation.html#installing-geochronr"><i class="fa fa-check"></i><b>2.2</b> Installing geoChronR</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="data.html"><a href="data.html"><i class="fa fa-check"></i><b>3</b> Data in geoChronR</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="data.html"><a href="data.html#loading-a-lipd-file"><i class="fa fa-check"></i><b>3.1</b> Loading a LiPD file</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="data.html"><a href="data.html#selectData"><i class="fa fa-check"></i><b>3.1.1</b> Extract a variable from a LiPD object</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="data.html"><a href="data.html#loading-multiple-lipd-datasets"><i class="fa fa-check"></i><b>3.2</b> Loading multiple LiPD datasets</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="data.html"><a href="data.html#filtering"><i class="fa fa-check"></i><b>3.2.1</b> Filtering</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="agemodelling.html"><a href="agemodelling.html"><i class="fa fa-check"></i><b>4</b> Age modelling in geoChronR</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="agemodelling.html"><a href="agemodelling.html#bacon"><i class="fa fa-check"></i><b>4.1</b> Bacon</a></li>
+<li class="chapter" data-level="4.2" data-path="agemodelling.html"><a href="agemodelling.html#bchron"><i class="fa fa-check"></i><b>4.2</b> BChron</a></li>
+<li class="chapter" data-level="4.3" data-path="agemodelling.html"><a href="agemodelling.html#oxcal"><i class="fa fa-check"></i><b>4.3</b> OxCal</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="agemodelling.html"><a href="agemodelling.html#lets-compare-these-models."><i class="fa fa-check"></i><b>4.3.1</b> Let’s compare these models.</a></li>
+<li class="chapter" data-level="4.3.2" data-path="agemodelling.html"><a href="agemodelling.html#creating-a-multimodel-ensemble"><i class="fa fa-check"></i><b>4.3.2</b> Creating a multimodel ensemble</a></li>
+<li class="chapter" data-level="4.3.3" data-path="agemodelling.html"><a href="agemodelling.html#mapping-the-age-ensemble-to-the-paleodata-measurements"><i class="fa fa-check"></i><b>4.3.3</b> Mapping the age ensemble to the paleoData measurements</a></li>
+<li class="chapter" data-level="4.3.4" data-path="agemodelling.html"><a href="agemodelling.html#creating-a-timeseries-plot-as-a-spaghetti-plot-of-lines"><i class="fa fa-check"></i><b>4.3.4</b> Creating a timeseries plot as a spaghetti plot of lines</a></li>
+<li class="chapter" data-level="4.3.5" data-path="agemodelling.html"><a href="agemodelling.html#creating-a-timeseries-plot-with-a-ribbon-confidence-intervals"><i class="fa fa-check"></i><b>4.3.5</b> Creating a timeseries plot with a ribbon confidence intervals</a></li>
+<li class="chapter" data-level="4.3.6" data-path="agemodelling.html"><a href="agemodelling.html#combining-the-two-kinds-of-timeseries-plots"><i class="fa fa-check"></i><b>4.3.6</b> Combining the two kinds of timeseries plots</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="agemodelling.html"><a href="agemodelling.html#banded-age-modelling"><i class="fa fa-check"></i><b>4.4</b> Banded Age Modelling</a></li>
+<li class="chapter" data-level="4.5" data-path="agemodelling.html"><a href="agemodelling.html#chapter-project."><i class="fa fa-check"></i><b>4.5</b> Chapter project.</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="correlation.html"><a href="correlation.html"><i class="fa fa-check"></i><b>5</b> Time-uncertain correlation</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="correlation.html"><a href="correlation.html#first-look"><i class="fa fa-check"></i><b>5.1</b> First look</a></li>
+<li class="chapter" data-level="5.2" data-path="correlation.html"><a href="correlation.html#correlateResponsibly"><i class="fa fa-check"></i><b>5.2</b> How to correlate responsibly</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="correlation.html"><a href="correlation.html#binning"><i class="fa fa-check"></i><b>5.2.1</b> Binning</a></li>
+<li class="chapter" data-level="5.2.2" data-path="correlation.html"><a href="correlation.html#autocorrelation"><i class="fa fa-check"></i><b>5.2.2</b> Autocorrelation</a></li>
+<li class="chapter" data-level="5.2.3" data-path="correlation.html"><a href="correlation.html#test-multiplicity"><i class="fa fa-check"></i><b>5.2.3</b> Test multiplicity</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="correlation.html"><a href="correlation.html#the-corens-function"><i class="fa fa-check"></i><b>5.3</b> The corEns() function</a></li>
+<li class="chapter" data-level="5.4" data-path="correlation.html"><a href="correlation.html#plotting-the-ensemble-correlation-results"><i class="fa fa-check"></i><b>5.4</b> Plotting the ensemble correlation results</a>
+<ul>
+<li class="chapter" data-level="5.4.1" data-path="correlation.html"><a href="correlation.html#significance-testing-options"><i class="fa fa-check"></i><b>5.4.1</b> Significance testing options</a></li>
+<li class="chapter" data-level="5.4.2" data-path="correlation.html"><a href="correlation.html#false-discovery-rate-testing"><i class="fa fa-check"></i><b>5.4.2</b> False-discovery rate testing</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="correlation.html"><a href="correlation.html#judging-the-overall-significance-of-an-age-uncertain-correlation"><i class="fa fa-check"></i><b>5.5</b> Judging the overall significance of an age-uncertain correlation</a></li>
+<li class="chapter" data-level="5.6" data-path="correlation.html"><a href="correlation.html#chapter-project"><i class="fa fa-check"></i><b>5.6</b> Chapter Project</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html"><i class="fa fa-check"></i><b>6</b> Principal Components Analysis {pca}</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#make-a-map"><i class="fa fa-check"></i><b>6.1</b> Make a map</a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#grab-the-age-ensembles-for-each-record."><i class="fa fa-check"></i><b>6.1.1</b> Grab the age ensembles for each record.</a></li>
+<li class="chapter" data-level="6.1.2" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#filter-the-data"><i class="fa fa-check"></i><b>6.1.2</b> Filter the data</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#calculate-the-ensemble-pca"><i class="fa fa-check"></i><b>6.2</b> Calculate the ensemble PCA</a>
+<ul>
+<li class="chapter" data-level="6.2.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#plot-the-ensemble-pca-results"><i class="fa fa-check"></i><b>6.2.1</b> Plot the ensemble PCA results</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#ensemble-pca-using-a-correlation-matrix."><i class="fa fa-check"></i><b>6.3</b> Ensemble PCA using a correlation matrix.</a></li>
+<li class="chapter" data-level="6.4" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#chapter-project-1"><i class="fa fa-check"></i><b>6.4</b> Chapter project</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html"><i class="fa fa-check"></i><b>7</b> Regression and Calibration-in-time</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#load-the-lipd-file"><i class="fa fa-check"></i><b>7.1</b> Load the LiPD file</a></li>
+<li class="chapter" data-level="7.2" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#check-out-the-contents"><i class="fa fa-check"></i><b>7.2</b> Check out the contents</a></li>
+<li class="chapter" data-level="7.3" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#create-an-age-model-with-bacon"><i class="fa fa-check"></i><b>7.3</b> Create an age model with Bacon</a></li>
+<li class="chapter" data-level="7.4" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-ensemble-output"><i class="fa fa-check"></i><b>7.4</b> And plot the ensemble output</a></li>
+<li class="chapter" data-level="7.5" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#map-the-age-ensemble-to-the-paleodata-table"><i class="fa fa-check"></i><b>7.5</b> Map the age ensemble to the paleodata table</a></li>
+<li class="chapter" data-level="7.6" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#select-the-paleodata-age-ensemble-and-rabd-data-that-wed-like-to-regress-and-calibrate"><i class="fa fa-check"></i><b>7.6</b> Select the paleodata age ensemble, and RABD data that we’d like to regress and calibrate</a></li>
+<li class="chapter" data-level="7.7" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#now-load-in-the-instrumental-data-we-want-to-correlate-and-regress-agains"><i class="fa fa-check"></i><b>7.7</b> Now load in the instrumental data we want to correlate and regress agains</a></li>
+<li class="chapter" data-level="7.8" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#check-agetime-units-before-proceeding"><i class="fa fa-check"></i><b>7.8</b> Check age/time units before proceeding</a></li>
+<li class="chapter" data-level="7.9" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#create-a-variable-list-for-the-instrumental-data"><i class="fa fa-check"></i><b>7.9</b> Create a “variable list” for the instrumental data</a></li>
+<li class="chapter" data-level="7.10" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#calculate-an-ensmeble-correlation-between-the-rabd-and-local-summer-temperature-data"><i class="fa fa-check"></i><b>7.10</b> Calculate an ensmeble correlation between the RABD and local summer temperature data</a></li>
+<li class="chapter" data-level="7.11" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-output"><i class="fa fa-check"></i><b>7.11</b> And plot the output</a></li>
+<li class="chapter" data-level="7.12" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#perform-ensemble-regression"><i class="fa fa-check"></i><b>7.12</b> Perform ensemble regression</a></li>
+<li class="chapter" data-level="7.13" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-output-1"><i class="fa fa-check"></i><b>7.13</b> And plot the output</a>
+<ul>
+<li class="chapter" data-level="7.13.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#lomb-scargle-periodogram"><i class="fa fa-check"></i><b>7.13.1</b> Lomb-Scargle periodogram</a></li>
+<li class="chapter" data-level="7.13.2" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#multi-taper-method"><i class="fa fa-check"></i><b>7.13.2</b> Multi-taper Method</a></li>
+<li class="chapter" data-level="7.13.3" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#weighted-wavelet-z-transform-nuspectral"><i class="fa fa-check"></i><b>7.13.3</b> Weighted Wavelet Z-transform (<em>nuspectral</em>)</a></li>
+</ul></li>
+<li class="chapter" data-level="7.14" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#time-uncertain-spectral-analysis"><i class="fa fa-check"></i><b>7.14</b> Time-uncertain spectral analysis</a></li>
+<li class="chapter" data-level="7.15" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#conclusion"><i class="fa fa-check"></i><b>7.15</b> Conclusion</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Time-uncertain data analysis in R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="regression-and-calibration-in-time" class="section level1" number="7">
+<h1><span class="header-section-number">Chapter 7</span> Regression and Calibration-in-time</h1>
+<p>In this chapter, we will replicate the analysis of Boldt et al. (2015), performing age-uncertain calibration-in-time on a chlorophyll reflectance record from northern Alaska, using geoChronR.</p>
+<p>The challenge of age-uncertain calibration-in-time is that age uncertainty affects both the calibration model (the relation between the proxy data and instrumental data) and the reconstruction (the timing of events in the reconstruction). geoChronR simplifies handling these issues.</p>
+<p>Let’s start by loading the packages we’ll need.</p>
+<div class="sourceCode" id="cb114"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb114-1"><a href="regression-and-calibration-in-time.html#cb114-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lipdR) <span class="co">#to read and write LiPD files</span></span>
+<span id="cb114-2"><a href="regression-and-calibration-in-time.html#cb114-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geoChronR) <span class="co">#of course</span></span>
+<span id="cb114-3"><a href="regression-and-calibration-in-time.html#cb114-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr) <span class="co">#to load in the instrumental data we need</span></span>
+<span id="cb114-4"><a href="regression-and-calibration-in-time.html#cb114-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2) <span class="co">#for plotting</span></span></code></pre></div>
+<div id="load-the-lipd-file" class="section level2" number="7.1">
+<h2><span class="header-section-number">7.1</span> Load the LiPD file</h2>
+<p>OK, we’ll begin by loading in the Kurupa Lake record from Boldt et al., 2015. <code>The system.file(...)</code> part of this pulls the example file from the package directory. You’d like just enter the path as a string for typical use.</p>
+<div class="sourceCode" id="cb115"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb115-1"><a href="regression-and-calibration-in-time.html#cb115-1" aria-hidden="true" tabindex="-1"></a>K <span class="ot">&lt;-</span> lipdR<span class="sc">::</span><span class="fu">readLipd</span>(<span class="st">&quot;http://lipdverse.org/geoChronR-examples/Kurupa.Boldt.2015.lpd&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;reading: Kurupa.Boldt.2015.lpd&quot;</code></pre>
+</div>
+<div id="check-out-the-contents" class="section level2" number="7.2">
+<h2><span class="header-section-number">7.2</span> Check out the contents</h2>
+<div class="sourceCode" id="cb117"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb117-1"><a href="regression-and-calibration-in-time.html#cb117-1" aria-hidden="true" tabindex="-1"></a>sp <span class="ot">&lt;-</span> <span class="fu">plotSummary</span>(K,<span class="at">paleo.data.var =</span> <span class="st">&quot;RABD&quot;</span>,<span class="at">summary.font.size =</span> <span class="dv">6</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;Found it! Moving on...&quot;
+## [1] &quot;Found it! Moving on...&quot;
+## [1] &quot;Found it! Moving on...&quot;
+## [1] &quot;Found it! Moving on...&quot;
+## [1] &quot;Found it! Moving on...&quot;</code></pre>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-60-1.png" width="672" /></p>
+<div class="sourceCode" id="cb119"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb119-1"><a href="regression-and-calibration-in-time.html#cb119-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(sp)</span></code></pre></div>
+<pre><code>## TableGrob (4 x 4) &quot;arrange&quot;: 4 grobs
+##   z     cells    name                   grob
+## 1 1 (1-1,1-2) arrange gTree[GRID.gTree.2493]
+## 2 2 (1-2,3-4) arrange         gtable[layout]
+## 3 3 (2-4,1-2) arrange         gtable[layout]
+## 4 4 (3-4,3-4) arrange         gtable[layout]</code></pre>
+</div>
+<div id="create-an-age-model-with-bacon" class="section level2" number="7.3">
+<h2><span class="header-section-number">7.3</span> Create an age model with Bacon</h2>
+<div class="sourceCode" id="cb121"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb121-1"><a href="regression-and-calibration-in-time.html#cb121-1" aria-hidden="true" tabindex="-1"></a>K <span class="ot">&lt;-</span> <span class="fu">runBacon</span>(K,</span>
+<span id="cb121-2"><a href="regression-and-calibration-in-time.html#cb121-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">lab.id.var =</span> <span class="st">&#39;labID&#39;</span>, </span>
+<span id="cb121-3"><a href="regression-and-calibration-in-time.html#cb121-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">age.14c.var =</span> <span class="st">&#39;age14C&#39;</span>, </span>
+<span id="cb121-4"><a href="regression-and-calibration-in-time.html#cb121-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">age.14c.uncertainty.var =</span> <span class="st">&#39;age14CUncertainty&#39;</span>,</span>
+<span id="cb121-5"><a href="regression-and-calibration-in-time.html#cb121-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">age.var =</span> <span class="st">&#39;age&#39;</span>, </span>
+<span id="cb121-6"><a href="regression-and-calibration-in-time.html#cb121-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">age.uncertainty.var =</span> <span class="st">&#39;ageUncertainty&#39;</span>, </span>
+<span id="cb121-7"><a href="regression-and-calibration-in-time.html#cb121-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">depth.var =</span> <span class="st">&#39;depth&#39;</span>, </span>
+<span id="cb121-8"><a href="regression-and-calibration-in-time.html#cb121-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">reservoir.age.14c.var =</span> <span class="cn">NULL</span>, </span>
+<span id="cb121-9"><a href="regression-and-calibration-in-time.html#cb121-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">reservoir.age.14c.uncertainty.var =</span> <span class="cn">NULL</span>, </span>
+<span id="cb121-10"><a href="regression-and-calibration-in-time.html#cb121-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">rejected.ages.var =</span> <span class="cn">NULL</span>,</span>
+<span id="cb121-11"><a href="regression-and-calibration-in-time.html#cb121-11" aria-hidden="true" tabindex="-1"></a>              <span class="at">bacon.acc.mean =</span> <span class="dv">10</span>,</span>
+<span id="cb121-12"><a href="regression-and-calibration-in-time.html#cb121-12" aria-hidden="true" tabindex="-1"></a>              <span class="at">bacon.thick =</span> <span class="dv">7</span>,</span>
+<span id="cb121-13"><a href="regression-and-calibration-in-time.html#cb121-13" aria-hidden="true" tabindex="-1"></a>              <span class="at">ask =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb121-14"><a href="regression-and-calibration-in-time.html#cb121-14" aria-hidden="true" tabindex="-1"></a>              <span class="at">bacon.dir =</span> <span class="st">&quot;~/Cores&quot;</span>,</span>
+<span id="cb121-15"><a href="regression-and-calibration-in-time.html#cb121-15" aria-hidden="true" tabindex="-1"></a>              <span class="at">suggest =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb121-16"><a href="regression-and-calibration-in-time.html#cb121-16" aria-hidden="true" tabindex="-1"></a>              <span class="at">close.connection =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<pre><code>##  Using a mix of cal BP and calibrated C-14 dates</code></pre>
+<pre><code>## Warning! The file with the dates seems newer than the run you are loading. If any dates have been added/changed/removed?, then please run Bacon.cleanup()</code></pre>
+<pre><code>## Warning, this will take quite some time to calculate. I suggest increasing d.by to, e.g.10</code></pre>
+<pre><code>## Calculating age ranges...</code></pre>
+<pre><code>## 
+## Preparing ghost graph...</code></pre>
+<pre><code>## 
+## Mean 95% confidence ranges 318 yr, min. 4 yr at 0 cm, max. 520 yr at 294 cm</code></pre>
+<pre><code>## 100% of the dates overlap with the age-depth model (95% ranges)</code></pre>
+<pre><code>## </code></pre>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/KurupaBacon-1.png" width="672" /></p>
+</div>
+<div id="and-plot-the-ensemble-output" class="section level2" number="7.4">
+<h2><span class="header-section-number">7.4</span> And plot the ensemble output</h2>
+<div class="sourceCode" id="cb130"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb130-1"><a href="regression-and-calibration-in-time.html#cb130-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotChron</span>(K,<span class="at">age.var =</span> <span class="st">&quot;ageEnsemble&quot;</span>,<span class="at">dist.scale =</span> <span class="fl">0.2</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;Found it! Moving on...&quot;
+## [1] &quot;Found it! Moving on...&quot;
+## [1] &quot;plotting your chron ensemble. This make take a few seconds...&quot;</code></pre>
+<pre><code>## Scale for &#39;x&#39; is already present. Adding another scale for &#39;x&#39;, which will replace the existing scale.</code></pre>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-61-1.png" width="672" /></p>
+</div>
+<div id="map-the-age-ensemble-to-the-paleodata-table" class="section level2" number="7.5">
+<h2><span class="header-section-number">7.5</span> Map the age ensemble to the paleodata table</h2>
+<p>This is to get ensemble age estimates for each depth in the paleoData measurement table</p>
+<div class="sourceCode" id="cb133"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb133-1"><a href="regression-and-calibration-in-time.html#cb133-1" aria-hidden="true" tabindex="-1"></a>K <span class="ot">&lt;-</span> <span class="fu">mapAgeEnsembleToPaleoData</span>(K,<span class="at">age.var =</span> <span class="st">&quot;ageEnsemble&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;Kurupa.Boldt.2015&quot;
+## [1] &quot;Looking for age ensemble....&quot;
+## [1] &quot;Found it! Moving on...&quot;
+## [1] &quot;Found it! Moving on...&quot;
+## [1] &quot;getting depth from the paleodata table...&quot;
+## [1] &quot;Found it! Moving on...&quot;</code></pre>
+</div>
+<div id="select-the-paleodata-age-ensemble-and-rabd-data-that-wed-like-to-regress-and-calibrate" class="section level2" number="7.6">
+<h2><span class="header-section-number">7.6</span> Select the paleodata age ensemble, and RABD data that we’d like to regress and calibrate</h2>
+<div class="sourceCode" id="cb135"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb135-1"><a href="regression-and-calibration-in-time.html#cb135-1" aria-hidden="true" tabindex="-1"></a>kae <span class="ot">&lt;-</span>  <span class="fu">selectData</span>(K,<span class="st">&quot;ageEnsemble&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;Found it! Moving on...&quot;</code></pre>
+<div class="sourceCode" id="cb137"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb137-1"><a href="regression-and-calibration-in-time.html#cb137-1" aria-hidden="true" tabindex="-1"></a>rabd <span class="ot">&lt;-</span> <span class="fu">selectData</span>(K,<span class="st">&quot;RABD&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;Found it! Moving on...&quot;</code></pre>
+</div>
+<div id="now-load-in-the-instrumental-data-we-want-to-correlate-and-regress-agains" class="section level2" number="7.7">
+<h2><span class="header-section-number">7.7</span> Now load in the instrumental data we want to correlate and regress agains</h2>
+<div class="sourceCode" id="cb139"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb139-1"><a href="regression-and-calibration-in-time.html#cb139-1" aria-hidden="true" tabindex="-1"></a>kurupa.instrumental <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">&quot;http://lipdverse.org/geoChronR-examples/KurupaInstrumental.csv&quot;</span>)</span></code></pre></div>
+<pre><code>## Rows: 134 Columns: 2</code></pre>
+<pre><code>## ── Column specification ──────────────────────────────────────────────────────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## dbl (2): Year (AD), JJAS Temperature (deg C)</code></pre>
+<pre><code>## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div id="check-agetime-units-before-proceeding" class="section level2" number="7.8">
+<h2><span class="header-section-number">7.8</span> Check age/time units before proceeding</h2>
+<div class="sourceCode" id="cb143"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb143-1"><a href="regression-and-calibration-in-time.html#cb143-1" aria-hidden="true" tabindex="-1"></a>kae<span class="sc">$</span>units</span></code></pre></div>
+<pre><code>## [1] &quot;yr BP&quot;</code></pre>
+<p>yep, we need to convert the units from BP to AD</p>
+<div class="sourceCode" id="cb145"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb145-1"><a href="regression-and-calibration-in-time.html#cb145-1" aria-hidden="true" tabindex="-1"></a>kae <span class="ot">&lt;-</span> <span class="fu">convertBP2AD</span>(kae)</span></code></pre></div>
+</div>
+<div id="create-a-variable-list-for-the-instrumental-data" class="section level2" number="7.9">
+<h2><span class="header-section-number">7.9</span> Create a “variable list” for the instrumental data</h2>
+<div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb146-1"><a href="regression-and-calibration-in-time.html#cb146-1" aria-hidden="true" tabindex="-1"></a>kyear <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb146-2"><a href="regression-and-calibration-in-time.html#cb146-2" aria-hidden="true" tabindex="-1"></a>kyear<span class="sc">$</span>values <span class="ot">&lt;-</span> kurupa.instrumental[,<span class="dv">1</span>]</span>
+<span id="cb146-3"><a href="regression-and-calibration-in-time.html#cb146-3" aria-hidden="true" tabindex="-1"></a>kyear<span class="sc">$</span>variableName <span class="ot">&lt;-</span> <span class="st">&quot;year&quot;</span></span>
+<span id="cb146-4"><a href="regression-and-calibration-in-time.html#cb146-4" aria-hidden="true" tabindex="-1"></a>kyear<span class="sc">$</span>units <span class="ot">&lt;-</span> <span class="st">&quot;AD&quot;</span></span>
+<span id="cb146-5"><a href="regression-and-calibration-in-time.html#cb146-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb146-6"><a href="regression-and-calibration-in-time.html#cb146-6" aria-hidden="true" tabindex="-1"></a>kinst <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb146-7"><a href="regression-and-calibration-in-time.html#cb146-7" aria-hidden="true" tabindex="-1"></a>kinst<span class="sc">$</span>values <span class="ot">&lt;-</span> kurupa.instrumental[,<span class="dv">2</span>]</span>
+<span id="cb146-8"><a href="regression-and-calibration-in-time.html#cb146-8" aria-hidden="true" tabindex="-1"></a>kinst<span class="sc">$</span>variableName <span class="ot">&lt;-</span> <span class="st">&quot;Temperature&quot;</span></span>
+<span id="cb146-9"><a href="regression-and-calibration-in-time.html#cb146-9" aria-hidden="true" tabindex="-1"></a>kinst<span class="sc">$</span>units <span class="ot">&lt;-</span> <span class="st">&quot;deg (C)&quot;</span></span></code></pre></div>
+</div>
+<div id="calculate-an-ensmeble-correlation-between-the-rabd-and-local-summer-temperature-data" class="section level2" number="7.10">
+<h2><span class="header-section-number">7.10</span> Calculate an ensmeble correlation between the RABD and local summer temperature data</h2>
+<div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb147-1"><a href="regression-and-calibration-in-time.html#cb147-1" aria-hidden="true" tabindex="-1"></a>corout <span class="ot">&lt;-</span> <span class="fu">corEns</span>(kae,rabd,kyear,kinst,<span class="at">bin.step=</span><span class="dv">2</span>,<span class="at">percentiles =</span> <span class="fu">c</span>(.<span class="dv">05</span>,.<span class="dv">5</span>,.<span class="dv">95</span> ))</span></code></pre></div>
+</div>
+<div id="and-plot-the-output" class="section level2" number="7.11">
+<h2><span class="header-section-number">7.11</span> And plot the output</h2>
+<p>Note that here we use the “Effective-N” significance option as we mimic the Boldt et al. (2015) paper.</p>
+<div class="sourceCode" id="cb148"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb148-1"><a href="regression-and-calibration-in-time.html#cb148-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotCorEns</span>(corout,<span class="at">significance.option =</span> <span class="st">&quot;eff-n&quot;</span>)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-69-1.png" width="672" /></p>
+<p>Mixed results. But encouraging enough to move forward.</p>
+</div>
+<div id="perform-ensemble-regression" class="section level2" number="7.12">
+<h2><span class="header-section-number">7.12</span> Perform ensemble regression</h2>
+<p>OK, you’ve convinced yourself that you want to use RABD to model temperature back through time. We can do this simply (perhaps naively) with regession, and lets do it with age uncertainty, both in the building of the model, and the reconstructing</p>
+<div class="sourceCode" id="cb149"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb149-1"><a href="regression-and-calibration-in-time.html#cb149-1" aria-hidden="true" tabindex="-1"></a>regout <span class="ot">&lt;-</span> <span class="fu">regressEns</span>(<span class="at">time.x =</span> kae,</span>
+<span id="cb149-2"><a href="regression-and-calibration-in-time.html#cb149-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">values.x =</span> rabd,</span>
+<span id="cb149-3"><a href="regression-and-calibration-in-time.html#cb149-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">time.y =</span>kyear,</span>
+<span id="cb149-4"><a href="regression-and-calibration-in-time.html#cb149-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">values.y =</span>kinst,</span>
+<span id="cb149-5"><a href="regression-and-calibration-in-time.html#cb149-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">bin.step=</span><span class="dv">3</span>,</span>
+<span id="cb149-6"><a href="regression-and-calibration-in-time.html#cb149-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">gaussianize =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb149-7"><a href="regression-and-calibration-in-time.html#cb149-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">recon.bin.vec =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">4010</span>,<span class="dv">2010</span>,<span class="at">by=</span><span class="dv">20</span>))</span></code></pre></div>
+</div>
+<div id="and-plot-the-output-1" class="section level2" number="7.13">
+<h2><span class="header-section-number">7.13</span> And plot the output</h2>
+<div class="sourceCode" id="cb150"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb150-1"><a href="regression-and-calibration-in-time.html#cb150-1" aria-hidden="true" tabindex="-1"></a>regPlots <span class="ot">&lt;-</span> <span class="fu">plotRegressEns</span>(regout,<span class="at">alp =</span> <span class="fl">0.01</span>,<span class="at">font.size =</span> <span class="dv">8</span>)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-71-1.png" width="672" /></p>
+<p>This result is consistent with that produced by Boldt et al., (2015), and was much simpler to produce with geoChronR.</p>
+<pre><code>
+
+&lt;!--chapter:end:regression.Rmd--&gt;
+
+# Spectral Analysis
+
+In this notebook we demonstrate how to use the spectral analysis features of GeoChronR using the &quot;ODP846&quot; record described in:
+
+  - Mix, A. C., J. Le, and N. J. Shackleton (1995a), Benthic foraminiferal stable isotope stratigraphy from Site 846: 0–1.8 Ma, Proc. Ocean Drill. Program Sci. Results, 138, 839–847.
+  - Shackleton, N. J. (1995), New data on the evolution of Pliocene climate variability, in Paleoclimate and Evolution, With Emphasis on Human Origins, edited by E. S. Vrba et al., pp. 242-248, Yale Univ. Press, New Haven, CT.
+
+The data were aligned to the Benthic Stack of [Lisiecki &amp; Raymo (2005)](https://agupubs.onlinelibrary.wiley.com/doi/abs/10.1029/2004PA001071) using the [HMM-Match](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1002/2014PA002713) algorithm [(Khider et al, 2017)](https://agupubs.onlinelibrary.wiley.com/doi/abs/10.1002/2016PA003057).  The latter is a probabilistic method that generates an ensemble of 1000 possible age models compatible with the chronostratigraphic constraints.
+
+We first remotely load the data using the LiPD utilities. Depending on your connectivity, this may take a minute as the file is fairly large (2.6Mb).
+
+
+```r
+library(lipdR) # to load the file
+library(geoChronR) # to analyze it
+library(ggthemes) # to define plotting theme
+library(ggplot2)  # to plot
+
+I &lt;- readLipd(&quot;http://lipdverse.org/geoChronR-examples/ODP846.Lawrence.2006.lpd&quot;)</code></pre>
+<p>Now let us take a first look at the median age model:</p>
+<div class="sourceCode" id="cb152"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb152-1"><a href="regression-and-calibration-in-time.html#cb152-1" aria-hidden="true" tabindex="-1"></a>d18O <span class="ot">=</span>  I<span class="sc">$</span>chronData[[<span class="dv">1</span>]]<span class="sc">$</span>model[[<span class="dv">1</span>]]<span class="sc">$</span>summaryTable[[<span class="dv">1</span>]]<span class="sc">$</span>d180<span class="sc">$</span>values</span>
+<span id="cb152-2"><a href="regression-and-calibration-in-time.html#cb152-2" aria-hidden="true" tabindex="-1"></a>t.med <span class="ot">&lt;-</span> I<span class="sc">$</span>chronData[[<span class="dv">1</span>]]<span class="sc">$</span>model[[<span class="dv">1</span>]]<span class="sc">$</span>summaryTable[[<span class="dv">1</span>]]<span class="sc">$</span>median<span class="sc">$</span>values</span>
+<span id="cb152-3"><a href="regression-and-calibration-in-time.html#cb152-3" aria-hidden="true" tabindex="-1"></a>L <span class="ot">&lt;-</span> geoChronR<span class="sc">::</span><span class="fu">mapAgeEnsembleToPaleoData</span>(I,<span class="at">paleo.meas.table.num =</span> <span class="dv">1</span>,<span class="at">age.var =</span> <span class="st">&quot;age&quot;</span>)</span>
+<span id="cb152-4"><a href="regression-and-calibration-in-time.html#cb152-4" aria-hidden="true" tabindex="-1"></a>age <span class="ot">=</span> geoChronR<span class="sc">::</span><span class="fu">selectData</span>(L,<span class="st">&quot;ageEnsemble&quot;</span>,<span class="at">meas.table.num =</span> <span class="dv">1</span>)</span>
+<span id="cb152-5"><a href="regression-and-calibration-in-time.html#cb152-5" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">=</span> geoChronR<span class="sc">::</span><span class="fu">selectData</span>(L,<span class="st">&quot;temp muller&quot;</span>,<span class="at">meas.table.num =</span> <span class="dv">1</span>)</span>
+<span id="cb152-6"><a href="regression-and-calibration-in-time.html#cb152-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plotTimeseriesEnsRibbons</span>(<span class="fu">ggplot</span>(),<span class="at">X=</span>age,<span class="at">Y=</span>temp,<span class="at">color.low=</span><span class="st">&quot;orchid&quot;</span>,<span class="at">color.high=</span><span class="st">&quot;darkorange3&quot;</span>,<span class="at">color.line=</span><span class="st">&quot;orange&quot;</span>,<span class="at">line.width=</span><span class="fl">0.5</span>,<span class="at">alp=</span><span class="fl">0.3</span>) <span class="sc">+</span> <span class="fu">scale_x_reverse</span>() <span class="sc">+</span> <span class="fu">theme_hc</span>(<span class="at">style =</span> <span class="st">&quot;darkunica&quot;</span>)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-72-1.png" width="672" /></p>
+<p>This paleoclimate record features:</p>
+<ul>
+<li>a long-term cooling trend (<span class="math inline">\(\delta^{18}\mathrm{O}\)</span> gets more positive over time) characteristic of late Neogene and Quaternary.</li>
+<li>some quasi-periodic oscillations (the legendary <a href="https://www.ncdc.noaa.gov/abrupt-climate-change/Glacial-Interglacial%20Cycles">Pleistocene Ice Ages</a>)</li>
+<li>nonstationary behavior, related to the well-known mid-Pleistocene transition from a “41k world” to a “100k world” somewhere around 0.8 Ma <a href="https://agupubs.onlinelibrary.wiley.com/doi/pdf/10.1029/2000RG000091">(Paillard, 2001)</a>.</li>
+</ul>
+<p>To keep things simple and lower computational cost, let’s focus on the last million years, and use the median age model. Now, a standard assumption of spectral analysis is that data are evenly spaced in time. In real-world paleo timeseries this is seldom the case. Let’s look at the distribution of time increments in this particular core, as contrained by this tuned age model:</p>
+<div class="sourceCode" id="cb153"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb153-1"><a href="regression-and-calibration-in-time.html#cb153-1" aria-hidden="true" tabindex="-1"></a>age.median <span class="ot">=</span> matrixStats<span class="sc">::</span><span class="fu">rowQuantiles</span>(age<span class="sc">$</span>values,<span class="at">probs =</span> <span class="fl">0.5</span>)</span>
+<span id="cb153-2"><a href="regression-and-calibration-in-time.html#cb153-2" aria-hidden="true" tabindex="-1"></a>temp.median <span class="ot">=</span> matrixStats<span class="sc">::</span><span class="fu">rowQuantiles</span>(<span class="fu">as.matrix</span>(temp<span class="sc">$</span>values),<span class="at">probs =</span> <span class="fl">0.5</span>)</span>
+<span id="cb153-3"><a href="regression-and-calibration-in-time.html#cb153-3" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span>age.median[age.median <span class="sc">&lt;</span> <span class="dv">1000</span>]</span>
+<span id="cb153-4"><a href="regression-and-calibration-in-time.html#cb153-4" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> temp.median[age.median <span class="sc">&lt;</span> <span class="dv">1000</span>]</span>
+<span id="cb153-5"><a href="regression-and-calibration-in-time.html#cb153-5" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> X <span class="sc">-</span> <span class="fu">mean</span>(X)</span>
+<span id="cb153-6"><a href="regression-and-calibration-in-time.html#cb153-6" aria-hidden="true" tabindex="-1"></a><span class="co">#dfs = dplyr::filter(df,t&lt;=1000)</span></span>
+<span id="cb153-7"><a href="regression-and-calibration-in-time.html#cb153-7" aria-hidden="true" tabindex="-1"></a>dt <span class="ot">=</span> <span class="fu">diff</span>(t)</span>
+<span id="cb153-8"><a href="regression-and-calibration-in-time.html#cb153-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">xlim</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">10</span>)) <span class="sc">+</span></span>
+<span id="cb153-9"><a href="regression-and-calibration-in-time.html#cb153-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">x=</span>dt,<span class="at">y =</span> ..density..), <span class="at">bins =</span> <span class="dv">25</span>, ,<span class="at">alpha =</span> <span class="fl">0.8</span>, <span class="at">fill =</span> <span class="st">&quot;orange&quot;</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">&quot;Distribution of time intervals&quot;</span>) <span class="sc">+</span> <span class="fu">theme_hc</span>(<span class="at">style =</span> <span class="st">&quot;darkunica&quot;</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="fu">expression</span>(Delta<span class="sc">*</span><span class="st">&quot;t&quot;</span>))</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-73-1.png" width="672" /></p>
+<p>We see that over the past 1 Ma, the time increments (<span class="math inline">\(\Delta t\)</span>) are sharply peaked around 2 ka, but they range from 0 to about 7.5 ka. For now, let us assume that the time axis, albeit uneven, is well-known (no uncertainty).
+## Time-certain spectral analysis
+From this point there are two ways to proceed: 1) use methods that explictly deal with unevenly-spaced data, or 2) interpolate to a regular grid and apply standard methods.
+In the first case, we could use the <em>Lomb-Scargle periodogram</em> or rather its version tailored for paleoclimate data, <a href="https://www.nonlin-processes-geophys.net/16/43/2009/">REDFIT</a>. In the second case, we can interpolate and use a method tailored to evenly-spaced data.</p>
+<div id="lomb-scargle-periodogram" class="section level3" number="7.13.1">
+<h3><span class="header-section-number">7.13.1</span> Lomb-Scargle periodogram</h3>
+<p>This is a very standard method implemented in many packages. For a review, see <a href="https://iopscience.iop.org/article/10.3847/1538-4365/aab766/meta">VanderPlas (2018)</a>. There are several ways to implement Lomb-Scargle. geoChronR does this via the <a href="https://www.rdocumentation.org/packages/lomb">lomb</a> package.</p>
+<p>To establish significance, we have a few choices. We re-use Stephen Meyer’s excellent <a href="https://www.rdocumentation.org/packages/astrochron">astrochron</a> package for this purpose, as it implements the methods described in <a href="https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2012PA002307">Meyers, (2012)</a>. Several nulls could be chosen here, and we focus first on a power-law, characteristic of many paleoclimate records (e.g. <a href="https://www.pnas.org/content/116/18/8728.short">Zhu et al, 2019</a>).</p>
+<div class="sourceCode" id="cb154"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb154-1"><a href="regression-and-calibration-in-time.html#cb154-1" aria-hidden="true" tabindex="-1"></a>spec.ls <span class="ot">&lt;-</span> <span class="fu">computeSpectraEns</span>(t,X,<span class="at">method =</span> <span class="st">&#39;lomb-scargle&#39;</span>)</span>
+<span id="cb154-2"><a href="regression-and-calibration-in-time.html#cb154-2" aria-hidden="true" tabindex="-1"></a>ls.df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="st">&quot;freq&quot;</span> <span class="ot">=</span> spec.ls<span class="sc">$</span>freqs, <span class="st">&quot;pwr&quot;</span> <span class="ot">=</span> spec.ls<span class="sc">$</span>power)</span>
+<span id="cb154-3"><a href="regression-and-calibration-in-time.html#cb154-3" aria-hidden="true" tabindex="-1"></a><span class="co"># estimate significance against a power-law fit</span></span>
+<span id="cb154-4"><a href="regression-and-calibration-in-time.html#cb154-4" aria-hidden="true" tabindex="-1"></a>f.low <span class="ot">&lt;-</span>  <span class="fl">1e-3</span>; f.high <span class="ot">&lt;-</span> <span class="fl">0.1</span></span>
+<span id="cb154-5"><a href="regression-and-calibration-in-time.html#cb154-5" aria-hidden="true" tabindex="-1"></a>plaw.ls <span class="ot">&lt;-</span>  astrochron<span class="sc">::</span><span class="fu">pwrLawFit</span>(ls.df, <span class="at">dof =</span> <span class="dv">2</span>, <span class="at">flow =</span> f.low, <span class="at">fhigh =</span> f.high, <span class="at">output =</span> <span class="dv">1</span>, <span class="at">genplot =</span> F)</span>
+<span id="cb154-6"><a href="regression-and-calibration-in-time.html#cb154-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb154-7"><a href="regression-and-calibration-in-time.html#cb154-7" aria-hidden="true" tabindex="-1"></a>cl.df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(plaw.ls[,<span class="fu">union</span>(<span class="dv">1</span>,<span class="fu">c</span>(<span class="dv">5</span><span class="sc">:</span><span class="dv">7</span>))]) <span class="co"># extract confidence limits</span></span>
+<span id="cb154-8"><a href="regression-and-calibration-in-time.html#cb154-8" aria-hidden="true" tabindex="-1"></a><span class="co"># rename columns to be less silly</span></span>
+<span id="cb154-9"><a href="regression-and-calibration-in-time.html#cb154-9" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cl.df)[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="st">&quot;freq&quot;</span></span>
+<span id="cb154-10"><a href="regression-and-calibration-in-time.html#cb154-10" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cl.df)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">&quot;90% CL&quot;</span></span>
+<span id="cb154-11"><a href="regression-and-calibration-in-time.html#cb154-11" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cl.df)[<span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="st">&quot;95% CL&quot;</span></span>
+<span id="cb154-12"><a href="regression-and-calibration-in-time.html#cb154-12" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cl.df)[<span class="dv">4</span>] <span class="ot">&lt;-</span> <span class="st">&quot;99% CL&quot;</span></span>
+<span id="cb154-13"><a href="regression-and-calibration-in-time.html#cb154-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb154-14"><a href="regression-and-calibration-in-time.html#cb154-14" aria-hidden="true" tabindex="-1"></a><span class="co"># plot this</span></span>
+<span id="cb154-15"><a href="regression-and-calibration-in-time.html#cb154-15" aria-hidden="true" tabindex="-1"></a>pticks <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">500</span>, <span class="dv">1000</span>)</span>
+<span id="cb154-16"><a href="regression-and-calibration-in-time.html#cb154-16" aria-hidden="true" tabindex="-1"></a>prange <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">1000</span>)</span>
+<span id="cb154-17"><a href="regression-and-calibration-in-time.html#cb154-17" aria-hidden="true" tabindex="-1"></a>yl <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.01</span>,<span class="dv">1000</span>)</span>
+<span id="cb154-18"><a href="regression-and-calibration-in-time.html#cb154-18" aria-hidden="true" tabindex="-1"></a>p.ls <span class="ot">&lt;-</span> <span class="fu">plotSpectrum</span>(ls.df,cl.df,<span class="at">x.lims =</span> prange,<span class="at">x.ticks =</span> pticks, <span class="at">y.lims =</span> yl,</span>
+<span id="cb154-19"><a href="regression-and-calibration-in-time.html#cb154-19" aria-hidden="true" tabindex="-1"></a>                     <span class="at">color.line=</span><span class="st">&#39;orange&#39;</span>, <span class="at">color.cl=</span><span class="st">&#39;white&#39;</span>) <span class="sc">+</span></span>
+<span id="cb154-20"><a href="regression-and-calibration-in-time.html#cb154-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;IODP 846 d18O, Lomb-Scargle periodogram&quot;</span>) <span class="sc">+</span></span>
+<span id="cb154-21"><a href="regression-and-calibration-in-time.html#cb154-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_hc</span>(<span class="at">style =</span> <span class="st">&quot;darkunica&quot;</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">axis.ticks.x =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">&quot;gray&quot;</span>))</span>
+<span id="cb154-22"><a href="regression-and-calibration-in-time.html#cb154-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb154-23"><a href="regression-and-calibration-in-time.html#cb154-23" aria-hidden="true" tabindex="-1"></a><span class="co"># label periodicities of interest</span></span>
+<span id="cb154-24"><a href="regression-and-calibration-in-time.html#cb154-24" aria-hidden="true" tabindex="-1"></a>p.ls <span class="ot">&lt;-</span> <span class="fu">periodAnnotate</span>(p.ls, <span class="at">periods =</span> <span class="fu">c</span>(<span class="dv">19</span>,<span class="dv">23</span>,<span class="dv">41</span>,<span class="dv">100</span>), <span class="at">y.lims =</span><span class="fu">c</span>(<span class="fl">0.01</span>,<span class="dv">100</span>))</span>
+<span id="cb154-25"><a href="regression-and-calibration-in-time.html#cb154-25" aria-hidden="true" tabindex="-1"></a><span class="fu">show</span>(p.ls)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/lomb-scargle-1.png" width="672" /></p>
+<p>It is clearly seen that the data contain significant energy (peaks) near, but not exactly at, the famed Milankovitch periodicities (100, 41, 23, and 19 kyr). These periodicities (particularly the eccentricity (100kyr) and obliquity (40kyr)) rise above the various power law nulls, but we see hints of higher power at high-frequencies. We shall soon see that this is an artifact of the Lomb-Scargle methods, which does not use any tapers and therefore displays high variance (in this context, spurious peaks). Other methods smooth out that noise.</p>
+<p><a href="https://boris.unibe.ch/id/eprint/38577">REDFIT</a> does so via application of Welch’s Overlapped Segment Averaging, which by default uses 3 segments that overlap by about 50%. geoChronR uses its <a href="https://cran.r-project.org/package=dplR">dplR</a> implementation, which differs slightly from the published algorithm (see <code>?dplR::redfit</code> for details).</p>
+<div class="sourceCode" id="cb155"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb155-1"><a href="regression-and-calibration-in-time.html#cb155-1" aria-hidden="true" tabindex="-1"></a>spec.redfit <span class="ot">&lt;-</span> <span class="fu">computeSpectraEns</span>(t,X,<span class="at">method =</span> <span class="st">&#39;redfit&#39;</span>)</span>
+<span id="cb155-2"><a href="regression-and-calibration-in-time.html#cb155-2" aria-hidden="true" tabindex="-1"></a>redfit.df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="st">&quot;freq&quot;</span> <span class="ot">=</span> spec.redfit<span class="sc">$</span>freq, <span class="st">&quot;pwr&quot;</span> <span class="ot">=</span> spec.redfit<span class="sc">$</span>power)</span>
+<span id="cb155-3"><a href="regression-and-calibration-in-time.html#cb155-3" aria-hidden="true" tabindex="-1"></a>cl.df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="st">&quot;freq&quot;</span> <span class="ot">=</span> spec.redfit<span class="sc">$</span>freq, <span class="st">&quot;95% CL&quot;</span> <span class="ot">=</span> spec.redfit<span class="sc">$</span>power.CL)</span>
+<span id="cb155-4"><a href="regression-and-calibration-in-time.html#cb155-4" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cl.df)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">&quot;95% CL&quot;</span></span>
+<span id="cb155-5"><a href="regression-and-calibration-in-time.html#cb155-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb155-6"><a href="regression-and-calibration-in-time.html#cb155-6" aria-hidden="true" tabindex="-1"></a><span class="co"># plot this</span></span>
+<span id="cb155-7"><a href="regression-and-calibration-in-time.html#cb155-7" aria-hidden="true" tabindex="-1"></a>pticks <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">500</span>, <span class="dv">1000</span>)</span>
+<span id="cb155-8"><a href="regression-and-calibration-in-time.html#cb155-8" aria-hidden="true" tabindex="-1"></a>prange <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">1000</span>)</span>
+<span id="cb155-9"><a href="regression-and-calibration-in-time.html#cb155-9" aria-hidden="true" tabindex="-1"></a>yl <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.01</span>,<span class="dv">1000</span>)</span>
+<span id="cb155-10"><a href="regression-and-calibration-in-time.html#cb155-10" aria-hidden="true" tabindex="-1"></a>p.ls <span class="ot">&lt;-</span> <span class="fu">plotSpectrum</span>(redfit.df,cl.df,<span class="at">x.lims=</span>prange,<span class="at">x.ticks =</span> pticks, <span class="at">y.lims =</span> yl,</span>
+<span id="cb155-11"><a href="regression-and-calibration-in-time.html#cb155-11" aria-hidden="true" tabindex="-1"></a>                     <span class="at">color.line=</span><span class="st">&#39;orange&#39;</span>, <span class="at">color.cl=</span><span class="st">&#39;white&#39;</span>) <span class="sc">+</span></span>
+<span id="cb155-12"><a href="regression-and-calibration-in-time.html#cb155-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;IODP 846 d18O, REDFIT estimation&quot;</span>) <span class="sc">+</span></span>
+<span id="cb155-13"><a href="regression-and-calibration-in-time.html#cb155-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_hc</span>(<span class="at">style =</span> <span class="st">&quot;darkunica&quot;</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">axis.ticks.x =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">&quot;gray&quot;</span>))</span>
+<span id="cb155-14"><a href="regression-and-calibration-in-time.html#cb155-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb155-15"><a href="regression-and-calibration-in-time.html#cb155-15" aria-hidden="true" tabindex="-1"></a><span class="co"># label periodicities of interest</span></span>
+<span id="cb155-16"><a href="regression-and-calibration-in-time.html#cb155-16" aria-hidden="true" tabindex="-1"></a>p.ls <span class="ot">&lt;-</span> <span class="fu">periodAnnotate</span>(p.ls, <span class="at">periods =</span> <span class="fu">c</span>(<span class="dv">19</span>,<span class="dv">23</span>,<span class="dv">41</span>,<span class="dv">100</span>), <span class="at">y.lims =</span><span class="fu">c</span>(<span class="fl">0.01</span>,<span class="dv">100</span>))</span>
+<span id="cb155-17"><a href="regression-and-calibration-in-time.html#cb155-17" aria-hidden="true" tabindex="-1"></a><span class="fu">show</span>(p.ls)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/REDFIT-1.png" width="672" /></p>
+<p>Now, this clearly is smoother, perhaps a little too much. One could play with <code>n50</code>, the size of the window, or <code>iwin</code>, its shape, to reduce the smoothing. There are still peaks near the Milankovitch periodicities, but in many cases they do not stand out (cf 41 kyr).</p>
+</div>
+<div id="multi-taper-method" class="section level3" number="7.13.2">
+<h3><span class="header-section-number">7.13.2</span> Multi-taper Method</h3>
+<p>The Lomb-Scargle periodogram is a decent way to deal with unevenly-spaced timeseries, but it is still a periodogram, which has several problems. In particular, it is inconsistent: the variance of each estimate goes to infinity as the number of observations increases. A much better estimator is Thomson’s Multi-Taper Method <a href="https://doi.org/10.1109/PROC.1982.12433">Thomson, 1982</a>, which is <a href="https://en.wikipedia.org/wiki/Consistent_estimator">consistent</a> (the more data you have, the better you know the spectrum, as it should be). Formally, MTM optimizes the classic bias-variance tradeoff inherent to all statistical inference. It does so by minimizing leakage outside of a frequency band with half-bandwidth equal to <span class="math inline">\(pf_R\)</span>, where <span class="math inline">\(f_R=1/(N \Delta t)\)</span> is the Rayleigh frequency, <span class="math inline">\(\Delta t\)</span> is the sampling interval, <span class="math inline">\(N\)</span> the number of measurements, and <span class="math inline">\(p\)</span> is the so-called time-bandwidth product. <span class="math inline">\(p\)</span> can only take a finite number of values, all multiples of 1/2 between 2 and 4. A larger <span class="math inline">\(p\)</span> means lower variance (i.e. less uncertainty about the power), but broader peaks (i.e. a lower spectral resolution), synonymous with more uncertainty about the exact location of the harmonic. So while MTM might not distinguish between closely-spaced harmonics, it is much less likely to identify spurious peaks, especially at high frequencies. In addition, a battery of formal tests have been devised with MTM, allowing under reasonably broad assumptions to ascertain the significance of spectral peaks. We show how to use this “harmonic F-test” below.</p>
+<p>A notable downside of MTM is that it only handles evenly-spaced data. Small potatoes! As we saw above, the data are not that far from evenly-spaced, so let’s interpolate and see what we get. Conveniently, both the interpolation routine and MTM are available within the <a href="https://www.rdocumentation.org/packages/astrochron">astrochron</a> package.</p>
+<div class="sourceCode" id="cb156"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb156-1"><a href="regression-and-calibration-in-time.html#cb156-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(astrochron)</span>
+<span id="cb156-2"><a href="regression-and-calibration-in-time.html#cb156-2" aria-hidden="true" tabindex="-1"></a>dfs <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">time=</span>t,<span class="at">temp=</span>X)</span>
+<span id="cb156-3"><a href="regression-and-calibration-in-time.html#cb156-3" aria-hidden="true" tabindex="-1"></a>dti <span class="ot">=</span> <span class="fl">2.5</span>  <span class="co"># interpolation interval, corresponding to the mode of the \Delta t distribution</span></span>
+<span id="cb156-4"><a href="regression-and-calibration-in-time.html#cb156-4" aria-hidden="true" tabindex="-1"></a>dfe <span class="ot">=</span> <span class="fu">linterp</span>(dfs,<span class="at">dt=</span>dti)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/interpolation-1.png" width="672" /></p>
+<div class="sourceCode" id="cb157"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb157-1"><a href="regression-and-calibration-in-time.html#cb157-1" aria-hidden="true" tabindex="-1"></a>tbw <span class="ot">=</span> <span class="dv">2</span>  <span class="co">#time-bandwidth product for the analysis; we use the minimum allowed to limit smoothing.</span></span></code></pre></div>
+<p>Most of the <code>astrochron</code> routines produce a diagnostic graphical output, which you can silence by turning the <code>genplot</code> flag to <code>FALSE</code>. However, it is instructive to take a peak at the top-left panel and see where the interpolation has made a difference. We see that the black line closely espouses the red measurements for most of the timeseries, reassuring us that this process did not introduce spurious excursions or oscillations.</p>
+<p>Now let’s compute the spectrum using MTM on the equally-spaced data stored in <code>dfe</code>.
+We continue to manually label Milankovitch frequencies (in orange) and label in green (technically, “chartreuse”) the periodicities identified as significant by the test. Here, we start with the default option of a test against an AR(1) background.</p>
+<div class="sourceCode" id="cb158"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb158-1"><a href="regression-and-calibration-in-time.html#cb158-1" aria-hidden="true" tabindex="-1"></a>spec.mtm <span class="ot">&lt;-</span> <span class="fu">computeSpectraEns</span>(dfe<span class="sc">$</span>time,dfe<span class="sc">$</span>temp,<span class="at">method =</span> <span class="st">&#39;mtm&#39;</span>, <span class="at">tbw=</span>tbw) <span class="co"># tbw is the time-bandwidth product, p in the above</span></span>
+<span id="cb158-2"><a href="regression-and-calibration-in-time.html#cb158-2" aria-hidden="true" tabindex="-1"></a>sig.freq <span class="ot">&lt;-</span> astrochron<span class="sc">::</span><span class="fu">mtm</span>(dfe,<span class="at">tbw=</span>tbw, <span class="at">padfac=</span><span class="dv">5</span>,<span class="at">ar1=</span><span class="cn">TRUE</span>,<span class="at">genplot =</span> F,<span class="at">output=</span><span class="dv">2</span>, <span class="at">verbose =</span> F, <span class="at">detrend=</span>T)</span>
+<span id="cb158-3"><a href="regression-and-calibration-in-time.html#cb158-3" aria-hidden="true" tabindex="-1"></a>mtm.df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="st">&quot;freq&quot;</span> <span class="ot">=</span> spec.mtm<span class="sc">$</span>freqs, <span class="st">&quot;pwr&quot;</span> <span class="ot">=</span> spec.mtm<span class="sc">$</span>power)</span>
+<span id="cb158-4"><a href="regression-and-calibration-in-time.html#cb158-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb158-5"><a href="regression-and-calibration-in-time.html#cb158-5" aria-hidden="true" tabindex="-1"></a><span class="co"># plot this</span></span>
+<span id="cb158-6"><a href="regression-and-calibration-in-time.html#cb158-6" aria-hidden="true" tabindex="-1"></a>prange <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">1000</span>)</span>
+<span id="cb158-7"><a href="regression-and-calibration-in-time.html#cb158-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb158-8"><a href="regression-and-calibration-in-time.html#cb158-8" aria-hidden="true" tabindex="-1"></a>p.mtm <span class="ot">&lt;-</span> <span class="fu">plotSpectrum</span>(mtm.df,<span class="at">x.lims=</span>prange,<span class="at">x.ticks =</span> pticks, <span class="at">y.lims =</span> <span class="fu">c</span>(<span class="fl">1e-6</span>,<span class="dv">10</span>), <span class="at">color.line=</span><span class="st">&#39;orange&#39;</span>) <span class="sc">+</span></span>
+<span id="cb158-9"><a href="regression-and-calibration-in-time.html#cb158-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;IODP 846 d18O, Multi-taper method, AR(1) null&quot;</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">&quot;Period (ky)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb158-10"><a href="regression-and-calibration-in-time.html#cb158-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_hc</span>(<span class="at">style =</span> <span class="st">&quot;darkunica&quot;</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">axis.ticks.x =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">&quot;gray&quot;</span>))</span>
+<span id="cb158-11"><a href="regression-and-calibration-in-time.html#cb158-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb158-12"><a href="regression-and-calibration-in-time.html#cb158-12" aria-hidden="true" tabindex="-1"></a><span class="co"># label periodicities of interest</span></span>
+<span id="cb158-13"><a href="regression-and-calibration-in-time.html#cb158-13" aria-hidden="true" tabindex="-1"></a>p.mtm <span class="ot">&lt;-</span> <span class="fu">periodAnnotate</span>(p.mtm, <span class="at">periods =</span> <span class="fu">c</span>(<span class="dv">19</span>,<span class="dv">23</span>,<span class="dv">41</span>,<span class="dv">100</span>), <span class="at">y.lims =</span> <span class="fu">c</span>(<span class="fl">1e-6</span>,<span class="dv">1</span>))</span>
+<span id="cb158-14"><a href="regression-and-calibration-in-time.html#cb158-14" aria-hidden="true" tabindex="-1"></a>p.mtm <span class="ot">&lt;-</span> <span class="fu">periodAnnotate</span>(p.mtm, <span class="at">periods =</span> <span class="dv">1</span><span class="sc">/</span>sig.freq<span class="sc">$</span>Frequency,<span class="at">color =</span> <span class="st">&quot;chartreuse&quot;</span>,<span class="at">y.lims =</span> <span class="fu">c</span>(<span class="fl">1e-6</span>,.<span class="dv">1</span>))</span>
+<span id="cb158-15"><a href="regression-and-calibration-in-time.html#cb158-15" aria-hidden="true" tabindex="-1"></a><span class="fu">show</span>(p.mtm)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/MTM-1.png" width="672" /></p>
+<p>You may notice a few differences to the Lomb-Scargle periodogram. First, the high frequency part is much smoother, getting rid of a lot of high-frequency noise. There is also a clear power law behavior from periods of 5 to 100 ky, which in this log-log plotting convention manifests as a linear decrease. <em>Astrochron</em> implements several tests to detect harmonic (sinusoidal) components. Like all tests, they are heavily dependent on a null hypothesis. By default, <em>astrochron::mtm()</em> assumes that we test against an AR(1) model. Using the option <code>output = 2</code>, it will export the frequencies identified as “significant” by this procedure. In this case, it roughly identifies the Milankovitch frequencies we expected to find, plus many others. What should we make of that? The 100ka cycle is now labeled as 90 ka, though given the peak’s width, one should not be foolish enough to consider them distinct. There is also evidence that this peak may be the result of ice ages clustering every 2 to 3 obliquity cycles (81 or 123 ka), averaging around 100 over the pleistocene <a href="https://www.nature.com/articles/nature03401">Huybers &amp; Wunsch (2005)</a>. Bottom line: with such spectral resolution, 94 and 100 are one and the same, and may really be a mixture of 80 and 120. Overall, this test identifies 8 periodicities as significant, compared to the 4 we’d expect.</p>
+<p>It’s helpful to take a step back and contemplate our null hypothesis of AR(1) background, and the real possibility that without adjustments, we might be underestimating the lag-1 autocorrelation, hence making the test too lenient. There are alternatives to that in <em>Astrochron</em>, using either the robust method of <a href="https://link.springer.com/article/10.1007/BF00142586">Mann &amp; Lees (1996)</a> or a less error-prone version by the author <a href="https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2012PA002307">Meyers, (2012)</a>, called LOWSPEC. You might want to experiment with that.</p>
+<p>Another factor to play with is the padding factor (<code>padfac</code>). In a nutshell, padding helps increase the spectral resolution at little to no cost (see <a href="https://dsp.stackexchange.com/questions/741/why-should-i-zero-pad-a-signal-before-taking-the-fourier-transform">here</a> for an informal account). You should also try and see what happens when it varies. (note: we used the <em>Astrochron</em> default values here)</p>
+<p>Most important of all is the choice of null <a href="https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2011PA002195">(Vaughan et al, 2011)</a>. Past work has shown that the continuum of climate variability is well described by power laws <a href="https://www.nature.com/articles/nature04745">Huybers &amp; Curry (2006)</a>, so this should be a far better null against which to test the emergence of spectral peaks. Never fear! <em>Astrochron</em> has an app for that:</p>
+<div class="sourceCode" id="cb159"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb159-1"><a href="regression-and-calibration-in-time.html#cb159-1" aria-hidden="true" tabindex="-1"></a>mtmPL.df <span class="ot">&lt;-</span> <span class="fu">computeSpectraEns</span>(t,X,<span class="at">method =</span> <span class="st">&#39;mtm&#39;</span>, <span class="at">tbw=</span>tbw, <span class="at">mtm_null =</span> <span class="st">&#39;power_law&#39;</span>) <span class="co"># tbw is the time-bandwidth product, p in the above</span></span>
+<span id="cb159-2"><a href="regression-and-calibration-in-time.html#cb159-2" aria-hidden="true" tabindex="-1"></a>sig.freqPL <span class="ot">&lt;-</span> astrochron<span class="sc">::</span><span class="fu">mtmPL</span>(dfe,<span class="at">tbw=</span>tbw,<span class="at">padfac=</span><span class="dv">5</span>,<span class="at">genplot =</span> F,<span class="at">output=</span><span class="dv">2</span>, <span class="at">verbose =</span> F, <span class="at">flow=</span>f.low, <span class="at">fhigh=</span>f.high)</span>
+<span id="cb159-3"><a href="regression-and-calibration-in-time.html#cb159-3" aria-hidden="true" tabindex="-1"></a>mtm.df <span class="ot">=</span> mtmPL.df[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)]</span>
+<span id="cb159-4"><a href="regression-and-calibration-in-time.html#cb159-4" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(mtm.df)[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="st">&quot;freq&quot;</span></span>
+<span id="cb159-5"><a href="regression-and-calibration-in-time.html#cb159-5" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(mtm.df)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">&quot;pwr&quot;</span></span>
+<span id="cb159-6"><a href="regression-and-calibration-in-time.html#cb159-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb159-7"><a href="regression-and-calibration-in-time.html#cb159-7" aria-hidden="true" tabindex="-1"></a>cl.df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(mtmPL.df<span class="sc">$</span>freqs,mtmPL.df<span class="sc">$</span>power.CL) <span class="co"># extract confidence limits</span></span>
+<span id="cb159-8"><a href="regression-and-calibration-in-time.html#cb159-8" aria-hidden="true" tabindex="-1"></a><span class="co"># rename columns to be less silly</span></span>
+<span id="cb159-9"><a href="regression-and-calibration-in-time.html#cb159-9" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cl.df)[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="st">&quot;freq&quot;</span></span>
+<span id="cb159-10"><a href="regression-and-calibration-in-time.html#cb159-10" aria-hidden="true" tabindex="-1"></a><span class="co">#names(cl.df)[2] &lt;- &quot;90% CL&quot;</span></span>
+<span id="cb159-11"><a href="regression-and-calibration-in-time.html#cb159-11" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cl.df)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">&quot;95% CL&quot;</span></span>
+<span id="cb159-12"><a href="regression-and-calibration-in-time.html#cb159-12" aria-hidden="true" tabindex="-1"></a><span class="co">#names(cl.df)[4] &lt;- &quot;99% CL&quot;</span></span>
+<span id="cb159-13"><a href="regression-and-calibration-in-time.html#cb159-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb159-14"><a href="regression-and-calibration-in-time.html#cb159-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb159-15"><a href="regression-and-calibration-in-time.html#cb159-15" aria-hidden="true" tabindex="-1"></a><span class="co"># plot it</span></span>
+<span id="cb159-16"><a href="regression-and-calibration-in-time.html#cb159-16" aria-hidden="true" tabindex="-1"></a>p.mtmPL <span class="ot">&lt;-</span> <span class="fu">plotSpectrum</span>(mtm.df,cl.df,<span class="at">x.lims =</span> prange,<span class="at">x.ticks =</span> pticks,</span>
+<span id="cb159-17"><a href="regression-and-calibration-in-time.html#cb159-17" aria-hidden="true" tabindex="-1"></a>                        <span class="at">y.lims =</span> <span class="fu">c</span>(<span class="fl">1e-6</span>,<span class="dv">10</span>),<span class="at">color.line=</span><span class="st">&#39;orange&#39;</span>, <span class="at">color.cl=</span><span class="st">&#39;white&#39;</span>) <span class="sc">+</span></span>
+<span id="cb159-18"><a href="regression-and-calibration-in-time.html#cb159-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;IODP 846 d18O, Multi-taper method, power-law null&quot;</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">&quot;Period (ky)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb159-19"><a href="regression-and-calibration-in-time.html#cb159-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_hc</span>(<span class="at">style =</span> <span class="st">&quot;darkunica&quot;</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">axis.ticks.x =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">&quot;gray&quot;</span>))</span>
+<span id="cb159-20"><a href="regression-and-calibration-in-time.html#cb159-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb159-21"><a href="regression-and-calibration-in-time.html#cb159-21" aria-hidden="true" tabindex="-1"></a><span class="co"># label periodicities of interest</span></span>
+<span id="cb159-22"><a href="regression-and-calibration-in-time.html#cb159-22" aria-hidden="true" tabindex="-1"></a>p.mtmPL <span class="ot">&lt;-</span> <span class="fu">periodAnnotate</span>(p.mtmPL, <span class="at">periods =</span> <span class="fu">c</span>(<span class="dv">19</span>,<span class="dv">23</span>,<span class="dv">41</span>,<span class="dv">100</span>), <span class="at">y.lims =</span> <span class="fu">c</span>(<span class="fl">1e-6</span>,<span class="dv">1</span>))</span>
+<span id="cb159-23"><a href="regression-and-calibration-in-time.html#cb159-23" aria-hidden="true" tabindex="-1"></a>p.mtmPL <span class="ot">&lt;-</span> <span class="fu">periodAnnotate</span>(p.mtmPL, <span class="at">periods =</span> <span class="dv">1</span><span class="sc">/</span>sig.freqPL<span class="sc">$</span>Frequency,<span class="at">color =</span> <span class="st">&quot;chartreuse&quot;</span>,<span class="at">y.lims =</span> <span class="fu">c</span>(<span class="fl">1e-6</span>,.<span class="dv">1</span>))</span>
+<span id="cb159-24"><a href="regression-and-calibration-in-time.html#cb159-24" aria-hidden="true" tabindex="-1"></a><span class="fu">show</span>(p.mtmPL)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-74-1.png" width="672" /></p>
+<p>Sure enough, this gets rid of a few cycles, but many remain. A few regions of the spectrum poke above the 95% confidence limit, but one should not be so foolish as to identify every single periodicity in these ranges to be independent. This is related to the <a href="https://en.wikipedia.org/wiki/Multiple_comparisons_problem">multiple hypothesis problem</a>. However, as pointed out by <a href="https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2012PA002307">Meyers, (2012)</a>, even that misses the point: sedimentary processes (and many processes in other proxy archives) tend to smooth out the signal over the depth axis (hence, over time), making comparisons at neighboring frequencies highly dependent. One solution is to use predictions made by a physical model about the frequency and relative amplitude of astronomical cycles <a href="http://www.ajsonline.org/content/307/5/773">Meyers &amp; Sageman, 2007</a>. However this may not be applicable to all spectral detection problems. We thus refrain from implementing “cookie-cutter” solutions in GeoChronR, to force the user to think deeply about the null hypothesis and the most sensible way to test it.</p>
+</div>
+<div id="weighted-wavelet-z-transform-nuspectral" class="section level3" number="7.13.3">
+<h3><span class="header-section-number">7.13.3</span> Weighted Wavelet Z-transform (<em>nuspectral</em>)</h3>
+<p>An interpolation-free alternative to MTM is the Weighted Wavelet Z-transform of <a href="http://adsabs.harvard.edu/cgi-bin/bib_query?1996AJ....112.1709F">Foster, (1996)</a>. The idea of spectral analysis is to decompose the signal on an orthogonal basis of sines and cosines. Data gaps cause this basis to lose its orthogonality, creating energy leakage. WWZ mitigates this problem using an inverse approach. Because it is wavelet based, it does not rely on interpolation or detrending. WWZ was adapted by <a href="https://www.pnas.org/content/110/30/12213.short">Kirchner &amp; Neal (2013)</a>, who employed basis rotations to mitigate the numerical instability that occurs in pathological cases with the original algorithm. A paleoclimate example of its use is given in <a href="https://www.pnas.org/content/116/18/8728.short">Zhu et al (2019)</a>).</p>
+<p>The WWZ method has one adjustable parameter, a decay constant that balances the time resolution and frequency resolution of the wavelet analysis. The smaller this constant is, the sharper the peaks.</p>
+<p>We wanted to offer GeoChronR users a better alternative to Lom-Scargle, but the WWZ code is relatively complex. We thus chose to incoporate the <em>nuspectral</em> method of <a href="https://www.jstatsoft.org/article/view/v011i02">Mathias et al (2004)</a> based on a similar idea. However, it is not equivalent to WWZ. The main difference has to do with the approximation of the mother wavelet by a cubic polynomial with compact support. This speeds up computation at the cost of much accuracy. <a href="https://www.jstatsoft.org/article/view/v011i02">Mathias et al (2004)</a> also describe implementations of complex wavelets in C (a compiled language, faster with loops), but we were not able to obtain any sensible results with those. For now, it is incorporated into GeoChronR to encourage further development.</p>
+<p>Readers interested in a more robust implementation of WWZ may want to consider <a href="http://linkedearth.github.io/Pyleoclim_util/Introduction.html">pyleoclim</a>, a Python package. This can be called in R via the <a href="https://rstudio.github.io/reticulate/">Reticulate</a> package.</p>
+</div>
+</div>
+<div id="time-uncertain-spectral-analysis" class="section level2" number="7.14">
+<h2><span class="header-section-number">7.14</span> Time-uncertain spectral analysis</h2>
+<p>Now let’s consider age uncertainties.</p>
+<p>The GeoChronR approach to quantifying and propagating those uncertainties is to leverage the power of ensembles. Here we will illustrate this with MTM. Let us repeat the previous analysis by looping over the 1,000 age realizations output by the tuning algorithm HMM-Match. That means computing 1000 spectra. We’ve already seen that <em>nuspectral</em> is too slow for an ensemble job, so let’s leave it out. Also, since REDFIT is a tapered version of Lomb-Scargle, and comes with more features, let’s focus here on comparing an REDFIT and MTM in ensemble mode.</p>
+<div class="sourceCode" id="cb160"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb160-1"><a href="regression-and-calibration-in-time.html#cb160-1" aria-hidden="true" tabindex="-1"></a>time <span class="ot">=</span> age<span class="sc">$</span>values[age.median <span class="sc">&lt;</span> <span class="dv">1000</span>,]  <span class="co"># age ensemble for ~ last 1 Ma</span></span>
+<span id="cb160-2"><a href="regression-and-calibration-in-time.html#cb160-2" aria-hidden="true" tabindex="-1"></a>values <span class="ot">=</span> temp<span class="sc">$</span>values[age.median <span class="sc">&lt;</span> <span class="dv">1000</span>]</span>
+<span id="cb160-3"><a href="regression-and-calibration-in-time.html#cb160-3" aria-hidden="true" tabindex="-1"></a>mtm.ens.spec <span class="ot">=</span> <span class="fu">computeSpectraEns</span>(time,values,</span>
+<span id="cb160-4"><a href="regression-and-calibration-in-time.html#cb160-4" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">max.ens =</span> <span class="dv">1000</span>,</span>
+<span id="cb160-5"><a href="regression-and-calibration-in-time.html#cb160-5" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">method =</span> <span class="st">&#39;mtm&#39;</span>,</span>
+<span id="cb160-6"><a href="regression-and-calibration-in-time.html#cb160-6" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">tbw=</span>tbw, <span class="at">padfac=</span><span class="dv">5</span>,</span>
+<span id="cb160-7"><a href="regression-and-calibration-in-time.html#cb160-7" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">mtm_null =</span> <span class="st">&#39;AR(1)&#39;</span>)</span></code></pre></div>
+<p>This took a few seconds with 1000 ensemble members, and the resulting output is close to 10 Mb. Not an issue for modern computers, but you can see why people weren’t doing this in the 70’s, even if they wanted to. Now, let’s plot the result:</p>
+<div class="sourceCode" id="cb161"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb161-1"><a href="regression-and-calibration-in-time.html#cb161-1" aria-hidden="true" tabindex="-1"></a>ar1.df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(mtm.ens.spec<span class="sc">$</span>freqs,mtm.ens.spec<span class="sc">$</span>power.CL)</span>
+<span id="cb161-2"><a href="regression-and-calibration-in-time.html#cb161-2" aria-hidden="true" tabindex="-1"></a><span class="co"># rename columns to be less silly</span></span>
+<span id="cb161-3"><a href="regression-and-calibration-in-time.html#cb161-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(ar1.df)[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="st">&quot;freq&quot;</span></span>
+<span id="cb161-4"><a href="regression-and-calibration-in-time.html#cb161-4" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(ar1.df)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">&quot;95% CL&quot;</span></span>
+<span id="cb161-5"><a href="regression-and-calibration-in-time.html#cb161-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb161-6"><a href="regression-and-calibration-in-time.html#cb161-6" aria-hidden="true" tabindex="-1"></a>p.mtm.ens <span class="ot">&lt;-</span> <span class="fu">plotSpectraEns</span>(<span class="at">spec.ens =</span> mtm.ens.spec, <span class="at">cl.df =</span> ar1.df, <span class="at">x.lims =</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">150</span>), <span class="at">y.lims =</span> <span class="fu">c</span>(<span class="fl">1e-5</span>,<span class="fl">1e-1</span>),</span>
+<span id="cb161-7"><a href="regression-and-calibration-in-time.html#cb161-7" aria-hidden="true" tabindex="-1"></a>                            <span class="at">color.line=</span><span class="st">&#39;darkorange&#39;</span>,</span>
+<span id="cb161-8"><a href="regression-and-calibration-in-time.html#cb161-8" aria-hidden="true" tabindex="-1"></a>                            <span class="at">color.low=</span><span class="st">&#39;darkorange2&#39;</span>,</span>
+<span id="cb161-9"><a href="regression-and-calibration-in-time.html#cb161-9" aria-hidden="true" tabindex="-1"></a>                            <span class="at">color.high=</span><span class="st">&#39;coral4&#39;</span>,<span class="at">color.cl =</span> <span class="st">&#39;white&#39;</span>) <span class="sc">+</span></span>
+<span id="cb161-10"><a href="regression-and-calibration-in-time.html#cb161-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;IODP 846 age ensemble, MTM&quot;</span>) <span class="sc">+</span> <span class="fu">theme_hc</span>(<span class="at">style =</span> <span class="st">&quot;darkunica&quot;</span>) <span class="sc">+</span></span>
+<span id="cb161-11"><a href="regression-and-calibration-in-time.html#cb161-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.ticks.x =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">&quot;gray&quot;</span>))</span>
+<span id="cb161-12"><a href="regression-and-calibration-in-time.html#cb161-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb161-13"><a href="regression-and-calibration-in-time.html#cb161-13" aria-hidden="true" tabindex="-1"></a><span class="co"># label periodicities of interest</span></span>
+<span id="cb161-14"><a href="regression-and-calibration-in-time.html#cb161-14" aria-hidden="true" tabindex="-1"></a>p.mtm.ens <span class="ot">&lt;-</span> <span class="fu">periodAnnotate</span>(p.mtm.ens, <span class="at">periods =</span> <span class="fu">c</span>(<span class="dv">19</span>,<span class="dv">23</span>,<span class="dv">41</span>,<span class="dv">100</span>), <span class="at">y.lims =</span><span class="fu">c</span>(<span class="fl">0.01</span>,<span class="fl">0.05</span>))</span>
+<span id="cb161-15"><a href="regression-and-calibration-in-time.html#cb161-15" aria-hidden="true" tabindex="-1"></a><span class="fu">show</span>(p.mtm.ens)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/ensemble-mode-MTM2-1.png" width="672" /></p>
+<p>To this we can add the periods identified as significant owing to MTM’s harmonic ratio test. geoChronR deals with it by computing at each frequency the fraction of ensemble members that exhibit a significant peak. One simple criterion for gauging the level of support for such peaks given age uncertainties is to pick out those periodicities that are identified as significant more than 50% of the time.</p>
+<div class="sourceCode" id="cb162"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb162-1"><a href="regression-and-calibration-in-time.html#cb162-1" aria-hidden="true" tabindex="-1"></a>per <span class="ot">=</span> <span class="dv">1</span><span class="sc">/</span>cl.df<span class="sc">$</span>freq</span>
+<span id="cb162-2"><a href="regression-and-calibration-in-time.html#cb162-2" aria-hidden="true" tabindex="-1"></a>sig_per <span class="ot">=</span>  <span class="fu">which</span>(mtm.ens.spec<span class="sc">$</span>sig.freq<span class="sc">&gt;</span><span class="fl">0.5</span>)</span>
+<span id="cb162-3"><a href="regression-and-calibration-in-time.html#cb162-3" aria-hidden="true" tabindex="-1"></a>p.mtm.ens <span class="ot">&lt;-</span> <span class="fu">periodAnnotate</span>(p.mtm.ens, <span class="at">periods =</span> per[sig_per],<span class="at">color =</span> <span class="st">&quot;chartreuse&quot;</span>,<span class="at">y.lims =</span> <span class="fu">c</span>(<span class="fl">1e-5</span>,<span class="fl">5e-4</span>))</span>
+<span id="cb162-4"><a href="regression-and-calibration-in-time.html#cb162-4" aria-hidden="true" tabindex="-1"></a><span class="fu">show</span>(p.mtm.ens)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/MTM-ensemble-1.png" width="672" /></p>
+<p>One could of course, impose a more stringent criterion (e.g. 80%, 90%, etc). To do that, specify <code>which(mtm.ens.spec$sig.freq&gt;0.8)</code> or <code>which(mtm.ens.spec$sig.freq&gt;0.9)</code>. That relatively close peaks appear significant may be an artifact of neglecting the multiple hypothesis problem (cf Vaughan et al, 2011).</p>
+<p>So what do we find? Consistent with previous investigations (e.g. <a href="https://npg.copernicus.org/articles/16/43/2009/">Mudelsee et al 2009</a>), the effect of age uncertainties is felt more at high frequencies, with the effect of broadening peaks, or lumping them together. Again, the peaks that rise above the power-law background are the ~100kyr and ~40kyr peaks, which is not surprising. There is significant energy around the precessional peaks, but it is rather spread out, and hard to tie to particular harmonics. No doubt a record with higher-resolution and/or tighter chronology would show sharper precessional peaks.</p>
+<p>Do we get the same answer in REDFIT? Let’s find out.</p>
+<div class="sourceCode" id="cb163"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb163-1"><a href="regression-and-calibration-in-time.html#cb163-1" aria-hidden="true" tabindex="-1"></a>spec.redfit.ens <span class="ot">&lt;-</span> <span class="fu">computeSpectraEns</span>(time,values,<span class="at">max.ens =</span> <span class="dv">1000</span>, <span class="at">method =</span> <span class="st">&#39;redfit&#39;</span>)</span>
+<span id="cb163-2"><a href="regression-and-calibration-in-time.html#cb163-2" aria-hidden="true" tabindex="-1"></a>cl.ens.df     <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="st">&quot;freq&quot;</span> <span class="ot">=</span> spec.redfit.ens<span class="sc">$</span>freq, <span class="st">&quot;pwr95&quot;</span> <span class="ot">=</span> spec.redfit.ens<span class="sc">$</span>power.CL) <span class="co"># store confidence limits</span></span>
+<span id="cb163-3"><a href="regression-and-calibration-in-time.html#cb163-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cl.ens.df)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">&quot;95% CL&quot;</span></span></code></pre></div>
+<p>again, it took a bit of time. let’s plot the result:</p>
+<div class="sourceCode" id="cb164"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb164-1"><a href="regression-and-calibration-in-time.html#cb164-1" aria-hidden="true" tabindex="-1"></a>p.redfit.ens <span class="ot">&lt;-</span> <span class="fu">plotSpectraEns</span>(<span class="at">spec.ens =</span> spec.redfit.ens,</span>
+<span id="cb164-2"><a href="regression-and-calibration-in-time.html#cb164-2" aria-hidden="true" tabindex="-1"></a>                               <span class="at">cl.df =</span> cl.ens.df,</span>
+<span id="cb164-3"><a href="regression-and-calibration-in-time.html#cb164-3" aria-hidden="true" tabindex="-1"></a>                               <span class="at">x.lims =</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">150</span>),</span>
+<span id="cb164-4"><a href="regression-and-calibration-in-time.html#cb164-4" aria-hidden="true" tabindex="-1"></a>                               <span class="at">color.line=</span><span class="st">&#39;darkorange&#39;</span>,</span>
+<span id="cb164-5"><a href="regression-and-calibration-in-time.html#cb164-5" aria-hidden="true" tabindex="-1"></a>                               <span class="at">color.low=</span><span class="st">&#39;darkorange2&#39;</span>,</span>
+<span id="cb164-6"><a href="regression-and-calibration-in-time.html#cb164-6" aria-hidden="true" tabindex="-1"></a>                               <span class="at">color.high=</span><span class="st">&#39;coral4&#39;</span>,</span>
+<span id="cb164-7"><a href="regression-and-calibration-in-time.html#cb164-7" aria-hidden="true" tabindex="-1"></a>                               <span class="at">color.cl =</span> <span class="st">&#39;white&#39;</span>) <span class="sc">+</span></span>
+<span id="cb164-8"><a href="regression-and-calibration-in-time.html#cb164-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;IODP 846 age ensemble, redfit&quot;</span>) <span class="sc">+</span></span>
+<span id="cb164-9"><a href="regression-and-calibration-in-time.html#cb164-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_hc</span>(<span class="at">style =</span> <span class="st">&quot;darkunica&quot;</span>) <span class="sc">+</span></span>
+<span id="cb164-10"><a href="regression-and-calibration-in-time.html#cb164-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.ticks.x =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">&quot;gray&quot;</span>))</span>
+<span id="cb164-11"><a href="regression-and-calibration-in-time.html#cb164-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb164-12"><a href="regression-and-calibration-in-time.html#cb164-12" aria-hidden="true" tabindex="-1"></a><span class="co"># label periodicities of interest</span></span>
+<span id="cb164-13"><a href="regression-and-calibration-in-time.html#cb164-13" aria-hidden="true" tabindex="-1"></a>p.redfit.ens <span class="ot">&lt;-</span> <span class="fu">periodAnnotate</span>(p.redfit.ens, <span class="at">periods =</span> <span class="fu">c</span>(<span class="dv">19</span>,<span class="dv">23</span>,<span class="dv">41</span>,<span class="dv">100</span>), <span class="at">y.lims =</span><span class="fu">c</span>(<span class="fl">0.01</span>,<span class="dv">500</span>))</span>
+<span id="cb164-14"><a href="regression-and-calibration-in-time.html#cb164-14" aria-hidden="true" tabindex="-1"></a><span class="fu">show</span>(p.redfit.ens)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/ensemble-mode-REDFIT2-1.png" width="672" /></p>
+<p>The result is quite a bit smoother here, perhaps because of the choice of parameters.</p>
+</div>
+<div id="conclusion" class="section level2" number="7.15">
+<h2><span class="header-section-number">7.15</span> Conclusion</h2>
+<p>There are several takeaways from this example:</p>
+<ol style="list-style-type: decimal">
+<li>geoChronR implements 4 different spectral methods, with different features and assumptions. This allows users to explore whether results obtained with one method are robust to these choices.<br />
+</li>
+<li>The methods are enabled for single age models, as well as age ensembles.</li>
+<li>The choice of null hypothesis is always highly consequential, and should be made with care.</li>
+<li>Hunting for astronomical (or other) frequencies in paleoclimate timeseries takes extreme care, and cannot be answered in one function call. In this particular example where the data are nearly evenly spaced, and interpolation has a negligible impact, the best choice is MTM for two reasons: (1) because it is optimal, in the sense that it minimizes spectral leakage, and (2) because the implementation used here (derived from <em>astrochron</em>) allows to flexibly apply different tests of significance. Not such luxury is afforded by the other methods at present.</li>
+<li>There is no one-size-fits-all method that will solve your exact problem, but it might get you started on asking relevant questions. Readers are invited to consider <a href="https://doi.org/10.1029/2011PA002195">Vaughan et al, 2011</a> and the work of Stephen Meyers on this topic:</li>
+</ol>
+<ul>
+<li><a href="https://doi.org/10.1029/2012PA002307">Meyers, 2012</a></li>
+<li><a href="https://agupubs.onlinelibrary.wiley.com/doi/full/10.1002/2015PA002850">Meyers, 2015</a></li>
+<li><a href="www.pnas.org/cgi/doi/10.1073/pnas.1717689115">Meyers &amp; Malinverno 2018</a></li>
+</ul>
+
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div class="csl-entry">
+Albada, S. J. van, and P. A. Robinson. 2007. <span>“Transformation of Arbitrary Distributions to the Normal Distribution with Application to {EEG} Test–Retest Reliability.”</span> <em>Journal of Neuroscience Methods</em> 161 (2): 205–11. <a href="https://doi.org/10.1016/j.jneumeth.2006.11.004">https://doi.org/10.1016/j.jneumeth.2006.11.004</a>.
+</div>
+<div class="csl-entry">
+Benjamini, Yoav, and Yosef Hochberg. 1995. <span>“Controlling the False Discovery Rate: A Practical and Powerful Approach to Multiple Testing.”</span> <em>Journal of the Royal Statistical Society. Series B (Methodological)</em> 57 (1): 289–300. <a href="https://doi.org/10.2307/2346101">https://doi.org/10.2307/2346101</a>.
+</div>
+<div class="csl-entry">
+Blaauw, M., and J. A. Christen. 2011. <span>“Flexible Paleoclimate Age-Depth Models Using an Autoregressive Gamma Process.”</span> <em>Bayesian Analysis</em> 6 (3): 457–74.
+</div>
+<div class="csl-entry">
+Blaauw, Maarten, J. Andres Christen, and Marco A. Aquino L. 2020. <em>Rbacon: Age-Depth Modelling Using Bayesian Statistics</em>. <a href="https://CRAN.R-project.org/package=rbacon">https://CRAN.R-project.org/package=rbacon</a>.
+</div>
+<div class="csl-entry">
+Bronk Ramsey, Christopher. 1995. <span>“Radiocarbon Calibration and Analysis of Stratigraphy: The OxCal Program.”</span> <em>Radiocarbon</em> 37 (2): 425–30.
+</div>
+<div class="csl-entry">
+———. 2008. <span>“Deposition Models for Chronological Records.”</span> <em>Quaternary Science Reviews</em> 27 (1-2): 42–60.
+</div>
+<div class="csl-entry">
+Bronk Ramsey, Christopher, Michael Dee, Sharen Lee, Takeshi Nakagawa, and Richard A Staff. 2010. <span>“Developments in the Calibration and Modeling of Radiocarbon Dates.”</span> <em>Radiocarbon</em> 52 (3): 953–61.
+</div>
+<div class="csl-entry">
+Comboul, M., J. Emile-Geay, M. Evans, N. Mirnateghi, K. M. Cobb, and D. M. Thompson. 2014. <span>“A Probabilistic Model of Chronological Errors in Layer-Counted Climate Proxies: Applications to Annually Banded Coral Archives.”</span> Journal Article. <em>Climate of the Past</em> 10: 825–41. <a href="https://doi.org/10.5194/cp-10-825-2014">https://doi.org/10.5194/cp-10-825-2014</a>.
+</div>
+<div class="csl-entry">
+Dawdy, DR, and NC Matalas. 1964. <em>Statistical and Probability Analysis of Hydrologic Data, Part III: Analysis of Variance, Covariance and Time Series</em>. McGraw-Hill.
+</div>
+<div class="csl-entry">
+Dee, S., J. Emile-Geay, M. N. Evans, A. Allam, E. J. Steig, and D. M. Thompson. 2015. <span>“<span class="nocase">PRYSM: An open-source framework for PRoxY System Modeling, with applications to oxygen-isotope systems</span>.”</span> <em>Journal of Advances in Modeling Earth Systems</em> 7 (3): 1220–47.
+</div>
+<div class="csl-entry">
+DeLong, Kristine L., Terrence M. Quinn, Frederick W. Taylor, Chuan-Chou Shen, and Ke Lin. 2013. <span>“Improving Coral-Base Paleoclimate Reconstructions by Replicating 350 Years of Coral Sr/Ca Variations.”</span> <em>Palaeogeography, Palaeoclimatology, Palaeoecology</em> 373: 6–24. <a href="https://doi.org/10.1016/j.palaeo.2012.08.019">https://doi.org/10.1016/j.palaeo.2012.08.019</a>.
+</div>
+<div class="csl-entry">
+Ebisuzaki, Wesley. 1997. <span>“A Method to Estimate the Statistical Significance of a Correlation When the Data Are Serially Correlated.”</span> <em>Journal of Climate</em> 10 (9): 2147–53. <a href="https://doi.org/10.1175/1520-0442(1997)010&lt;2147:AMTETS&gt;2.0.CO;2">https://doi.org/10.1175/1520-0442(1997)010&lt;2147:AMTETS&gt;2.0.CO;2</a>.
+</div>
+<div class="csl-entry">
+Emile-Geay, J., and M. Tingley. 2016. <span>“Inferring Climate Variability from Nonlinear Proxies: Application to Palaeo-ENSO Studies.”</span> <em>Climate of the Past</em> 12 (1): 31–50. <a href="https://doi.org/10.5194/cp-12-31-2016">https://doi.org/10.5194/cp-12-31-2016</a>.
+</div>
+<div class="csl-entry">
+Ghil, M., R. M. Allen, M. D. Dettinger, K. Ide, D. Kondrashov, M. E. Mann, A Robertson, et al. 2002. <span>“Advanced Spectral Methods for Climatic Time Series.”</span> <em>Rev. Geophys.</em> 40 (1): 1003–52.
+</div>
+<div class="csl-entry">
+Haslett, John, and Andrew Parnell. 2008. <span>“A Simple Monotone Process with Application to Radiocarbon-Dated Depth Chronologies.”</span> <em>Journal of the Royal Statistical Society: Series C (Applied Statistics)</em> 57 (4): 399–418. <a href="https://doi.org/10.1111/j.1467-9876.2008.00623.x">https://doi.org/10.1111/j.1467-9876.2008.00623.x</a>.
+</div>
+<div class="csl-entry">
+Hu, Jun, Julien Emile-Geay, and Judson Partin. 2017. <span>“Correlation-Based Interpretations of Paleoclimate Data – Where Statistics Meet Past Climates.”</span> <em>Earth and Planetary Science Letters</em> 459 (February): 362–71. <a href="https://doi.org/10.1016/j.epsl.2016.11.048">https://doi.org/10.1016/j.epsl.2016.11.048</a>.
+</div>
+<div class="csl-entry">
+Martin, Hinz, Clemens Schmid, Daniel Knitter, and Carolin Tietze. 2018. <em>oxcAAR: Interface to ’OxCal’ Radiocarbon Calibration</em>. <a href="https://CRAN.R-project.org/package=oxcAAR">https://CRAN.R-project.org/package=oxcAAR</a>.
+</div>
+<div class="csl-entry">
+McKay, Nicholas P, Julien Emile-Geay, and Deborah Khider. 2021. <span>“geoChronR–an r Package to Model, Analyze, and Visualize Age-Uncertain Data.”</span> <em>Geochronology</em> 3 (1): 149–69.
+</div>
+<div class="csl-entry">
+Park, Joseph, Cameron Smith, George Sugihara, and Ethan Deyle. 2020. <em>rEDM: Empirical Dynamic Modeling (’EDM’)</em>. <a href="https://CRAN.R-project.org/package=rEDM">https://CRAN.R-project.org/package=rEDM</a>.
+</div>
+<div class="csl-entry">
+Parnell, AC, J Haslett, JRM Allen, CE Buck, and B Huntley. 2008. <span>“A Flexible Approach to Assessing Synchroneity of Past Events Using Bayesian Reconstructions of Sedimentation History.”</span> <em>Quaternary Science Reviews</em> 27 (19-20): 1872–85.
+</div>
+<div class="csl-entry">
+Parnell, Andrew C., Caitlin E. Buck, and Thinh K. Doan. 2011. <span>“A Review of Statistical Chronology Models for High-Resolution, Proxy-Based Holocene Palaeoenvironmental Reconstruction.”</span> <em>Quaternary Science Reviews</em> 30 (21–22): 2948–60. <a href="https://doi.org/10.1016/j.quascirev.2011.07.024">https://doi.org/10.1016/j.quascirev.2011.07.024</a>.
+</div>
+<div class="csl-entry">
+Trachsel, Mathias, and Richard J Telford. 2017. <span>“All Age–Depth Models Are Wrong, but Are Getting Better.”</span> <em>The Holocene</em> 27 (6): 860–69. <a href="https://doi.org/10.1177/0959683616675939">https://doi.org/10.1177/0959683616675939</a>.
+</div>
+<div class="csl-entry">
+Ventura, Valérie, Christopher J. Paciorek, and James S. Risbey. 2004. <span>“<span class="nocase">Controlling the Proportion of Falsely Rejected Hypotheses when Conducting Multiple Tests with Climatological Data</span>.”</span> <em>Journal of Climate</em> 17 (22): 4343–56. <a href="https://doi.org/10.1175/3199.1">https://doi.org/10.1175/3199.1</a>.
+</div>
+<div class="csl-entry">
+Wang, Yong-Jin, Hai Cheng, R Lawrence Edwards, ZS An, JY Wu, C-C Shen, and Jeffrey A Dorale. 2001. <span>“A High-Resolution Absolute-Dated Late Pleistocene Monsoon Record from Hulu Cave, China.”</span> <em>Science</em> 294 (5550): 2345–48.
+</div>
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="principal-components-analysis-pca.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["Time-uncertain-data-analysis-in-R.pdf"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
