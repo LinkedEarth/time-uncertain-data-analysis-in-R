@@ -25,20 +25,17 @@ L <- readLipd("https://lipdverse.org/Temp12k/current_version/GEOFAR_KF16_MgCa.Re
 
 You can load a LiPD file from the web, as shown above, or locally on your computer. If you leave the input blank (e.g. `L <- readLipd()`), you can interactively choose a file on your computer. 
 
-
 :::: {.blackbox data-latex=""}
 ::: {.exercise #LoadingLipdData}
 
 Explore [the Temp12k collection on lipdverse.org](https://lipdverse.org/Temp12k/current_version), and load a file into R using lipdR with two different approaches: a) directly using the url as above, and b) download the file to your computer, and load it interactively. 
-:::
-::::
 <details>
-  <summary>Click for Answer to \@ref(exr:LoadingLipdData)a</summary>
+  <summary>Click for hint for \@ref(exr:LoadingLipdData)a</summary>
    We'll use [this dataset](https://lipdverse.org/Temp12k/current_version/HeshangCave.Wang.2018.html).
    
    a. First we'll get it directly from the web like this:
-
-```{r, echo=TRUE, eval=TRUE}
+   
+```{r, echo=TRUE, eval=TRUE, class.source = "blackboxcode"}
     lipd <- readLipd("https://lipdverse.org/Temp12k/current_version/HeshangCave.Wang.2018.lpd")
 ```
 
@@ -46,15 +43,19 @@ note that the extension is ".lpd" not ".html"
 </details> 
 
 <details>
-  <summary>Click for Answer to \@ref(exr:LoadingLipdData)b</summary>
+  <summary>Click for hint for \@ref(exr:LoadingLipdData)b</summary>
    b. This time, just go to [the dataset](https://lipdverse.org/Temp12k/current_version/HeshangCave.Wang.2018.html) and download the data to your computer, then run 
 
-```{r, echo=TRUE, eval=FALSE}
+```{r, echo=TRUE, eval=FALSE, class.source = "blackboxcode"}
     lipd <- readLipd()
 ```
 
 and select the file interactively. 
 </details> 
+:::
+::::
+
+
 
 
 Once you have a LiPD object loaded in R, there are a few things you can do. First, if you want a quick and dirty visualization of what's inside the dataset, use `plotLipd()`.
@@ -94,7 +95,7 @@ c14 <- selectData(L,paleo.or.chron = "chronData")
 If there's a lot of variables in the file, and you kinda know what you're looking for, you can add a `var.name` guess and it will narrow it down to options that seem likely, or select one automatically if it's close. 
 
 :::: {.blackbox data-latex=""}
-::: {.exercise #mapLipd}
+::: {.exercise #selectData}
 Enter "d18o" as the var.name in selectData() and see how it narrows down your options.
 :::
 ::::

@@ -1,4 +1,4 @@
-# Principal Components Analysis {pca}
+# Principal Components Analysis {#pca}
 
 As always, let's start by loading the packages we need. 
   
@@ -17,8 +17,8 @@ This vignette showcases the ability to perform principal component analysis (PCA
   FD <- lipdR::readLipd("http://lipdverse.org/geoChronR-examples/PalMod-IndianOcean/PalMod-IndianOcean.zip") 
 ```
 
-
-## Make a map
+## Let's explore these data!
+### Make a map
 First, let's take a quick look at where these records are located. geoChronR's `mapLipd` function can create quick maps:
 
 ```{r,results="hide",fig.keep="all"}
@@ -37,7 +37,7 @@ FD2 = purrr::map(FD,
 ```
 
 
-### Filter the data
+### Plot some summary statistics
 
 In this analysis, we're interested in spatiotemporal patterns in the Indian Ocean during the Last Deglaciation. Not all of these records cover that time interval, so let's take a look at the temporal coverage. 
 
@@ -63,9 +63,33 @@ Explore the LiPD data to determine the units on the ages, and update your histog
 :::
 ::::
 
-Since we're interested in the deglaciation, we need to find which datasets span the range from at least 10,000 to 30,000 years ago, and that have enough data in that range to be useful. 
 
-There are a few ways to go about this. Here's one:
+### Plot the data
+Let's start by making a stack plot of the surface temperature data in this dataset, to see what we're working with.
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #timeseriesPlot}
+Create a "stack plot" of the Surface Temperature data, ignoring age uncertainty for now. 
+
+<details> 
+<summary>Hint #1</summary>
+  First you'll need to create a lipd-ts-tibble-long object
+</details> 
+<details>
+  <summary>Hint #2</summary>
+Then filter it to just the variable of interest
+</details> 
+<details>
+  <summary>Hint #3</summary>
+Then use plotStack() to plot it up
+</details> 
+:::
+::::
+
+## Filter the data
+OK, there's a lot of data that span a lot of time here. Since we're interested in the deglaciation, we need to find which datasets span the range from at least 10,000 to 30,000 years ago, and that have enough data in that range to be useful. 
+
+There are a few ways to go about this. Here's one that uses `purrr`. Feel free to try a different solution here too!
 
 ```{r, warning=FALSE}
 indTs <- extractTs(FD2) #create a lipd-timeseries
@@ -93,28 +117,29 @@ span <- function(x,startYear,endYear){
 nValsInRange <- map_dbl(indTs,nGoodVals,startYear,endYear)
 span <- map_dbl(indTs,span,startYear,endYear)
 ```
-OK, now we can see for each of these timeseries how many values are between 10 and 30 ka, and how much time range that span corresponds to. 
 
-We can now filter our TS object down to something closer to what we're looking for, and then select on the variable we're looking for, in this, "surface.temp"
+Now we can see for each of these timeseries how many values are between 10 and 30 ka, and how much time range that span corresponds to. We now filter our TS object down to something closer to what we're looking for, and then select on the variable we're looking for, in this, "surface.temp"
 
 ```{r}
 #use our indices from above to select only the good timeseries
 TS.filtered <- indTs[nValsInRange > 20 & span > 15] %>% 
   filterTs("paleoData_variableName == surface.temp") #and then select our variable of interest
 ```
+This is the first time we've seen the `filterTs()` function. It's part of the `lipdR` library, and enables *simple* filtering on lipd-ts objects. It's a weaker version of `dplyr::filter()`, and for complex queries you're much better off converting to a tibble and using dplyr. But for simple operations on lipd-ts objects, it works well enough. 
 
-
-At this point, we should get our eyes on the data. Let's make a timeseries plot of the existing data. 
+At this point, we should get our eyes on the data again. Let's make a timeseries plot of the existing data. 
 ```{r}
+#convert the lipd-ts object to a lipd-ts-tibble
 tsTib <- ts2tibble(TS.filtered) 
 
-tp <- tidyTs(tsTib,age.var = "age")
+#convert the lipd-ts-tibble object to a lipd-ts-tibble-long
+tp <- tidyTs(tsTib,age.var = "age") 
 
 #filter it only to our time range
 tp <- tp %>% 
   filter(between(age,10,30))
 
-
+#and make a timeseries stack plot
 plotTimeseriesStack(tp,time.var = "age")
 ```
 
@@ -128,9 +153,9 @@ binned.TS <- binTs(TS.filtered,bin.vec = seq(10,30,by=.5),time.var = "ageEnsembl
 
 We're now ready to calculate the PCA!
 
-## Calculate the ensemble PCA
+## Calculate an ensemble PCA
 
-Calculate PCA on each ensemble member:
+Calculate PCA, using a covariance matrix, randomly selecting ensemble members in each iteration:
 ```{r pcaEns1,results="hide",warning=FALSE,cache = TRUE}
 pcout <- pcaEns(binned.TS,pca.type = "cov")
 ```

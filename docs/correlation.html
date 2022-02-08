@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 5 Time-uncertain correlation | Time-uncertain data analysis in R</title>
+  <title>Chapter 5 Correlation | Time-uncertain data analysis in R</title>
   <meta name="description" content="This book covers time-uncertain data analysis in R, primarily relying on the geoChronR package" />
   <meta name="generator" content="bookdown 0.22 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 5 Time-uncertain correlation | Time-uncertain data analysis in R" />
+  <meta property="og:title" content="Chapter 5 Correlation | Time-uncertain data analysis in R" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="linkedearth/time-uncertain-data-analysis-in-R" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 5 Time-uncertain correlation | Time-uncertain data analysis in R" />
+  <meta name="twitter:title" content="Chapter 5 Correlation | Time-uncertain data analysis in R" />
   
   <meta name="twitter:description" content="This book covers time-uncertain data analysis in R, primarily relying on the geoChronR package" />
   
@@ -31,7 +31,7 @@
   
   
 <link rel="prev" href="agemodelling.html"/>
-<link rel="next" href="principal-components-analysis-pca.html"/>
+<link rel="next" href="pca.html"/>
 <script src="libs/header-attrs-2.9/header-attrs.js"></script>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -155,8 +155,9 @@ div.csl-indent {
       <nav role="navigation">
 
 <ul class="summary">
-<li><a href="./">geoChronR Tutorial</a></li>
-<li><a href="http://nickmckay.github.io/GeoChronR>geoChronR manual</a></li>
+<li><a href="./">Time-uncertain Data Analysis in R</a></li>
+<li><a href="http://nickmckay.github.io/GeoChronR">geoChronR manual</a></li>
+<li><a href="http://linked.earth">LinkedEarth Home </a></li>
 
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Welcome!</a></li>
@@ -190,16 +191,17 @@ div.csl-indent {
 <li class="chapter" data-level="4.3.6" data-path="agemodelling.html"><a href="agemodelling.html#combining-the-two-kinds-of-timeseries-plots"><i class="fa fa-check"></i><b>4.3.6</b> Combining the two kinds of timeseries plots</a></li>
 </ul></li>
 <li class="chapter" data-level="4.4" data-path="agemodelling.html"><a href="agemodelling.html#banded-age-modelling"><i class="fa fa-check"></i><b>4.4</b> Banded Age Modelling</a></li>
-<li class="chapter" data-level="4.5" data-path="agemodelling.html"><a href="agemodelling.html#chapter-project."><i class="fa fa-check"></i><b>4.5</b> Chapter project.</a></li>
+<li class="chapter" data-level="4.5" data-path="agemodelling.html"><a href="agemodelling.html#chapter-project"><i class="fa fa-check"></i><b>4.5</b> Chapter project</a></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="correlation.html"><a href="correlation.html"><i class="fa fa-check"></i><b>5</b> Time-uncertain correlation</a>
+<li class="chapter" data-level="5" data-path="correlation.html"><a href="correlation.html"><i class="fa fa-check"></i><b>5</b> Correlation</a>
 <ul>
 <li class="chapter" data-level="5.1" data-path="correlation.html"><a href="correlation.html#first-look"><i class="fa fa-check"></i><b>5.1</b> First look</a></li>
 <li class="chapter" data-level="5.2" data-path="correlation.html"><a href="correlation.html#correlateResponsibly"><i class="fa fa-check"></i><b>5.2</b> How to correlate responsibly</a>
 <ul>
-<li class="chapter" data-level="5.2.1" data-path="correlation.html"><a href="correlation.html#binning"><i class="fa fa-check"></i><b>5.2.1</b> Binning</a></li>
-<li class="chapter" data-level="5.2.2" data-path="correlation.html"><a href="correlation.html#autocorrelation"><i class="fa fa-check"></i><b>5.2.2</b> Autocorrelation</a></li>
-<li class="chapter" data-level="5.2.3" data-path="correlation.html"><a href="correlation.html#test-multiplicity"><i class="fa fa-check"></i><b>5.2.3</b> Test multiplicity</a></li>
+<li class="chapter" data-level="5.2.1" data-path="correlation.html"><a href="correlation.html#correlation-1"><i class="fa fa-check"></i><b>5.2.1</b> Correlation</a></li>
+<li class="chapter" data-level="5.2.2" data-path="correlation.html"><a href="correlation.html#binning"><i class="fa fa-check"></i><b>5.2.2</b> Binning</a></li>
+<li class="chapter" data-level="5.2.3" data-path="correlation.html"><a href="correlation.html#autocorrelation"><i class="fa fa-check"></i><b>5.2.3</b> Autocorrelation</a></li>
+<li class="chapter" data-level="5.2.4" data-path="correlation.html"><a href="correlation.html#test-multiplicity"><i class="fa fa-check"></i><b>5.2.4</b> Test multiplicity</a></li>
 </ul></li>
 <li class="chapter" data-level="5.3" data-path="correlation.html"><a href="correlation.html#the-corens-function"><i class="fa fa-check"></i><b>5.3</b> The corEns() function</a></li>
 <li class="chapter" data-level="5.4" data-path="correlation.html"><a href="correlation.html#plotting-the-ensemble-correlation-results"><i class="fa fa-check"></i><b>5.4</b> Plotting the ensemble correlation results</a>
@@ -208,44 +210,57 @@ div.csl-indent {
 <li class="chapter" data-level="5.4.2" data-path="correlation.html"><a href="correlation.html#false-discovery-rate-testing"><i class="fa fa-check"></i><b>5.4.2</b> False-discovery rate testing</a></li>
 </ul></li>
 <li class="chapter" data-level="5.5" data-path="correlation.html"><a href="correlation.html#judging-the-overall-significance-of-an-age-uncertain-correlation"><i class="fa fa-check"></i><b>5.5</b> Judging the overall significance of an age-uncertain correlation</a></li>
-<li class="chapter" data-level="5.6" data-path="correlation.html"><a href="correlation.html#chapter-project"><i class="fa fa-check"></i><b>5.6</b> Chapter Project</a></li>
+<li class="chapter" data-level="5.6" data-path="correlation.html"><a href="correlation.html#chapter-project-1"><i class="fa fa-check"></i><b>5.6</b> Chapter Project</a></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html"><i class="fa fa-check"></i><b>6</b> Principal Components Analysis {pca}</a>
+<li class="chapter" data-level="6" data-path="pca.html"><a href="pca.html"><i class="fa fa-check"></i><b>6</b> Principal Components Analysis</a>
 <ul>
-<li class="chapter" data-level="6.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#make-a-map"><i class="fa fa-check"></i><b>6.1</b> Make a map</a>
+<li class="chapter" data-level="6.1" data-path="pca.html"><a href="pca.html#lets-explore-these-data"><i class="fa fa-check"></i><b>6.1</b> Let’s explore these data!</a>
 <ul>
-<li class="chapter" data-level="6.1.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#grab-the-age-ensembles-for-each-record."><i class="fa fa-check"></i><b>6.1.1</b> Grab the age ensembles for each record.</a></li>
-<li class="chapter" data-level="6.1.2" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#filter-the-data"><i class="fa fa-check"></i><b>6.1.2</b> Filter the data</a></li>
+<li class="chapter" data-level="6.1.1" data-path="pca.html"><a href="pca.html#make-a-map"><i class="fa fa-check"></i><b>6.1.1</b> Make a map</a></li>
+<li class="chapter" data-level="6.1.2" data-path="pca.html"><a href="pca.html#grab-the-age-ensembles-for-each-record."><i class="fa fa-check"></i><b>6.1.2</b> Grab the age ensembles for each record.</a></li>
+<li class="chapter" data-level="6.1.3" data-path="pca.html"><a href="pca.html#plot-some-summary-statistics"><i class="fa fa-check"></i><b>6.1.3</b> Plot some summary statistics</a></li>
+<li class="chapter" data-level="6.1.4" data-path="pca.html"><a href="pca.html#plot-the-data"><i class="fa fa-check"></i><b>6.1.4</b> Plot the data</a></li>
 </ul></li>
-<li class="chapter" data-level="6.2" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#calculate-the-ensemble-pca"><i class="fa fa-check"></i><b>6.2</b> Calculate the ensemble PCA</a>
+<li class="chapter" data-level="6.2" data-path="pca.html"><a href="pca.html#filter-the-data"><i class="fa fa-check"></i><b>6.2</b> Filter the data</a></li>
+<li class="chapter" data-level="6.3" data-path="pca.html"><a href="pca.html#calculate-an-ensemble-pca"><i class="fa fa-check"></i><b>6.3</b> Calculate an ensemble PCA</a>
 <ul>
-<li class="chapter" data-level="6.2.1" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#plot-the-ensemble-pca-results"><i class="fa fa-check"></i><b>6.2.1</b> Plot the ensemble PCA results</a></li>
+<li class="chapter" data-level="6.3.1" data-path="pca.html"><a href="pca.html#plot-the-ensemble-pca-results"><i class="fa fa-check"></i><b>6.3.1</b> Plot the ensemble PCA results</a></li>
 </ul></li>
-<li class="chapter" data-level="6.3" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#ensemble-pca-using-a-correlation-matrix."><i class="fa fa-check"></i><b>6.3</b> Ensemble PCA using a correlation matrix.</a></li>
-<li class="chapter" data-level="6.4" data-path="principal-components-analysis-pca.html"><a href="principal-components-analysis-pca.html#chapter-project-1"><i class="fa fa-check"></i><b>6.4</b> Chapter project</a></li>
+<li class="chapter" data-level="6.4" data-path="pca.html"><a href="pca.html#ensemble-pca-using-a-correlation-matrix."><i class="fa fa-check"></i><b>6.4</b> Ensemble PCA using a correlation matrix.</a></li>
+<li class="chapter" data-level="6.5" data-path="pca.html"><a href="pca.html#chapter-project-2"><i class="fa fa-check"></i><b>6.5</b> Chapter project</a></li>
 </ul></li>
 <li class="chapter" data-level="7" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html"><i class="fa fa-check"></i><b>7</b> Regression and Calibration-in-time</a>
 <ul>
-<li class="chapter" data-level="7.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#load-the-lipd-file"><i class="fa fa-check"></i><b>7.1</b> Load the LiPD file</a></li>
-<li class="chapter" data-level="7.2" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#check-out-the-contents"><i class="fa fa-check"></i><b>7.2</b> Check out the contents</a></li>
-<li class="chapter" data-level="7.3" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#create-an-age-model-with-bacon"><i class="fa fa-check"></i><b>7.3</b> Create an age model with Bacon</a></li>
-<li class="chapter" data-level="7.4" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-ensemble-output"><i class="fa fa-check"></i><b>7.4</b> And plot the ensemble output</a></li>
-<li class="chapter" data-level="7.5" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#map-the-age-ensemble-to-the-paleodata-table"><i class="fa fa-check"></i><b>7.5</b> Map the age ensemble to the paleodata table</a></li>
-<li class="chapter" data-level="7.6" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#select-the-paleodata-age-ensemble-and-rabd-data-that-wed-like-to-regress-and-calibrate"><i class="fa fa-check"></i><b>7.6</b> Select the paleodata age ensemble, and RABD data that we’d like to regress and calibrate</a></li>
-<li class="chapter" data-level="7.7" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#now-load-in-the-instrumental-data-we-want-to-correlate-and-regress-agains"><i class="fa fa-check"></i><b>7.7</b> Now load in the instrumental data we want to correlate and regress agains</a></li>
-<li class="chapter" data-level="7.8" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#check-agetime-units-before-proceeding"><i class="fa fa-check"></i><b>7.8</b> Check age/time units before proceeding</a></li>
-<li class="chapter" data-level="7.9" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#create-a-variable-list-for-the-instrumental-data"><i class="fa fa-check"></i><b>7.9</b> Create a “variable list” for the instrumental data</a></li>
-<li class="chapter" data-level="7.10" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#calculate-an-ensmeble-correlation-between-the-rabd-and-local-summer-temperature-data"><i class="fa fa-check"></i><b>7.10</b> Calculate an ensmeble correlation between the RABD and local summer temperature data</a></li>
-<li class="chapter" data-level="7.11" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-output"><i class="fa fa-check"></i><b>7.11</b> And plot the output</a></li>
-<li class="chapter" data-level="7.12" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#perform-ensemble-regression"><i class="fa fa-check"></i><b>7.12</b> Perform ensemble regression</a></li>
-<li class="chapter" data-level="7.13" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-output-1"><i class="fa fa-check"></i><b>7.13</b> And plot the output</a>
+<li class="chapter" data-level="7.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#load-the-lipd-file"><i class="fa fa-check"></i><b>7.1</b> Load the LiPD file</a>
 <ul>
-<li class="chapter" data-level="7.13.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#lomb-scargle-periodogram"><i class="fa fa-check"></i><b>7.13.1</b> Lomb-Scargle periodogram</a></li>
-<li class="chapter" data-level="7.13.2" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#multi-taper-method"><i class="fa fa-check"></i><b>7.13.2</b> Multi-taper Method</a></li>
-<li class="chapter" data-level="7.13.3" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#weighted-wavelet-z-transform-nuspectral"><i class="fa fa-check"></i><b>7.13.3</b> Weighted Wavelet Z-transform (<em>nuspectral</em>)</a></li>
+<li class="chapter" data-level="7.1.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#check-out-the-contents"><i class="fa fa-check"></i><b>7.1.1</b> Check out the contents</a></li>
 </ul></li>
-<li class="chapter" data-level="7.14" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#time-uncertain-spectral-analysis"><i class="fa fa-check"></i><b>7.14</b> Time-uncertain spectral analysis</a></li>
-<li class="chapter" data-level="7.15" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#conclusion"><i class="fa fa-check"></i><b>7.15</b> Conclusion</a></li>
+<li class="chapter" data-level="7.2" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#create-an-age-model"><i class="fa fa-check"></i><b>7.2</b> Create an age model</a>
+<ul>
+<li class="chapter" data-level="7.2.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-ensemble-output"><i class="fa fa-check"></i><b>7.2.1</b> And plot the ensemble output</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#prepare-the-data"><i class="fa fa-check"></i><b>7.3</b> Prepare the data</a>
+<ul>
+<li class="chapter" data-level="7.3.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#map-the-age-ensemble-to-the-paleodata-table"><i class="fa fa-check"></i><b>7.3.1</b> Map the age ensemble to the paleodata table</a></li>
+<li class="chapter" data-level="7.3.2" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#select-the-paleodata-age-ensemble-and-rabd-data-that-wed-like-to-regress-and-calibrate"><i class="fa fa-check"></i><b>7.3.2</b> Select the paleodata age ensemble, and RABD data that we’d like to regress and calibrate</a></li>
+<li class="chapter" data-level="7.3.3" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#now-load-in-the-instrumental-data-we-want-to-correlate-and-regress-agains"><i class="fa fa-check"></i><b>7.3.3</b> Now load in the instrumental data we want to correlate and regress agains</a></li>
+<li class="chapter" data-level="7.3.4" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#check-agetime-units-before-proceeding"><i class="fa fa-check"></i><b>7.3.4</b> Check age/time units before proceeding</a></li>
+<li class="chapter" data-level="7.3.5" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#create-a-variable-list-for-the-instrumental-data"><i class="fa fa-check"></i><b>7.3.5</b> Create a “variable list” for the instrumental data</a></li>
+<li class="chapter" data-level="7.3.6" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#calculate-an-ensemble-correlation-between-the-rabd-and-local-summer-temperature-data"><i class="fa fa-check"></i><b>7.3.6</b> Calculate an ensemble correlation between the RABD and local summer temperature data</a></li>
+<li class="chapter" data-level="7.3.7" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-output"><i class="fa fa-check"></i><b>7.3.7</b> And plot the output</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#perform-ensemble-regression"><i class="fa fa-check"></i><b>7.4</b> Perform ensemble regression</a>
+<ul>
+<li class="chapter" data-level="7.4.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-output-1"><i class="fa fa-check"></i><b>7.4.1</b> And plot the output</a></li>
+</ul></li>
+<li class="chapter" data-level="7.5" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#chapter-project-3"><i class="fa fa-check"></i><b>7.5</b> Chapter project</a>
+<ul>
+<li class="chapter" data-level="7.5.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#lomb-scargle-periodogram"><i class="fa fa-check"></i><b>7.5.1</b> Lomb-Scargle periodogram</a></li>
+<li class="chapter" data-level="7.5.2" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#multi-taper-method"><i class="fa fa-check"></i><b>7.5.2</b> Multi-taper Method</a></li>
+<li class="chapter" data-level="7.5.3" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#weighted-wavelet-z-transform-nuspectral"><i class="fa fa-check"></i><b>7.5.3</b> Weighted Wavelet Z-transform (<em>nuspectral</em>)</a></li>
+</ul></li>
+<li class="chapter" data-level="7.6" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#time-uncertain-spectral-analysis"><i class="fa fa-check"></i><b>7.6</b> Time-uncertain spectral analysis</a></li>
+<li class="chapter" data-level="7.7" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#conclusion"><i class="fa fa-check"></i><b>7.7</b> Conclusion</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -268,7 +283,7 @@ div.csl-indent {
 
             <section class="normal" id="section-">
 <div id="correlation" class="section level1" number="5">
-<h1><span class="header-section-number">Chapter 5</span> Time-uncertain correlation</h1>
+<h1><span class="header-section-number">Chapter 5</span> Correlation</h1>
 <p>Correlation is perhaps the most commonly used statistical tool in the paleogeosciences. This makes sense, because we often see similar patterns between datasets, but want to know whether the apparent relationship is robust, or could be spurious. And of course, age uncertainty can have immense impacts on correlation.</p>
 <p>In this chapter, we’ll explore the time-uncertain correlation tools in geoChronR by walking through a classic comparison in paleoclimatology, the relationship between <span class="math inline">\(\delta^{18}\)</span>O variability in Greenland ice cores and Asian speleothems.
 On multi-millennial timescales, the two datasets display such similar features that the well-dated Hulu Cave record, and other similar records from China and Greenland, have been used to argue for atmospheric teleconnections between the regions and support the independent chronology of GISP2 <span class="citation">(<a href="#ref-hulu2001" role="doc-biblioref">Wang et al. 2001</a>)</span>.
@@ -277,11 +292,11 @@ Here, we revisit this relation quantitatively, using ensemble age models and the
 <!-- Kendall's Tau method, or using Pearson correlation after gaussianizing the input (the geoChronR default), are also reasonable options that in most cases, including this one, produce comparable results. -->
 It’s worth noting at this point that there is a long and detailed discussion in the literature discussing this relationship, and any correlation approach to address this question ignores aspects of the science, and ignores ancillary evidence that may support a mechanistic relationship between two timeseries.
 Nevertheless, this is a good example of how age uncertainty can affect apparent alignment between two datasets.</p>
-<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="correlation.html#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lipdR)</span>
-<span id="cb87-2"><a href="correlation.html#cb87-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geoChronR)</span>
-<span id="cb87-3"><a href="correlation.html#cb87-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb87-4"><a href="correlation.html#cb87-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(magrittr)</span>
-<span id="cb87-5"><a href="correlation.html#cb87-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(egg)</span></code></pre></div>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="correlation.html#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lipdR)</span>
+<span id="cb76-2"><a href="correlation.html#cb76-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geoChronR)</span>
+<span id="cb76-3"><a href="correlation.html#cb76-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb76-4"><a href="correlation.html#cb76-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(magrittr)</span>
+<span id="cb76-5"><a href="correlation.html#cb76-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(egg)</span></code></pre></div>
 <div id="first-look" class="section level2" number="5.1">
 <h2><span class="header-section-number">5.1</span> First look</h2>
 <p>LiPD files for the Hulu Cave speleothem <span class="math inline">\(\delta^{18}\)</span>O and the GISP2 ice core <span class="math inline">\(\delta^{18}\)</span>O records are available at x and y.
@@ -321,7 +336,7 @@ Use the egg package and ggarrange to stack the plots to allow easy comparison.
 </details>
 </div>
 </div>
-<p>Great! There’s no replacement for actually looking at the data, and lipdR and geoChronR make it possible to do this in just a few lines of code. If you found that exercise difficult, spend some time reviewing Chapters <a href="data.html#data">3</a> and @(agemodelling).</p>
+<p>Great! There’s no replacement for actually looking at the data, and lipdR and geoChronR make it possible to do this in just a few lines of code. If you found that exercise difficult, spend some time reviewing Chapters <a href="data.html#data">3</a> and <a href="agemodelling.html#agemodelling">4</a>.</p>
 <div class="blackbox">
 <div class="exercise">
 <p><span id="exr:correlationThoughts" class="exercise"><strong>Exercise 5.2  </strong></span>Now that you’ve made the overview figure, does it look like there might be a relationship between these datasets? Would you expect the a positive, negative, or zero correlation?</p>
@@ -330,23 +345,26 @@ Use the egg package and ggarrange to stack the plots to allow easy comparison.
 </div>
 <div id="correlateResponsibly" class="section level2" number="5.2">
 <h2><span class="header-section-number">5.2</span> How to correlate responsibly</h2>
-<p>Before we jump into the details of how to conduct time-uncertain correlation in R, let’s review some of the key assumptions, methods and choices. The following is an excerpt from the <a href="https://gchron.copernicus.org/articles/3/149/2021/">geoChronR paper in Geochronology</a> <span class="citation">(<a href="#ref-geochronrPaper" role="doc-biblioref">McKay, Emile-Geay, and Khider 2021</a>)</span>.</p>
+<p>Before we jump into the details of how to conduct time-uncertain correlation in R, let’s review some of the key assumptions, methods and choices. The rest of this section is an excerpt from our <a href="https://gchron.copernicus.org/articles/3/149/2021/">geoChronR paper in Geochronology</a> <span class="citation">(<a href="#ref-geochronrPaper" role="doc-biblioref">McKay, Emile-Geay, and Khider 2021</a>)</span>.</p>
+<div id="correlation-1" class="section level3" number="5.2.1">
+<h3><span class="header-section-number">5.2.1</span> Correlation</h3>
 <p>Correlation is the most common measure of a relationship between two variables <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>.
 Its computation is fast, lending itself to ensemble analysis, with a handful of pretreatment and significance considerations that are relevant for ensembles of paleoenvironmental and geoscientific data.
 geoChronR implements three methods for correlation analysis: Pearson’s product-moment, Spearman’s rank and Kendall’s tau.
 Pearson correlation is the most common correlation statistic, but assumes normally-distributed data.
 This assumption is commonly not met in paleoenvironmental or geoscientific datasets, but can be can be overcome by mapping both datasets to a standard normal distribution prior to analysis <span class="citation"><a href="#ref-JEG_Tingley_CP2016" role="doc-biblioref">Emile-Geay and Tingley</a> (<a href="#ref-JEG_Tingley_CP2016" role="doc-biblioref">2016</a>)</span>.
 Alternatively, the Spearman and Kendall correlation methods are rank-based, and do not require normally distributed input data, and are useful alternatives in many applications.</p>
-<div id="binning" class="section level3" number="5.2.1">
-<h3><span class="header-section-number">5.2.1</span> Binning</h3>
+</div>
+<div id="binning" class="section level3" number="5.2.2">
+<h3><span class="header-section-number">5.2.2</span> Binning</h3>
 <p>All correlation analyses for timeseries are built on the assumption the datasets can be aligned on a common timeline.
 Age-uncertain data violate this assumption.
 We overcome this by treating each ensemble member from one or more age uncertain timeseries as valid for that iteration, then “bin” each of the timeseries into coeval intervals.
 The “binning” procedure in geoChronR sets up an interval, which is typical evenly spaced, over which the data are averaged. Generally, this intentionally degrades the median resolution of the timeseries, for example, a timeseries with 37-year median spacing could be reasonably “binned” into 100- or 200-year bins.
 The binning procedure is repeated for each ensemble member, meaning that between different ensembles, different observations will be placed in different bins.</p>
 </div>
-<div id="autocorrelation" class="section level3" number="5.2.2">
-<h3><span class="header-section-number">5.2.2</span> Autocorrelation</h3>
+<div id="autocorrelation" class="section level3" number="5.2.3">
+<h3><span class="header-section-number">5.2.3</span> Autocorrelation</h3>
 <p>Following binning, the correlation is calculated and recorded for each ensemble member. The standard way to assess correlation significance is using a Student’s T-test, which assumes normality and independence. Although geoChronR can overcome the normality requirement, as discussed above, paleoenvironmental timeseries are often highly autocorrelated, and not serially independent, leading to spurious assessments of significance <span class="citation">(<a href="#ref-Hu_epsl17" role="doc-biblioref">Hu, Emile-Geay, and Partin 2017</a>)</span>.
 geoChronR addresses this potential bias using three approaches:</p>
 <ol style="list-style-type: decimal">
@@ -368,8 +386,8 @@ This method makes the fewest assumptions as to the structure of the series, and 
 <!-- This also makes the least stable of the methods to changes in bin size.  -->
 <!-- Isopersistence.... Ebisuzaki.... , which is why we consider the most broadly applicable, and is the default choice in geoChronR. -->
 </div>
-<div id="test-multiplicity" class="section level3" number="5.2.3">
-<h3><span class="header-section-number">5.2.3</span> Test multiplicity</h3>
+<div id="test-multiplicity" class="section level3" number="5.2.4">
+<h3><span class="header-section-number">5.2.4</span> Test multiplicity</h3>
 <p>In addition to the impact of autocorrelation on this analysis, repeating the test over multiple ensemble members raises the issue of test multiplicity <span class="citation">(<a href="#ref-Ventura2004" role="doc-biblioref">Ventura, Paciorek, and Risbey 2004</a>)</span>, also known as the “look elsewhere effect.”
 To overcome this problem, we control for this false discovery rate (FDR) using the simple approach of <span class="citation"><a href="#ref-BenjaminiHochberg95" role="doc-biblioref">Benjamini and Hochberg</a> (<a href="#ref-BenjaminiHochberg95" role="doc-biblioref">1995</a>)</span>, coded in R by <span class="citation"><a href="#ref-Ventura2004" role="doc-biblioref">Ventura, Paciorek, and Risbey</a> (<a href="#ref-Ventura2004" role="doc-biblioref">2004</a>)</span>.
 FDR explicitly controls for spurious discoveries arising from repeatedly carrying out the same test.
@@ -384,15 +402,15 @@ In effect, it filters the set of “significant” results identified by each hy
 <p>Let’s take another look at the the two timeseries over the period of overlap.
 To calculate age uncertain correlation let use geoChronR’s <code>corEns</code> function.
 I’m going to run this with 1000 ensemble members, but you may want to run it with only 200 ensemble members for now, since we have multiple significance testing options turned on and it can be a little slow.</p>
-<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="correlation.html#cb88-1" aria-hidden="true" tabindex="-1"></a>corout <span class="ot">&lt;-</span> <span class="fu">corEns</span>(<span class="at">time.1 =</span> gisp2.ae,</span>
-<span id="cb88-2"><a href="correlation.html#cb88-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">values.1 =</span> gisp2.d18O,</span>
-<span id="cb88-3"><a href="correlation.html#cb88-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">time.2 =</span> hulu.ae,</span>
-<span id="cb88-4"><a href="correlation.html#cb88-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">values.2 =</span> hulu.d18O,</span>
-<span id="cb88-5"><a href="correlation.html#cb88-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">bin.step =</span> <span class="dv">200</span>,</span>
-<span id="cb88-6"><a href="correlation.html#cb88-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">max.ens =</span> <span class="dv">1000</span>,</span>
-<span id="cb88-7"><a href="correlation.html#cb88-7" aria-hidden="true" tabindex="-1"></a>                 <span class="at">isopersistent  =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb88-8"><a href="correlation.html#cb88-8" aria-hidden="true" tabindex="-1"></a>                 <span class="at">isospectral =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb88-9"><a href="correlation.html#cb88-9" aria-hidden="true" tabindex="-1"></a>                 <span class="at">gaussianize =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="correlation.html#cb77-1" aria-hidden="true" tabindex="-1"></a>corout <span class="ot">&lt;-</span> <span class="fu">corEns</span>(<span class="at">time.1 =</span> gisp2.ae,</span>
+<span id="cb77-2"><a href="correlation.html#cb77-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">values.1 =</span> gisp2.d18O,</span>
+<span id="cb77-3"><a href="correlation.html#cb77-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">time.2 =</span> hulu.ae,</span>
+<span id="cb77-4"><a href="correlation.html#cb77-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">values.2 =</span> hulu.d18O,</span>
+<span id="cb77-5"><a href="correlation.html#cb77-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">bin.step =</span> <span class="dv">200</span>,</span>
+<span id="cb77-6"><a href="correlation.html#cb77-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">max.ens =</span> <span class="dv">1000</span>,</span>
+<span id="cb77-7"><a href="correlation.html#cb77-7" aria-hidden="true" tabindex="-1"></a>                 <span class="at">isopersistent  =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb77-8"><a href="correlation.html#cb77-8" aria-hidden="true" tabindex="-1"></a>                 <span class="at">isospectral =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb77-9"><a href="correlation.html#cb77-9" aria-hidden="true" tabindex="-1"></a>                 <span class="at">gaussianize =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <p>Hopefully, some of those options look familiar (see <a href="correlation.html#correlateResponsibly">5.2</a> if they don’t). There are a lot of choice that go into time uncertain correlation, meaning that there are a lot of parameters available for the <code>corEns</code> function (check out the help at <code>?corEns</code>).</p>
 <p>Some of the key ones to pay attention to are:</p>
 <ul>
@@ -402,7 +420,7 @@ I’m going to run this with 1000 ensemble members, but you may want to run it w
 </ul>
 <p><code>corEns</code> returns a list that has the key correlation and significance results for all the selected methods.
 If percentiles are provided to corEns, and they are by default, the function will output a data.frame that summarizes the output.</p>
-<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb89-1"><a href="correlation.html#cb89-1" aria-hidden="true" tabindex="-1"></a>corout<span class="sc">$</span>cor.stats</span></code></pre></div>
+<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="correlation.html#cb78-1" aria-hidden="true" tabindex="-1"></a>corout<span class="sc">$</span>cor.stats</span></code></pre></div>
 <pre><code>## # A tibble: 5 x 6
 ##   percentiles       r pSerial     pRaw pIsopersistent pIsospectral
 ##         &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;          &lt;dbl&gt;        &lt;dbl&gt;
@@ -415,11 +433,11 @@ If percentiles are provided to corEns, and they are by default, the function wil
 <div id="plotting-the-ensemble-correlation-results" class="section level2" number="5.4">
 <h2><span class="header-section-number">5.4</span> Plotting the ensemble correlation results</h2>
 <p>This gives us a first order sense of the results, but let’s use the <code>plotCorEns</code> function to dig in deeper.</p>
-<div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb91-1"><a href="correlation.html#cb91-1" aria-hidden="true" tabindex="-1"></a>raw <span class="ot">&lt;-</span> <span class="fu">plotCorEns</span>(corout,</span>
-<span id="cb91-2"><a href="correlation.html#cb91-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">significance.option =</span> <span class="st">&quot;raw&quot;</span>,</span>
-<span id="cb91-3"><a href="correlation.html#cb91-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">use.fdr =</span> <span class="cn">FALSE</span>)<span class="sc">+</span><span class="fu">ggtitle</span>(<span class="st">&quot;Distribution of correlation coefficients&quot;</span>)</span>
-<span id="cb91-4"><a href="correlation.html#cb91-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-5"><a href="correlation.html#cb91-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(raw)</span></code></pre></div>
+<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="correlation.html#cb80-1" aria-hidden="true" tabindex="-1"></a>raw <span class="ot">&lt;-</span> <span class="fu">plotCorEns</span>(corout,</span>
+<span id="cb80-2"><a href="correlation.html#cb80-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">significance.option =</span> <span class="st">&quot;raw&quot;</span>,</span>
+<span id="cb80-3"><a href="correlation.html#cb80-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">use.fdr =</span> <span class="cn">FALSE</span>)<span class="sc">+</span><span class="fu">ggtitle</span>(<span class="st">&quot;Distribution of correlation coefficients&quot;</span>)</span>
+<span id="cb80-4"><a href="correlation.html#cb80-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb80-5"><a href="correlation.html#cb80-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(raw)</span></code></pre></div>
 <p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-40-1.png" width="576" /></p>
 <div class="blackbox">
 <div class="exercise">
@@ -465,13 +483,13 @@ To overcome this problem, we control for this false discovery rate (FDR) using t
 FDR takes this effect into account to minimize the risk of identifying such spurious correlations merely on account of repeated testing.
 In effect, it filters the set of “significant” results identified by each hypothesis test (effective-N, isopersistent, or isospectral).
 Let’s plot the results of the isopersistent test again, but turn the <code>use.fdr</code> option to <code>TRUE</code>.</p>
-<div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb92-1"><a href="correlation.html#cb92-1" aria-hidden="true" tabindex="-1"></a>isoPersistentFdr <span class="ot">&lt;-</span> <span class="fu">plotCorEns</span>(corout,</span>
-<span id="cb92-2"><a href="correlation.html#cb92-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">legend.position =</span><span class="fu">c</span>(.<span class="dv">85</span>,.<span class="dv">8</span>),</span>
-<span id="cb92-3"><a href="correlation.html#cb92-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">f.sig.lab.position =</span> <span class="fu">c</span>(.<span class="dv">85</span>,.<span class="dv">6</span>),</span>
-<span id="cb92-4"><a href="correlation.html#cb92-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">significance.option =</span> <span class="st">&quot;isopersistent&quot;</span>,</span>
-<span id="cb92-5"><a href="correlation.html#cb92-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">use.fdr =</span> <span class="cn">TRUE</span>)<span class="sc">+</span><span class="fu">ggtitle</span>(<span class="st">&quot;Isopersistent significance testing with FDR&quot;</span>)</span>
-<span id="cb92-6"><a href="correlation.html#cb92-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb92-7"><a href="correlation.html#cb92-7" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(isoPersistentFdr)</span></code></pre></div>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="correlation.html#cb81-1" aria-hidden="true" tabindex="-1"></a>isoPersistentFdr <span class="ot">&lt;-</span> <span class="fu">plotCorEns</span>(corout,</span>
+<span id="cb81-2"><a href="correlation.html#cb81-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">legend.position =</span><span class="fu">c</span>(.<span class="dv">85</span>,.<span class="dv">8</span>),</span>
+<span id="cb81-3"><a href="correlation.html#cb81-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">f.sig.lab.position =</span> <span class="fu">c</span>(.<span class="dv">85</span>,.<span class="dv">6</span>),</span>
+<span id="cb81-4"><a href="correlation.html#cb81-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">significance.option =</span> <span class="st">&quot;isopersistent&quot;</span>,</span>
+<span id="cb81-5"><a href="correlation.html#cb81-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">use.fdr =</span> <span class="cn">TRUE</span>)<span class="sc">+</span><span class="fu">ggtitle</span>(<span class="st">&quot;Isopersistent significance testing with FDR&quot;</span>)</span>
+<span id="cb81-6"><a href="correlation.html#cb81-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-7"><a href="correlation.html#cb81-7" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(isoPersistentFdr)</span></code></pre></div>
 <p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-42-1.png" width="576" /></p>
 <p>Now we see how accounting for FDR can further reduce our significance levels. In this case many of the significant correlations are expected due to test multiplicity (shown in the green bars in the plot above). This represents the randomness that we’re sampling by repeating the correlation across 1000 ensemble members. After accounting for this, only 33.6% of the ensemble members are significant.</p>
 <p>Note that accounting for False Discovery Rate is a separate process than deriving p-values, and can be applied to any of the significance.options in geoChronR.</p>
@@ -494,7 +512,7 @@ One way to get a sense of the vulnerability of a timeseries to false negatives i
 </div>
 </div>
 </div>
-<div id="chapter-project" class="section level2" number="5.6">
+<div id="chapter-project-1" class="section level2" number="5.6">
 <h2><span class="header-section-number">5.6</span> Chapter Project</h2>
 <p>Generally, age uncertainties obscure relationships between records, while in rare cases creating the appearance of spurious correlations. It is appropriate to think of ensemble correlation as a tool to explore the age-uncertain correlation characteristics between timeseries, rather than a binary answer to the question “Are these two datasets significantly correlated?”</p>
 <p>So for your chapter project, we’ll explore one more parameter that will have significant impacts on your result.</p>
@@ -545,7 +563,7 @@ Wang, Yong-Jin, Hai Cheng, R Lawrence Edwards, ZS An, JY Wu, C-C Shen, and Jeffr
         </div>
       </div>
 <a href="agemodelling.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="principal-components-analysis-pca.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="pca.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

@@ -1,4 +1,4 @@
-# Time-uncertain correlation {#correlation}
+# Correlation {#correlation}
 
 Correlation is perhaps the most commonly used statistical tool in the paleogeosciences. This makes sense, because we often see similar patterns between datasets, but want to know whether the apparent relationship is robust, or could be spurious. And of course, age uncertainty can have immense impacts on correlation.
 
@@ -50,7 +50,7 @@ Create a figure that that uses ensemble timeseries plots to compares the Hulu Ca
 ::::
 
 
-```{r getCorData,echo=FALSE,results='hide',message=FALSE,warning=FALSE}
+```{r getCorData,echo=FALSE,results='hide',message=FALSE,warning=FALSE,cache=TRUE}
 hulu <- readLipd("~/Dropbox/Hulucave.Wang.2001-ens.lpd")
 gisp2 <- readLipd("~/Dropbox/GISP2.Alley.2000-ens.lpd")
 
@@ -70,7 +70,7 @@ gisp2.ae <- selectData(gisp2,var.name = "ageEnsemble")
 ```
 
 
-Great! There's no replacement for actually looking at the data, and lipdR and geoChronR make it possible to do this in just a few lines of code. If you found that exercise difficult, spend some time reviewing Chapters \@ref(data) and @\ref(agemodelling).
+Great! There's no replacement for actually looking at the data, and lipdR and geoChronR make it possible to do this in just a few lines of code. If you found that exercise difficult, spend some time reviewing Chapters \@ref(data) and \@ref(agemodelling).
 
 
 :::: {.blackbox data-latex=""}
@@ -81,8 +81,9 @@ Now that you've made the overview figure, does it look like there might be a rel
 
 
 ## How to correlate responsibly {#correlateResponsibly}
-Before we jump into the details of how to conduct time-uncertain correlation in R, let's review some of the key assumptions, methods and choices. The following is an excerpt from the [geoChronR paper in Geochronology](https://gchron.copernicus.org/articles/3/149/2021/) [@geochronrPaper].
+Before we jump into the details of how to conduct time-uncertain correlation in R, let's review some of the key assumptions, methods and choices. The rest of this section is an excerpt from our [geoChronR paper in Geochronology](https://gchron.copernicus.org/articles/3/149/2021/) [@geochronrPaper].
 
+### Correlation
 
 Correlation is the most common measure of a relationship between two variables $X$ and $Y$.
 Its computation is fast, lending itself to ensemble analysis, with a handful of pretreatment and significance considerations that are relevant for ensembles of paleoenvironmental and geoscientific data.

@@ -20,16 +20,16 @@ OK, we'll begin by loading in the Kurupa Lake record from Boldt et al., 2015. `T
 K <- lipdR::readLipd("http://lipdverse.org/geoChronR-examples/Kurupa.Boldt.2015.lpd")
 ```
 
-## Check out the contents
+### Check out the contents
 ```{r}
 sp <- plotSummary(K,paleo.data.var = "RABD",summary.font.size = 6)
 print(sp)
 ```
 
 
-## Create an age model with Bacon
+## Create an age model
 
-```{r KurupaBacon,results="hide",fig.keep="all",cache=TRUE}
+```{r KurupaBacon,results="hide",fig.show='hide',message=FALSE,warning=FALSE,cache=TRUE}
 K <- runBacon(K,
               lab.id.var = 'labID', 
               age.14c.var = 'age14C', 
@@ -48,14 +48,30 @@ K <- runBacon(K,
               close.connection = FALSE)
 ```
 
-## And plot the ensemble output
+:::: {.blackbox data-latex=""}
+::: {.exercise #reg-ex-1}
+In this chapter, the exercises will have conduct the analysis in a parallel universe, where you make different, but reasonable choices and see what happens. 
+
+First, create the best age model you can using either Bchron or Oxcal.
+:::
+::::
+
+
+### And plot the ensemble output
 
 ```{r}
 plotChron(K,age.var = "ageEnsemble",dist.scale = 0.2)
 ```
 
 
-## Map the age ensemble to the paleodata table
+:::: {.blackbox data-latex=""}
+::: {.exercise #reg-ex-2}
+Plot your model. How does it compare to the Bacon model?
+:::
+::::
+
+## Prepare the data
+### Map the age ensemble to the paleodata table
 This is to get ensemble age estimates for each depth in the paleoData measurement table
 
 ```{r}
@@ -63,7 +79,7 @@ K <- mapAgeEnsembleToPaleoData(K,age.var = "ageEnsemble")
 ```
 
 
-## Select the paleodata age ensemble, and RABD data that we'd like to regress and calibrate
+### Select the paleodata age ensemble, and RABD data that we'd like to regress and calibrate
 
 ```{r}
 kae <-  selectData(K,"ageEnsemble")
@@ -71,12 +87,12 @@ rabd <- selectData(K,"RABD")
 ```
 
 
-## Now load in the instrumental data we want to correlate and regress agains
+### Now load in the instrumental data we want to correlate and regress agains
 ```{r}
 kurupa.instrumental <- readr::read_csv("http://lipdverse.org/geoChronR-examples/KurupaInstrumental.csv")
 ```
 
-## Check age/time units before proceeding
+### Check age/time units before proceeding
 
 ```{r}
 kae$units
@@ -88,7 +104,7 @@ yep, we need to convert the units from BP to AD
 kae <- convertBP2AD(kae)
 ```
 
-## Create a "variable list" for the instrumental data
+### Create a "variable list" for the instrumental data
 
 ```{r}
 kyear <- list()
@@ -103,12 +119,25 @@ kinst$units <- "deg (C)"
 ```
 
 
-## Calculate an ensmeble correlation between the RABD and local summer temperature data
+:::: {.blackbox data-latex=""}
+::: {.exercise #reg-ex-3}
+Repeat all of this prep work, including mapping the age uncertainties and extracting the variables. 
+:::
+::::
+
+### Calculate an ensemble correlation between the RABD and local summer temperature data
 ```{r,results="hide",warning=FALSE}
 corout <- corEns(kae,rabd,kyear,kinst,bin.step=2,percentiles = c(.05,.5,.95 ))
 ```
 
-## And plot the output
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #reg-ex-4}
+Calculate the correlation ensemble, but you decide to use 5-year bins instead of 2-year bins.
+:::
+::::
+
+### And plot the output
 Note that here we use the "Effective-N" significance option as we mimic the Boldt et al. (2015) paper.
 ```{r}
 plotCorEns(corout,significance.option = "eff-n")
@@ -116,8 +145,14 @@ plotCorEns(corout,significance.option = "eff-n")
 
 Mixed results. But encouraging enough to move forward.
 
+:::: {.blackbox data-latex=""}
+::: {.exercise #reg-ex-5}
+After reading Chapter \@ref(corr), you know that the isospectral method is usually more reliable. Use that instead.
+:::
+::::
+
 ## Perform ensemble regression
-OK, you've convinced yourself that you want to use RABD to model temperature back through time. We can do this simply (perhaps naively) with regession, and lets do it with age uncertainty, both in the building of the model, and the reconstructing
+OK, you've convinced yourself that you want to use RABD to model temperature back through time. We can do this simply (perhaps naively) with regression, and lets do it with age uncertainty, both in the building of the model, and the reconstructing
 ```{r,results="hide",fig.keep="all"}
 regout <- regressEns(time.x = kae,
                     values.x = rabd,
@@ -128,7 +163,14 @@ regout <- regressEns(time.x = kae,
                     recon.bin.vec = seq(-4010,2010,by=20))
 ```
 
-## And plot the output
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #reg-ex-6}
+Again, use 5-year time steps, and also gaussianize to avoid the potential impact of skewed data
+:::
+::::
+
+### And plot the output
 
 ```{r}
 regPlots <- plotRegressEns(regout,alp = 0.01,font.size = 8)
@@ -136,5 +178,11 @@ regPlots <- plotRegressEns(regout,alp = 0.01,font.size = 8)
 
 This result is consistent with that produced by Boldt et al., (2015), and was much simpler to produce with geoChronR.
 
+## Chapter project
+:::: {.blackbox data-latex=""}
+::: {.exercise #reg-ex-7}
+Plot your results. How did making different, reasonable (perhaps even better?) choices affect the final outcome of the regression?
+:::
+::::
 ```
 

@@ -328,7 +328,7 @@ print(tana.ribbon.plot)
 
 
 :::: {.blackbox data-latex=""}
-::: {.exercise #plotTimeseriesEnsLines}
+::: {.exercise #plotTimeseriesEnsLines2}
 plotTimeseriesEnsRibbons () has many more options that control the output. Take a look at the documentation for that function, and then change the following parameters, and understand how that affects the output:
 
   a. probs
@@ -413,7 +413,7 @@ ggarrange(plots = list(tana.ribbon.plot + xlim(c(15000,0)) + ggtitle("Temperatur
 ```
 
 
-## Chapter project. 
+## Chapter project
 
 This chapter covers a range of age modelling approaches, how to implement them in geoChronR, how to propagate the uncertainties to data of interest, and visualization of all of the above. Now it's time to test what you've learned!
 
