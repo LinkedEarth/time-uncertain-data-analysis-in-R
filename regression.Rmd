@@ -184,5 +184,3 @@ This result is consistent with that produced by Boldt et al., (2015), and was mu
 Plot your results. How did making different, reasonable (perhaps even better?) choices affect the final outcome of the regression?
 :::
 ::::
-```
-

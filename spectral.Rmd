@@ -57,13 +57,13 @@ We see that over the past 1 Ma, the time increments ($\Delta t$) are sharply pea
 From this point there are two ways to proceed: 1) use methods that explictly deal with unevenly-spaced data, or 2) interpolate to a regular grid and apply standard methods.
 In the first case, we could use the *Lomb-Scargle periodogram* or rather its version tailored for paleoclimate data, [REDFIT](https://www.nonlin-processes-geophys.net/16/43/2009/). In the second case, we can interpolate and use a method tailored to evenly-spaced data.
 
-### Lomb-Scargle periodogram
-This is a very standard method implemented in many packages. For a review, see [VanderPlas (2018)](https://iopscience.iop.org/article/10.3847/1538-4365/aab766/meta). There are several ways to implement Lomb-Scargle. geoChronR does this via the [lomb](https://www.rdocumentation.org/packages/lomb) package.
+<!-- ### Lomb-Scargle periodogram -->
+<!-- This is a very standard method implemented in many packages. For a review, see [VanderPlas (2018)](https://iopscience.iop.org/article/10.3847/1538-4365/aab766/meta). There are several ways to implement Lomb-Scargle. geoChronR does this via the [lomb](https://www.rdocumentation.org/packages/lomb) package. -->
 
-To establish significance, we have a few choices. We re-use Stephen Meyer's excellent [astrochron](https://www.rdocumentation.org/packages/astrochron) package for this purpose, as it implements the methods described in [Meyers, (2012)](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2012PA002307).  Several nulls could be chosen here, and we focus first on a power-law, characteristic of many paleoclimate records (e.g. [Zhu et al, 2019](https://www.pnas.org/content/116/18/8728.short)).
+<!-- To establish significance, we have a few choices. We re-use Stephen Meyer's excellent [astrochron](https://www.rdocumentation.org/packages/astrochron) package for this purpose, as it implements the methods described in [Meyers, (2012)](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2012PA002307).  Several nulls could be chosen here, and we focus first on a power-law, characteristic of many paleoclimate records (e.g. [Zhu et al, 2019](https://www.pnas.org/content/116/18/8728.short)). -->
 
 
-```{r lomb-scargle, message=FALSE, results = 'hide', warning = FALSE}
+```{r lomb-scargle, message=FALSE, results = 'hide', warning = FALSE,eval=FALSE,echo = FALSE}
 spec.ls <- computeSpectraEns(t,X,method = 'lomb-scargle')
 ls.df <- data.frame("freq" = spec.ls$freqs, "pwr" = spec.ls$power)
 # estimate significance against a power-law fit
@@ -91,9 +91,9 @@ p.ls <- periodAnnotate(p.ls, periods = c(19,23,41,100), y.lims =c(0.01,100))
 show(p.ls)
 ```
 
-It is clearly seen that the data contain significant energy (peaks) near, but not exactly at, the famed Milankovitch periodicities (100, 41, 23, and 19 kyr).  These periodicities (particularly the eccentricity (100kyr) and obliquity (40kyr)) rise above the various power law nulls, but we see hints of higher power at high-frequencies. We shall soon see that this is an artifact of the Lomb-Scargle methods, which does not use any tapers and therefore displays high variance (in this context, spurious peaks). Other methods smooth out that noise.   
+<!-- It is clearly seen that the data contain significant energy (peaks) near, but not exactly at, the famed Milankovitch periodicities (100, 41, 23, and 19 kyr).  These periodicities (particularly the eccentricity (100kyr) and obliquity (40kyr)) rise above the various power law nulls, but we see hints of higher power at high-frequencies. We shall soon see that this is an artifact of the Lomb-Scargle methods, which does not use any tapers and therefore displays high variance (in this context, spurious peaks). Other methods smooth out that noise.    -->
 
-[REDFIT](https://boris.unibe.ch/id/eprint/38577) does so via application of Welch’s Overlapped Segment Averaging, which by default uses 3 segments that overlap by about 50%. geoChronR uses its [dplR](https://cran.r-project.org/package=dplR) implementation, which differs slightly from the published algorithm (see `?dplR::redfit` for details).
+[REDFIT](https://boris.unibe.ch/id/eprint/38577) smooths the spectra via application of Welch’s Overlapped Segment Averaging, which by default uses 3 segments that overlap by about 50%. geoChronR uses its [dplR](https://cran.r-project.org/package=dplR) implementation, which differs slightly from the published algorithm (see `?dplR::redfit` for details).
 
 ```{r REDFIT, message=FALSE, results = 'hide', warning = FALSE}
 spec.redfit <- computeSpectraEns(t,X,method = 'redfit')

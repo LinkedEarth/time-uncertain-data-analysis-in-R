@@ -94,7 +94,7 @@ and-plot-the-output
 perform-ensemble-regression
 and-plot-the-output-1
 chapter-project-3
-lomb-scargle-periodogram
+spectral
 multi-taper-method
 weighted-wavelet-z-transform-nuspectral
 time-uncertain-spectral-analysis

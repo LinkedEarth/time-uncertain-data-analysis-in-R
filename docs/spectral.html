@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 8 Spectral Analysis | Time-uncertain data analysis in R</title>
+  <meta name="description" content="This book covers time-uncertain data analysis in R, primarily relying on the geoChronR package" />
+  <meta name="generator" content="bookdown 0.22 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 8 Spectral Analysis | Time-uncertain data analysis in R" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This book covers time-uncertain data analysis in R, primarily relying on the geoChronR package" />
+  <meta name="github-repo" content="linkedearth/time-uncertain-data-analysis-in-R" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 8 Spectral Analysis | Time-uncertain data analysis in R" />
+  
+  <meta name="twitter:description" content="This book covers time-uncertain data analysis in R, primarily relying on the geoChronR package" />
+  
+
+<meta name="author" content="Nick McKay" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="regression-and-calibration-in-time.html"/>
+
+<script src="libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Time-uncertain Data Analysis in R</a></li>
+<li><a href="http://nickmckay.github.io/GeoChronR">geoChronR manual</a></li>
+<li><a href="http://linked.earth">LinkedEarth Home </a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Welcome!</a></li>
+<li class="chapter" data-level="2" data-path="installation.html"><a href="installation.html"><i class="fa fa-check"></i><b>2</b> Installing the software you need</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="installation.html"><a href="installation.html#installing-lipdr"><i class="fa fa-check"></i><b>2.1</b> Installing lipdR</a></li>
+<li class="chapter" data-level="2.2" data-path="installation.html"><a href="installation.html#installing-geochronr"><i class="fa fa-check"></i><b>2.2</b> Installing geoChronR</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="data.html"><a href="data.html"><i class="fa fa-check"></i><b>3</b> Data in geoChronR</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="data.html"><a href="data.html#loading-a-lipd-file"><i class="fa fa-check"></i><b>3.1</b> Loading a LiPD file</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="data.html"><a href="data.html#selectData"><i class="fa fa-check"></i><b>3.1.1</b> Extract a variable from a LiPD object</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="data.html"><a href="data.html#loading-multiple-lipd-datasets"><i class="fa fa-check"></i><b>3.2</b> Loading multiple LiPD datasets</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="data.html"><a href="data.html#filtering"><i class="fa fa-check"></i><b>3.2.1</b> Filtering</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="agemodelling.html"><a href="agemodelling.html"><i class="fa fa-check"></i><b>4</b> Age modelling in geoChronR</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="agemodelling.html"><a href="agemodelling.html#bacon"><i class="fa fa-check"></i><b>4.1</b> Bacon</a></li>
+<li class="chapter" data-level="4.2" data-path="agemodelling.html"><a href="agemodelling.html#bchron"><i class="fa fa-check"></i><b>4.2</b> BChron</a></li>
+<li class="chapter" data-level="4.3" data-path="agemodelling.html"><a href="agemodelling.html#oxcal"><i class="fa fa-check"></i><b>4.3</b> OxCal</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="agemodelling.html"><a href="agemodelling.html#lets-compare-these-models."><i class="fa fa-check"></i><b>4.3.1</b> Let’s compare these models.</a></li>
+<li class="chapter" data-level="4.3.2" data-path="agemodelling.html"><a href="agemodelling.html#creating-a-multimodel-ensemble"><i class="fa fa-check"></i><b>4.3.2</b> Creating a multimodel ensemble</a></li>
+<li class="chapter" data-level="4.3.3" data-path="agemodelling.html"><a href="agemodelling.html#mapping-the-age-ensemble-to-the-paleodata-measurements"><i class="fa fa-check"></i><b>4.3.3</b> Mapping the age ensemble to the paleoData measurements</a></li>
+<li class="chapter" data-level="4.3.4" data-path="agemodelling.html"><a href="agemodelling.html#creating-a-timeseries-plot-as-a-spaghetti-plot-of-lines"><i class="fa fa-check"></i><b>4.3.4</b> Creating a timeseries plot as a spaghetti plot of lines</a></li>
+<li class="chapter" data-level="4.3.5" data-path="agemodelling.html"><a href="agemodelling.html#creating-a-timeseries-plot-with-a-ribbon-confidence-intervals"><i class="fa fa-check"></i><b>4.3.5</b> Creating a timeseries plot with a ribbon confidence intervals</a></li>
+<li class="chapter" data-level="4.3.6" data-path="agemodelling.html"><a href="agemodelling.html#combining-the-two-kinds-of-timeseries-plots"><i class="fa fa-check"></i><b>4.3.6</b> Combining the two kinds of timeseries plots</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="agemodelling.html"><a href="agemodelling.html#banded-age-modelling"><i class="fa fa-check"></i><b>4.4</b> Banded Age Modelling</a></li>
+<li class="chapter" data-level="4.5" data-path="agemodelling.html"><a href="agemodelling.html#chapter-project"><i class="fa fa-check"></i><b>4.5</b> Chapter project</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="correlation.html"><a href="correlation.html"><i class="fa fa-check"></i><b>5</b> Correlation</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="correlation.html"><a href="correlation.html#first-look"><i class="fa fa-check"></i><b>5.1</b> First look</a></li>
+<li class="chapter" data-level="5.2" data-path="correlation.html"><a href="correlation.html#correlateResponsibly"><i class="fa fa-check"></i><b>5.2</b> How to correlate responsibly</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="correlation.html"><a href="correlation.html#correlation-1"><i class="fa fa-check"></i><b>5.2.1</b> Correlation</a></li>
+<li class="chapter" data-level="5.2.2" data-path="correlation.html"><a href="correlation.html#binning"><i class="fa fa-check"></i><b>5.2.2</b> Binning</a></li>
+<li class="chapter" data-level="5.2.3" data-path="correlation.html"><a href="correlation.html#autocorrelation"><i class="fa fa-check"></i><b>5.2.3</b> Autocorrelation</a></li>
+<li class="chapter" data-level="5.2.4" data-path="correlation.html"><a href="correlation.html#test-multiplicity"><i class="fa fa-check"></i><b>5.2.4</b> Test multiplicity</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="correlation.html"><a href="correlation.html#the-corens-function"><i class="fa fa-check"></i><b>5.3</b> The corEns() function</a></li>
+<li class="chapter" data-level="5.4" data-path="correlation.html"><a href="correlation.html#plotting-the-ensemble-correlation-results"><i class="fa fa-check"></i><b>5.4</b> Plotting the ensemble correlation results</a>
+<ul>
+<li class="chapter" data-level="5.4.1" data-path="correlation.html"><a href="correlation.html#significance-testing-options"><i class="fa fa-check"></i><b>5.4.1</b> Significance testing options</a></li>
+<li class="chapter" data-level="5.4.2" data-path="correlation.html"><a href="correlation.html#false-discovery-rate-testing"><i class="fa fa-check"></i><b>5.4.2</b> False-discovery rate testing</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="correlation.html"><a href="correlation.html#judging-the-overall-significance-of-an-age-uncertain-correlation"><i class="fa fa-check"></i><b>5.5</b> Judging the overall significance of an age-uncertain correlation</a></li>
+<li class="chapter" data-level="5.6" data-path="correlation.html"><a href="correlation.html#chapter-project-1"><i class="fa fa-check"></i><b>5.6</b> Chapter Project</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="pca.html"><a href="pca.html"><i class="fa fa-check"></i><b>6</b> Principal Components Analysis</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="pca.html"><a href="pca.html#lets-explore-these-data"><i class="fa fa-check"></i><b>6.1</b> Let’s explore these data!</a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="pca.html"><a href="pca.html#make-a-map"><i class="fa fa-check"></i><b>6.1.1</b> Make a map</a></li>
+<li class="chapter" data-level="6.1.2" data-path="pca.html"><a href="pca.html#grab-the-age-ensembles-for-each-record."><i class="fa fa-check"></i><b>6.1.2</b> Grab the age ensembles for each record.</a></li>
+<li class="chapter" data-level="6.1.3" data-path="pca.html"><a href="pca.html#plot-some-summary-statistics"><i class="fa fa-check"></i><b>6.1.3</b> Plot some summary statistics</a></li>
+<li class="chapter" data-level="6.1.4" data-path="pca.html"><a href="pca.html#plot-the-data"><i class="fa fa-check"></i><b>6.1.4</b> Plot the data</a></li>
+</ul></li>
+<li class="chapter" data-level="6.2" data-path="pca.html"><a href="pca.html#filter-the-data"><i class="fa fa-check"></i><b>6.2</b> Filter the data</a>
+<ul>
+<li class="chapter" data-level="6.2.1" data-path="pca.html"><a href="pca.html#plot-the-data-again-plotagain"><i class="fa fa-check"></i><b>6.2.1</b> Plot the data again (#plotAgain)</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="pca.html"><a href="pca.html#calculate-an-ensemble-pca"><i class="fa fa-check"></i><b>6.3</b> Calculate an ensemble PCA</a>
+<ul>
+<li class="chapter" data-level="6.3.1" data-path="pca.html"><a href="pca.html#plot-the-ensemble-pca-results"><i class="fa fa-check"></i><b>6.3.1</b> Plot the ensemble PCA results</a></li>
+<li class="chapter" data-level="6.3.2" data-path="pca.html"><a href="pca.html#data-weighting"><i class="fa fa-check"></i><b>6.3.2</b> Data weighting</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="pca.html"><a href="pca.html#ensemble-pca-using-a-correlation-matrix."><i class="fa fa-check"></i><b>6.4</b> Ensemble PCA using a correlation matrix.</a></li>
+<li class="chapter" data-level="6.5" data-path="pca.html"><a href="pca.html#chapter-project-2"><i class="fa fa-check"></i><b>6.5</b> Chapter project</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html"><i class="fa fa-check"></i><b>7</b> Regression and Calibration-in-time</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#load-the-lipd-file"><i class="fa fa-check"></i><b>7.1</b> Load the LiPD file</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#check-out-the-contents"><i class="fa fa-check"></i><b>7.1.1</b> Check out the contents</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#create-an-age-model"><i class="fa fa-check"></i><b>7.2</b> Create an age model</a>
+<ul>
+<li class="chapter" data-level="7.2.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-ensemble-output"><i class="fa fa-check"></i><b>7.2.1</b> And plot the ensemble output</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#prepare-the-data"><i class="fa fa-check"></i><b>7.3</b> Prepare the data</a>
+<ul>
+<li class="chapter" data-level="7.3.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#map-the-age-ensemble-to-the-paleodata-table"><i class="fa fa-check"></i><b>7.3.1</b> Map the age ensemble to the paleodata table</a></li>
+<li class="chapter" data-level="7.3.2" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#select-the-paleodata-age-ensemble-and-rabd-data-that-wed-like-to-regress-and-calibrate"><i class="fa fa-check"></i><b>7.3.2</b> Select the paleodata age ensemble, and RABD data that we’d like to regress and calibrate</a></li>
+<li class="chapter" data-level="7.3.3" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#now-load-in-the-instrumental-data"><i class="fa fa-check"></i><b>7.3.3</b> Now load in the instrumental data</a></li>
+<li class="chapter" data-level="7.3.4" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#check-agetime-units-before-proceeding"><i class="fa fa-check"></i><b>7.3.4</b> Check age/time units before proceeding</a></li>
+<li class="chapter" data-level="7.3.5" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#create-a-variable-list-for-the-instrumental-data"><i class="fa fa-check"></i><b>7.3.5</b> Create a “variable list” for the instrumental data</a></li>
+<li class="chapter" data-level="7.3.6" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#calculate-an-ensemble-correlation-between-the-rabd-and-local-summer-temperature-data"><i class="fa fa-check"></i><b>7.3.6</b> Calculate an ensemble correlation between the RABD and local summer temperature data</a></li>
+<li class="chapter" data-level="7.3.7" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-output"><i class="fa fa-check"></i><b>7.3.7</b> And plot the output</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#perform-ensemble-regression"><i class="fa fa-check"></i><b>7.4</b> Perform ensemble regression</a>
+<ul>
+<li class="chapter" data-level="7.4.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-output-1"><i class="fa fa-check"></i><b>7.4.1</b> And plot the output</a></li>
+</ul></li>
+<li class="chapter" data-level="7.5" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#chapter-project-3"><i class="fa fa-check"></i><b>7.5</b> Chapter project</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="spectral.html"><a href="spectral.html"><i class="fa fa-check"></i><b>8</b> Spectral Analysis</a>
+<ul>
+<li class="chapter" data-level="8.0.1" data-path="spectral.html"><a href="spectral.html#multi-taper-method"><i class="fa fa-check"></i><b>8.0.1</b> Multi-taper Method</a></li>
+<li class="chapter" data-level="8.0.2" data-path="spectral.html"><a href="spectral.html#weighted-wavelet-z-transform-nuspectral"><i class="fa fa-check"></i><b>8.0.2</b> Weighted Wavelet Z-transform (<em>nuspectral</em>)</a></li>
+<li class="chapter" data-level="8.1" data-path="spectral.html"><a href="spectral.html#time-uncertain-spectral-analysis"><i class="fa fa-check"></i><b>8.1</b> Time-uncertain spectral analysis</a></li>
+<li class="chapter" data-level="8.2" data-path="spectral.html"><a href="spectral.html#conclusion"><i class="fa fa-check"></i><b>8.2</b> Conclusion</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Time-uncertain data analysis in R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="spectral" class="section level1" number="8">
+<h1><span class="header-section-number">Chapter 8</span> Spectral Analysis</h1>
+<p>In this notebook we demonstrate how to use the spectral analysis features of GeoChronR using the “ODP846” record described in:</p>
+<ul>
+<li>Mix, A. C., J. Le, and N. J. Shackleton (1995a), Benthic foraminiferal stable isotope stratigraphy from Site 846: 0–1.8 Ma, Proc. Ocean Drill. Program Sci. Results, 138, 839–847.</li>
+<li>Shackleton, N. J. (1995), New data on the evolution of Pliocene climate variability, in Paleoclimate and Evolution, With Emphasis on Human Origins, edited by E. S. Vrba et al., pp. 242-248, Yale Univ. Press, New Haven, CT.</li>
+</ul>
+<p>The data were aligned to the Benthic Stack of <a href="https://agupubs.onlinelibrary.wiley.com/doi/abs/10.1029/2004PA001071">Lisiecki &amp; Raymo (2005)</a> using the <a href="https://agupubs.onlinelibrary.wiley.com/doi/full/10.1002/2014PA002713">HMM-Match</a> algorithm <a href="https://agupubs.onlinelibrary.wiley.com/doi/abs/10.1002/2016PA003057">(Khider et al, 2017)</a>. The latter is a probabilistic method that generates an ensemble of 1000 possible age models compatible with the chronostratigraphic constraints.</p>
+<p>We first remotely load the data using the LiPD utilities. Depending on your connectivity, this may take a minute as the file is fairly large (2.6Mb).</p>
+<div class="sourceCode" id="cb137"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb137-1"><a href="spectral.html#cb137-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lipdR) <span class="co"># to load the file</span></span>
+<span id="cb137-2"><a href="spectral.html#cb137-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geoChronR) <span class="co"># to analyze it</span></span>
+<span id="cb137-3"><a href="spectral.html#cb137-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggthemes) <span class="co"># to define plotting theme</span></span>
+<span id="cb137-4"><a href="spectral.html#cb137-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)  <span class="co"># to plot</span></span>
+<span id="cb137-5"><a href="spectral.html#cb137-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb137-6"><a href="spectral.html#cb137-6" aria-hidden="true" tabindex="-1"></a>I <span class="ot">&lt;-</span> <span class="fu">readLipd</span>(<span class="st">&quot;http://lipdverse.org/geoChronR-examples/ODP846.Lawrence.2006.lpd&quot;</span>)</span></code></pre></div>
+<p>Now let us take a first look at the median age model:</p>
+<div class="sourceCode" id="cb138"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb138-1"><a href="spectral.html#cb138-1" aria-hidden="true" tabindex="-1"></a>d18O <span class="ot">=</span>  I<span class="sc">$</span>chronData[[<span class="dv">1</span>]]<span class="sc">$</span>model[[<span class="dv">1</span>]]<span class="sc">$</span>summaryTable[[<span class="dv">1</span>]]<span class="sc">$</span>d180<span class="sc">$</span>values</span>
+<span id="cb138-2"><a href="spectral.html#cb138-2" aria-hidden="true" tabindex="-1"></a>t.med <span class="ot">&lt;-</span> I<span class="sc">$</span>chronData[[<span class="dv">1</span>]]<span class="sc">$</span>model[[<span class="dv">1</span>]]<span class="sc">$</span>summaryTable[[<span class="dv">1</span>]]<span class="sc">$</span>median<span class="sc">$</span>values</span>
+<span id="cb138-3"><a href="spectral.html#cb138-3" aria-hidden="true" tabindex="-1"></a>L <span class="ot">&lt;-</span> geoChronR<span class="sc">::</span><span class="fu">mapAgeEnsembleToPaleoData</span>(I,<span class="at">paleo.meas.table.num =</span> <span class="dv">1</span>,<span class="at">age.var =</span> <span class="st">&quot;age&quot;</span>)</span>
+<span id="cb138-4"><a href="spectral.html#cb138-4" aria-hidden="true" tabindex="-1"></a>age <span class="ot">=</span> geoChronR<span class="sc">::</span><span class="fu">selectData</span>(L,<span class="st">&quot;ageEnsemble&quot;</span>,<span class="at">meas.table.num =</span> <span class="dv">1</span>)</span>
+<span id="cb138-5"><a href="spectral.html#cb138-5" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">=</span> geoChronR<span class="sc">::</span><span class="fu">selectData</span>(L,<span class="st">&quot;temp muller&quot;</span>,<span class="at">meas.table.num =</span> <span class="dv">1</span>)</span>
+<span id="cb138-6"><a href="spectral.html#cb138-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plotTimeseriesEnsRibbons</span>(<span class="fu">ggplot</span>(),<span class="at">X=</span>age,<span class="at">Y=</span>temp,<span class="at">color.low=</span><span class="st">&quot;orchid&quot;</span>,<span class="at">color.high=</span><span class="st">&quot;darkorange3&quot;</span>,<span class="at">color.line=</span><span class="st">&quot;orange&quot;</span>,<span class="at">line.width=</span><span class="fl">0.5</span>,<span class="at">alp=</span><span class="fl">0.3</span>) <span class="sc">+</span> <span class="fu">scale_x_reverse</span>() <span class="sc">+</span> <span class="fu">theme_hc</span>(<span class="at">style =</span> <span class="st">&quot;darkunica&quot;</span>)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-76-1.png" width="672" /></p>
+<p>This paleoclimate record features:</p>
+<ul>
+<li>a long-term cooling trend (<span class="math inline">\(\delta^{18}\mathrm{O}\)</span> gets more positive over time) characteristic of late Neogene and Quaternary.</li>
+<li>some quasi-periodic oscillations (the legendary <a href="https://www.ncdc.noaa.gov/abrupt-climate-change/Glacial-Interglacial%20Cycles">Pleistocene Ice Ages</a>)</li>
+<li>nonstationary behavior, related to the well-known mid-Pleistocene transition from a “41k world” to a “100k world” somewhere around 0.8 Ma <a href="https://agupubs.onlinelibrary.wiley.com/doi/pdf/10.1029/2000RG000091">(Paillard, 2001)</a>.</li>
+</ul>
+<p>To keep things simple and lower computational cost, let’s focus on the last million years, and use the median age model. Now, a standard assumption of spectral analysis is that data are evenly spaced in time. In real-world paleo timeseries this is seldom the case. Let’s look at the distribution of time increments in this particular core, as contrained by this tuned age model:</p>
+<div class="sourceCode" id="cb139"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb139-1"><a href="spectral.html#cb139-1" aria-hidden="true" tabindex="-1"></a>age.median <span class="ot">=</span> matrixStats<span class="sc">::</span><span class="fu">rowQuantiles</span>(age<span class="sc">$</span>values,<span class="at">probs =</span> <span class="fl">0.5</span>)</span>
+<span id="cb139-2"><a href="spectral.html#cb139-2" aria-hidden="true" tabindex="-1"></a>temp.median <span class="ot">=</span> matrixStats<span class="sc">::</span><span class="fu">rowQuantiles</span>(<span class="fu">as.matrix</span>(temp<span class="sc">$</span>values),<span class="at">probs =</span> <span class="fl">0.5</span>)</span>
+<span id="cb139-3"><a href="spectral.html#cb139-3" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span>age.median[age.median <span class="sc">&lt;</span> <span class="dv">1000</span>]</span>
+<span id="cb139-4"><a href="spectral.html#cb139-4" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> temp.median[age.median <span class="sc">&lt;</span> <span class="dv">1000</span>]</span>
+<span id="cb139-5"><a href="spectral.html#cb139-5" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> X <span class="sc">-</span> <span class="fu">mean</span>(X)</span>
+<span id="cb139-6"><a href="spectral.html#cb139-6" aria-hidden="true" tabindex="-1"></a><span class="co">#dfs = dplyr::filter(df,t&lt;=1000)</span></span>
+<span id="cb139-7"><a href="spectral.html#cb139-7" aria-hidden="true" tabindex="-1"></a>dt <span class="ot">=</span> <span class="fu">diff</span>(t)</span>
+<span id="cb139-8"><a href="spectral.html#cb139-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">xlim</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">10</span>)) <span class="sc">+</span></span>
+<span id="cb139-9"><a href="spectral.html#cb139-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">x=</span>dt,<span class="at">y =</span> ..density..), <span class="at">bins =</span> <span class="dv">25</span>, ,<span class="at">alpha =</span> <span class="fl">0.8</span>, <span class="at">fill =</span> <span class="st">&quot;orange&quot;</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">&quot;Distribution of time intervals&quot;</span>) <span class="sc">+</span> <span class="fu">theme_hc</span>(<span class="at">style =</span> <span class="st">&quot;darkunica&quot;</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="fu">expression</span>(Delta<span class="sc">*</span><span class="st">&quot;t&quot;</span>))</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-77-1.png" width="672" /></p>
+<p>We see that over the past 1 Ma, the time increments (<span class="math inline">\(\Delta t\)</span>) are sharply peaked around 2 ka, but they range from 0 to about 7.5 ka. For now, let us assume that the time axis, albeit uneven, is well-known (no uncertainty).
+## Time-certain spectral analysis
+From this point there are two ways to proceed: 1) use methods that explictly deal with unevenly-spaced data, or 2) interpolate to a regular grid and apply standard methods.
+In the first case, we could use the <em>Lomb-Scargle periodogram</em> or rather its version tailored for paleoclimate data, <a href="https://www.nonlin-processes-geophys.net/16/43/2009/">REDFIT</a>. In the second case, we can interpolate and use a method tailored to evenly-spaced data.</p>
+<!-- ### Lomb-Scargle periodogram -->
+<!-- This is a very standard method implemented in many packages. For a review, see [VanderPlas (2018)](https://iopscience.iop.org/article/10.3847/1538-4365/aab766/meta). There are several ways to implement Lomb-Scargle. geoChronR does this via the [lomb](https://www.rdocumentation.org/packages/lomb) package. -->
+<!-- To establish significance, we have a few choices. We re-use Stephen Meyer's excellent [astrochron](https://www.rdocumentation.org/packages/astrochron) package for this purpose, as it implements the methods described in [Meyers, (2012)](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2012PA002307).  Several nulls could be chosen here, and we focus first on a power-law, characteristic of many paleoclimate records (e.g. [Zhu et al, 2019](https://www.pnas.org/content/116/18/8728.short)). -->
+<!-- It is clearly seen that the data contain significant energy (peaks) near, but not exactly at, the famed Milankovitch periodicities (100, 41, 23, and 19 kyr).  These periodicities (particularly the eccentricity (100kyr) and obliquity (40kyr)) rise above the various power law nulls, but we see hints of higher power at high-frequencies. We shall soon see that this is an artifact of the Lomb-Scargle methods, which does not use any tapers and therefore displays high variance (in this context, spurious peaks). Other methods smooth out that noise.    -->
+<p><a href="https://boris.unibe.ch/id/eprint/38577">REDFIT</a> smooths the spectra via application of Welch’s Overlapped Segment Averaging, which by default uses 3 segments that overlap by about 50%. geoChronR uses its <a href="https://cran.r-project.org/package=dplR">dplR</a> implementation, which differs slightly from the published algorithm (see <code>?dplR::redfit</code> for details).</p>
+<div class="sourceCode" id="cb140"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb140-1"><a href="spectral.html#cb140-1" aria-hidden="true" tabindex="-1"></a>spec.redfit <span class="ot">&lt;-</span> <span class="fu">computeSpectraEns</span>(t,X,<span class="at">method =</span> <span class="st">&#39;redfit&#39;</span>)</span>
+<span id="cb140-2"><a href="spectral.html#cb140-2" aria-hidden="true" tabindex="-1"></a>redfit.df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="st">&quot;freq&quot;</span> <span class="ot">=</span> spec.redfit<span class="sc">$</span>freq, <span class="st">&quot;pwr&quot;</span> <span class="ot">=</span> spec.redfit<span class="sc">$</span>power)</span>
+<span id="cb140-3"><a href="spectral.html#cb140-3" aria-hidden="true" tabindex="-1"></a>cl.df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="st">&quot;freq&quot;</span> <span class="ot">=</span> spec.redfit<span class="sc">$</span>freq, <span class="st">&quot;95% CL&quot;</span> <span class="ot">=</span> spec.redfit<span class="sc">$</span>power.CL)</span>
+<span id="cb140-4"><a href="spectral.html#cb140-4" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cl.df)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">&quot;95% CL&quot;</span></span>
+<span id="cb140-5"><a href="spectral.html#cb140-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb140-6"><a href="spectral.html#cb140-6" aria-hidden="true" tabindex="-1"></a><span class="co"># plot this</span></span>
+<span id="cb140-7"><a href="spectral.html#cb140-7" aria-hidden="true" tabindex="-1"></a>pticks <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">500</span>, <span class="dv">1000</span>)</span>
+<span id="cb140-8"><a href="spectral.html#cb140-8" aria-hidden="true" tabindex="-1"></a>prange <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">1000</span>)</span>
+<span id="cb140-9"><a href="spectral.html#cb140-9" aria-hidden="true" tabindex="-1"></a>yl <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.01</span>,<span class="dv">1000</span>)</span>
+<span id="cb140-10"><a href="spectral.html#cb140-10" aria-hidden="true" tabindex="-1"></a>p.ls <span class="ot">&lt;-</span> <span class="fu">plotSpectrum</span>(redfit.df,cl.df,<span class="at">x.lims=</span>prange,<span class="at">x.ticks =</span> pticks, <span class="at">y.lims =</span> yl,</span>
+<span id="cb140-11"><a href="spectral.html#cb140-11" aria-hidden="true" tabindex="-1"></a>                     <span class="at">color.line=</span><span class="st">&#39;orange&#39;</span>, <span class="at">color.cl=</span><span class="st">&#39;white&#39;</span>) <span class="sc">+</span></span>
+<span id="cb140-12"><a href="spectral.html#cb140-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;IODP 846 d18O, REDFIT estimation&quot;</span>) <span class="sc">+</span></span>
+<span id="cb140-13"><a href="spectral.html#cb140-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_hc</span>(<span class="at">style =</span> <span class="st">&quot;darkunica&quot;</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">axis.ticks.x =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">&quot;gray&quot;</span>))</span>
+<span id="cb140-14"><a href="spectral.html#cb140-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb140-15"><a href="spectral.html#cb140-15" aria-hidden="true" tabindex="-1"></a><span class="co"># label periodicities of interest</span></span>
+<span id="cb140-16"><a href="spectral.html#cb140-16" aria-hidden="true" tabindex="-1"></a>p.ls <span class="ot">&lt;-</span> <span class="fu">periodAnnotate</span>(p.ls, <span class="at">periods =</span> <span class="fu">c</span>(<span class="dv">19</span>,<span class="dv">23</span>,<span class="dv">41</span>,<span class="dv">100</span>), <span class="at">y.lims =</span><span class="fu">c</span>(<span class="fl">0.01</span>,<span class="dv">100</span>))</span>
+<span id="cb140-17"><a href="spectral.html#cb140-17" aria-hidden="true" tabindex="-1"></a><span class="fu">show</span>(p.ls)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/REDFIT-1.png" width="672" /></p>
+<p>Now, this clearly is smoother, perhaps a little too much. One could play with <code>n50</code>, the size of the window, or <code>iwin</code>, its shape, to reduce the smoothing. There are still peaks near the Milankovitch periodicities, but in many cases they do not stand out (cf 41 kyr).</p>
+<div id="multi-taper-method" class="section level3" number="8.0.1">
+<h3><span class="header-section-number">8.0.1</span> Multi-taper Method</h3>
+<p>The Lomb-Scargle periodogram is a decent way to deal with unevenly-spaced timeseries, but it is still a periodogram, which has several problems. In particular, it is inconsistent: the variance of each estimate goes to infinity as the number of observations increases. A much better estimator is Thomson’s Multi-Taper Method <a href="https://doi.org/10.1109/PROC.1982.12433">Thomson, 1982</a>, which is <a href="https://en.wikipedia.org/wiki/Consistent_estimator">consistent</a> (the more data you have, the better you know the spectrum, as it should be). Formally, MTM optimizes the classic bias-variance tradeoff inherent to all statistical inference. It does so by minimizing leakage outside of a frequency band with half-bandwidth equal to <span class="math inline">\(pf_R\)</span>, where <span class="math inline">\(f_R=1/(N \Delta t)\)</span> is the Rayleigh frequency, <span class="math inline">\(\Delta t\)</span> is the sampling interval, <span class="math inline">\(N\)</span> the number of measurements, and <span class="math inline">\(p\)</span> is the so-called time-bandwidth product. <span class="math inline">\(p\)</span> can only take a finite number of values, all multiples of 1/2 between 2 and 4. A larger <span class="math inline">\(p\)</span> means lower variance (i.e. less uncertainty about the power), but broader peaks (i.e. a lower spectral resolution), synonymous with more uncertainty about the exact location of the harmonic. So while MTM might not distinguish between closely-spaced harmonics, it is much less likely to identify spurious peaks, especially at high frequencies. In addition, a battery of formal tests have been devised with MTM, allowing under reasonably broad assumptions to ascertain the significance of spectral peaks. We show how to use this “harmonic F-test” below.</p>
+<p>A notable downside of MTM is that it only handles evenly-spaced data. Small potatoes! As we saw above, the data are not that far from evenly-spaced, so let’s interpolate and see what we get. Conveniently, both the interpolation routine and MTM are available within the <a href="https://www.rdocumentation.org/packages/astrochron">astrochron</a> package.</p>
+<div class="sourceCode" id="cb141"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb141-1"><a href="spectral.html#cb141-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(astrochron)</span>
+<span id="cb141-2"><a href="spectral.html#cb141-2" aria-hidden="true" tabindex="-1"></a>dfs <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">time=</span>t,<span class="at">temp=</span>X)</span>
+<span id="cb141-3"><a href="spectral.html#cb141-3" aria-hidden="true" tabindex="-1"></a>dti <span class="ot">=</span> <span class="fl">2.5</span>  <span class="co"># interpolation interval, corresponding to the mode of the \Delta t distribution</span></span>
+<span id="cb141-4"><a href="spectral.html#cb141-4" aria-hidden="true" tabindex="-1"></a>dfe <span class="ot">=</span> <span class="fu">linterp</span>(dfs,<span class="at">dt=</span>dti)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/interpolation-1.png" width="672" /></p>
+<div class="sourceCode" id="cb142"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb142-1"><a href="spectral.html#cb142-1" aria-hidden="true" tabindex="-1"></a>tbw <span class="ot">=</span> <span class="dv">2</span>  <span class="co">#time-bandwidth product for the analysis; we use the minimum allowed to limit smoothing.</span></span></code></pre></div>
+<p>Most of the <code>astrochron</code> routines produce a diagnostic graphical output, which you can silence by turning the <code>genplot</code> flag to <code>FALSE</code>. However, it is instructive to take a peak at the top-left panel and see where the interpolation has made a difference. We see that the black line closely espouses the red measurements for most of the timeseries, reassuring us that this process did not introduce spurious excursions or oscillations.</p>
+<p>Now let’s compute the spectrum using MTM on the equally-spaced data stored in <code>dfe</code>.
+We continue to manually label Milankovitch frequencies (in orange) and label in green (technically, “chartreuse”) the periodicities identified as significant by the test. Here, we start with the default option of a test against an AR(1) background.</p>
+<div class="sourceCode" id="cb143"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb143-1"><a href="spectral.html#cb143-1" aria-hidden="true" tabindex="-1"></a>spec.mtm <span class="ot">&lt;-</span> <span class="fu">computeSpectraEns</span>(dfe<span class="sc">$</span>time,dfe<span class="sc">$</span>temp,<span class="at">method =</span> <span class="st">&#39;mtm&#39;</span>, <span class="at">tbw=</span>tbw) <span class="co"># tbw is the time-bandwidth product, p in the above</span></span>
+<span id="cb143-2"><a href="spectral.html#cb143-2" aria-hidden="true" tabindex="-1"></a>sig.freq <span class="ot">&lt;-</span> astrochron<span class="sc">::</span><span class="fu">mtm</span>(dfe,<span class="at">tbw=</span>tbw, <span class="at">padfac=</span><span class="dv">5</span>,<span class="at">ar1=</span><span class="cn">TRUE</span>,<span class="at">genplot =</span> F,<span class="at">output=</span><span class="dv">2</span>, <span class="at">verbose =</span> F, <span class="at">detrend=</span>T)</span>
+<span id="cb143-3"><a href="spectral.html#cb143-3" aria-hidden="true" tabindex="-1"></a>mtm.df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="st">&quot;freq&quot;</span> <span class="ot">=</span> spec.mtm<span class="sc">$</span>freqs, <span class="st">&quot;pwr&quot;</span> <span class="ot">=</span> spec.mtm<span class="sc">$</span>power)</span>
+<span id="cb143-4"><a href="spectral.html#cb143-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb143-5"><a href="spectral.html#cb143-5" aria-hidden="true" tabindex="-1"></a><span class="co"># plot this</span></span>
+<span id="cb143-6"><a href="spectral.html#cb143-6" aria-hidden="true" tabindex="-1"></a>prange <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">1000</span>)</span>
+<span id="cb143-7"><a href="spectral.html#cb143-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb143-8"><a href="spectral.html#cb143-8" aria-hidden="true" tabindex="-1"></a>p.mtm <span class="ot">&lt;-</span> <span class="fu">plotSpectrum</span>(mtm.df,<span class="at">x.lims=</span>prange,<span class="at">x.ticks =</span> pticks, <span class="at">y.lims =</span> <span class="fu">c</span>(<span class="fl">1e-6</span>,<span class="dv">10</span>), <span class="at">color.line=</span><span class="st">&#39;orange&#39;</span>) <span class="sc">+</span></span>
+<span id="cb143-9"><a href="spectral.html#cb143-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;IODP 846 d18O, Multi-taper method, AR(1) null&quot;</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">&quot;Period (ky)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb143-10"><a href="spectral.html#cb143-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_hc</span>(<span class="at">style =</span> <span class="st">&quot;darkunica&quot;</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">axis.ticks.x =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">&quot;gray&quot;</span>))</span>
+<span id="cb143-11"><a href="spectral.html#cb143-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb143-12"><a href="spectral.html#cb143-12" aria-hidden="true" tabindex="-1"></a><span class="co"># label periodicities of interest</span></span>
+<span id="cb143-13"><a href="spectral.html#cb143-13" aria-hidden="true" tabindex="-1"></a>p.mtm <span class="ot">&lt;-</span> <span class="fu">periodAnnotate</span>(p.mtm, <span class="at">periods =</span> <span class="fu">c</span>(<span class="dv">19</span>,<span class="dv">23</span>,<span class="dv">41</span>,<span class="dv">100</span>), <span class="at">y.lims =</span> <span class="fu">c</span>(<span class="fl">1e-6</span>,<span class="dv">1</span>))</span>
+<span id="cb143-14"><a href="spectral.html#cb143-14" aria-hidden="true" tabindex="-1"></a>p.mtm <span class="ot">&lt;-</span> <span class="fu">periodAnnotate</span>(p.mtm, <span class="at">periods =</span> <span class="dv">1</span><span class="sc">/</span>sig.freq<span class="sc">$</span>Frequency,<span class="at">color =</span> <span class="st">&quot;chartreuse&quot;</span>,<span class="at">y.lims =</span> <span class="fu">c</span>(<span class="fl">1e-6</span>,.<span class="dv">1</span>))</span>
+<span id="cb143-15"><a href="spectral.html#cb143-15" aria-hidden="true" tabindex="-1"></a><span class="fu">show</span>(p.mtm)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/MTM-1.png" width="672" /></p>
+<p>You may notice a few differences to the Lomb-Scargle periodogram. First, the high frequency part is much smoother, getting rid of a lot of high-frequency noise. There is also a clear power law behavior from periods of 5 to 100 ky, which in this log-log plotting convention manifests as a linear decrease. <em>Astrochron</em> implements several tests to detect harmonic (sinusoidal) components. Like all tests, they are heavily dependent on a null hypothesis. By default, <em>astrochron::mtm()</em> assumes that we test against an AR(1) model. Using the option <code>output = 2</code>, it will export the frequencies identified as “significant” by this procedure. In this case, it roughly identifies the Milankovitch frequencies we expected to find, plus many others. What should we make of that? The 100ka cycle is now labeled as 90 ka, though given the peak’s width, one should not be foolish enough to consider them distinct. There is also evidence that this peak may be the result of ice ages clustering every 2 to 3 obliquity cycles (81 or 123 ka), averaging around 100 over the pleistocene <a href="https://www.nature.com/articles/nature03401">Huybers &amp; Wunsch (2005)</a>. Bottom line: with such spectral resolution, 94 and 100 are one and the same, and may really be a mixture of 80 and 120. Overall, this test identifies 8 periodicities as significant, compared to the 4 we’d expect.</p>
+<p>It’s helpful to take a step back and contemplate our null hypothesis of AR(1) background, and the real possibility that without adjustments, we might be underestimating the lag-1 autocorrelation, hence making the test too lenient. There are alternatives to that in <em>Astrochron</em>, using either the robust method of <a href="https://link.springer.com/article/10.1007/BF00142586">Mann &amp; Lees (1996)</a> or a less error-prone version by the author <a href="https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2012PA002307">Meyers, (2012)</a>, called LOWSPEC. You might want to experiment with that.</p>
+<p>Another factor to play with is the padding factor (<code>padfac</code>). In a nutshell, padding helps increase the spectral resolution at little to no cost (see <a href="https://dsp.stackexchange.com/questions/741/why-should-i-zero-pad-a-signal-before-taking-the-fourier-transform">here</a> for an informal account). You should also try and see what happens when it varies. (note: we used the <em>Astrochron</em> default values here)</p>
+<p>Most important of all is the choice of null <a href="https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2011PA002195">(Vaughan et al, 2011)</a>. Past work has shown that the continuum of climate variability is well described by power laws <a href="https://www.nature.com/articles/nature04745">Huybers &amp; Curry (2006)</a>, so this should be a far better null against which to test the emergence of spectral peaks. Never fear! <em>Astrochron</em> has an app for that:</p>
+<div class="sourceCode" id="cb144"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb144-1"><a href="spectral.html#cb144-1" aria-hidden="true" tabindex="-1"></a>mtmPL.df <span class="ot">&lt;-</span> <span class="fu">computeSpectraEns</span>(t,X,<span class="at">method =</span> <span class="st">&#39;mtm&#39;</span>, <span class="at">tbw=</span>tbw, <span class="at">mtm_null =</span> <span class="st">&#39;power_law&#39;</span>) <span class="co"># tbw is the time-bandwidth product, p in the above</span></span>
+<span id="cb144-2"><a href="spectral.html#cb144-2" aria-hidden="true" tabindex="-1"></a>sig.freqPL <span class="ot">&lt;-</span> astrochron<span class="sc">::</span><span class="fu">mtmPL</span>(dfe,<span class="at">tbw=</span>tbw,<span class="at">padfac=</span><span class="dv">5</span>,<span class="at">genplot =</span> F,<span class="at">output=</span><span class="dv">2</span>, <span class="at">verbose =</span> F, <span class="at">flow=</span>f.low, <span class="at">fhigh=</span>f.high)</span>
+<span id="cb144-3"><a href="spectral.html#cb144-3" aria-hidden="true" tabindex="-1"></a>mtm.df <span class="ot">=</span> mtmPL.df[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)]</span>
+<span id="cb144-4"><a href="spectral.html#cb144-4" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(mtm.df)[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="st">&quot;freq&quot;</span></span>
+<span id="cb144-5"><a href="spectral.html#cb144-5" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(mtm.df)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">&quot;pwr&quot;</span></span>
+<span id="cb144-6"><a href="spectral.html#cb144-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb144-7"><a href="spectral.html#cb144-7" aria-hidden="true" tabindex="-1"></a>cl.df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(mtmPL.df<span class="sc">$</span>freqs,mtmPL.df<span class="sc">$</span>power.CL) <span class="co"># extract confidence limits</span></span>
+<span id="cb144-8"><a href="spectral.html#cb144-8" aria-hidden="true" tabindex="-1"></a><span class="co"># rename columns to be less silly</span></span>
+<span id="cb144-9"><a href="spectral.html#cb144-9" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cl.df)[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="st">&quot;freq&quot;</span></span>
+<span id="cb144-10"><a href="spectral.html#cb144-10" aria-hidden="true" tabindex="-1"></a><span class="co">#names(cl.df)[2] &lt;- &quot;90% CL&quot;</span></span>
+<span id="cb144-11"><a href="spectral.html#cb144-11" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cl.df)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">&quot;95% CL&quot;</span></span>
+<span id="cb144-12"><a href="spectral.html#cb144-12" aria-hidden="true" tabindex="-1"></a><span class="co">#names(cl.df)[4] &lt;- &quot;99% CL&quot;</span></span>
+<span id="cb144-13"><a href="spectral.html#cb144-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb144-14"><a href="spectral.html#cb144-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb144-15"><a href="spectral.html#cb144-15" aria-hidden="true" tabindex="-1"></a><span class="co"># plot it</span></span>
+<span id="cb144-16"><a href="spectral.html#cb144-16" aria-hidden="true" tabindex="-1"></a>p.mtmPL <span class="ot">&lt;-</span> <span class="fu">plotSpectrum</span>(mtm.df,cl.df,<span class="at">x.lims =</span> prange,<span class="at">x.ticks =</span> pticks,</span>
+<span id="cb144-17"><a href="spectral.html#cb144-17" aria-hidden="true" tabindex="-1"></a>                        <span class="at">y.lims =</span> <span class="fu">c</span>(<span class="fl">1e-6</span>,<span class="dv">10</span>),<span class="at">color.line=</span><span class="st">&#39;orange&#39;</span>, <span class="at">color.cl=</span><span class="st">&#39;white&#39;</span>) <span class="sc">+</span></span>
+<span id="cb144-18"><a href="spectral.html#cb144-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;IODP 846 d18O, Multi-taper method, power-law null&quot;</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">&quot;Period (ky)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb144-19"><a href="spectral.html#cb144-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_hc</span>(<span class="at">style =</span> <span class="st">&quot;darkunica&quot;</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">axis.ticks.x =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">&quot;gray&quot;</span>))</span>
+<span id="cb144-20"><a href="spectral.html#cb144-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb144-21"><a href="spectral.html#cb144-21" aria-hidden="true" tabindex="-1"></a><span class="co"># label periodicities of interest</span></span>
+<span id="cb144-22"><a href="spectral.html#cb144-22" aria-hidden="true" tabindex="-1"></a>p.mtmPL <span class="ot">&lt;-</span> <span class="fu">periodAnnotate</span>(p.mtmPL, <span class="at">periods =</span> <span class="fu">c</span>(<span class="dv">19</span>,<span class="dv">23</span>,<span class="dv">41</span>,<span class="dv">100</span>), <span class="at">y.lims =</span> <span class="fu">c</span>(<span class="fl">1e-6</span>,<span class="dv">1</span>))</span>
+<span id="cb144-23"><a href="spectral.html#cb144-23" aria-hidden="true" tabindex="-1"></a>p.mtmPL <span class="ot">&lt;-</span> <span class="fu">periodAnnotate</span>(p.mtmPL, <span class="at">periods =</span> <span class="dv">1</span><span class="sc">/</span>sig.freqPL<span class="sc">$</span>Frequency,<span class="at">color =</span> <span class="st">&quot;chartreuse&quot;</span>,<span class="at">y.lims =</span> <span class="fu">c</span>(<span class="fl">1e-6</span>,.<span class="dv">1</span>))</span>
+<span id="cb144-24"><a href="spectral.html#cb144-24" aria-hidden="true" tabindex="-1"></a><span class="fu">show</span>(p.mtmPL)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-78-1.png" width="672" /></p>
+<p>Sure enough, this gets rid of a few cycles, but many remain. A few regions of the spectrum poke above the 95% confidence limit, but one should not be so foolish as to identify every single periodicity in these ranges to be independent. This is related to the <a href="https://en.wikipedia.org/wiki/Multiple_comparisons_problem">multiple hypothesis problem</a>. However, as pointed out by <a href="https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2012PA002307">Meyers, (2012)</a>, even that misses the point: sedimentary processes (and many processes in other proxy archives) tend to smooth out the signal over the depth axis (hence, over time), making comparisons at neighboring frequencies highly dependent. One solution is to use predictions made by a physical model about the frequency and relative amplitude of astronomical cycles <a href="http://www.ajsonline.org/content/307/5/773">Meyers &amp; Sageman, 2007</a>. However this may not be applicable to all spectral detection problems. We thus refrain from implementing “cookie-cutter” solutions in GeoChronR, to force the user to think deeply about the null hypothesis and the most sensible way to test it.</p>
+</div>
+<div id="weighted-wavelet-z-transform-nuspectral" class="section level3" number="8.0.2">
+<h3><span class="header-section-number">8.0.2</span> Weighted Wavelet Z-transform (<em>nuspectral</em>)</h3>
+<p>An interpolation-free alternative to MTM is the Weighted Wavelet Z-transform of <a href="http://adsabs.harvard.edu/cgi-bin/bib_query?1996AJ....112.1709F">Foster, (1996)</a>. The idea of spectral analysis is to decompose the signal on an orthogonal basis of sines and cosines. Data gaps cause this basis to lose its orthogonality, creating energy leakage. WWZ mitigates this problem using an inverse approach. Because it is wavelet based, it does not rely on interpolation or detrending. WWZ was adapted by <a href="https://www.pnas.org/content/110/30/12213.short">Kirchner &amp; Neal (2013)</a>, who employed basis rotations to mitigate the numerical instability that occurs in pathological cases with the original algorithm. A paleoclimate example of its use is given in <a href="https://www.pnas.org/content/116/18/8728.short">Zhu et al (2019)</a>).</p>
+<p>The WWZ method has one adjustable parameter, a decay constant that balances the time resolution and frequency resolution of the wavelet analysis. The smaller this constant is, the sharper the peaks.</p>
+<p>We wanted to offer GeoChronR users a better alternative to Lom-Scargle, but the WWZ code is relatively complex. We thus chose to incoporate the <em>nuspectral</em> method of <a href="https://www.jstatsoft.org/article/view/v011i02">Mathias et al (2004)</a> based on a similar idea. However, it is not equivalent to WWZ. The main difference has to do with the approximation of the mother wavelet by a cubic polynomial with compact support. This speeds up computation at the cost of much accuracy. <a href="https://www.jstatsoft.org/article/view/v011i02">Mathias et al (2004)</a> also describe implementations of complex wavelets in C (a compiled language, faster with loops), but we were not able to obtain any sensible results with those. For now, it is incorporated into GeoChronR to encourage further development.</p>
+<p>Readers interested in a more robust implementation of WWZ may want to consider <a href="http://linkedearth.github.io/Pyleoclim_util/Introduction.html">pyleoclim</a>, a Python package. This can be called in R via the <a href="https://rstudio.github.io/reticulate/">Reticulate</a> package.</p>
+</div>
+<div id="time-uncertain-spectral-analysis" class="section level2" number="8.1">
+<h2><span class="header-section-number">8.1</span> Time-uncertain spectral analysis</h2>
+<p>Now let’s consider age uncertainties.</p>
+<p>The GeoChronR approach to quantifying and propagating those uncertainties is to leverage the power of ensembles. Here we will illustrate this with MTM. Let us repeat the previous analysis by looping over the 1,000 age realizations output by the tuning algorithm HMM-Match. That means computing 1000 spectra. We’ve already seen that <em>nuspectral</em> is too slow for an ensemble job, so let’s leave it out. Also, since REDFIT is a tapered version of Lomb-Scargle, and comes with more features, let’s focus here on comparing an REDFIT and MTM in ensemble mode.</p>
+<div class="sourceCode" id="cb145"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb145-1"><a href="spectral.html#cb145-1" aria-hidden="true" tabindex="-1"></a>time <span class="ot">=</span> age<span class="sc">$</span>values[age.median <span class="sc">&lt;</span> <span class="dv">1000</span>,]  <span class="co"># age ensemble for ~ last 1 Ma</span></span>
+<span id="cb145-2"><a href="spectral.html#cb145-2" aria-hidden="true" tabindex="-1"></a>values <span class="ot">=</span> temp<span class="sc">$</span>values[age.median <span class="sc">&lt;</span> <span class="dv">1000</span>]</span>
+<span id="cb145-3"><a href="spectral.html#cb145-3" aria-hidden="true" tabindex="-1"></a>mtm.ens.spec <span class="ot">=</span> <span class="fu">computeSpectraEns</span>(time,values,</span>
+<span id="cb145-4"><a href="spectral.html#cb145-4" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">max.ens =</span> <span class="dv">1000</span>,</span>
+<span id="cb145-5"><a href="spectral.html#cb145-5" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">method =</span> <span class="st">&#39;mtm&#39;</span>,</span>
+<span id="cb145-6"><a href="spectral.html#cb145-6" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">tbw=</span>tbw, <span class="at">padfac=</span><span class="dv">5</span>,</span>
+<span id="cb145-7"><a href="spectral.html#cb145-7" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">mtm_null =</span> <span class="st">&#39;AR(1)&#39;</span>)</span></code></pre></div>
+<p>This took a few seconds with 1000 ensemble members, and the resulting output is close to 10 Mb. Not an issue for modern computers, but you can see why people weren’t doing this in the 70’s, even if they wanted to. Now, let’s plot the result:</p>
+<div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb146-1"><a href="spectral.html#cb146-1" aria-hidden="true" tabindex="-1"></a>ar1.df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(mtm.ens.spec<span class="sc">$</span>freqs,mtm.ens.spec<span class="sc">$</span>power.CL)</span>
+<span id="cb146-2"><a href="spectral.html#cb146-2" aria-hidden="true" tabindex="-1"></a><span class="co"># rename columns to be less silly</span></span>
+<span id="cb146-3"><a href="spectral.html#cb146-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(ar1.df)[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="st">&quot;freq&quot;</span></span>
+<span id="cb146-4"><a href="spectral.html#cb146-4" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(ar1.df)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">&quot;95% CL&quot;</span></span>
+<span id="cb146-5"><a href="spectral.html#cb146-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb146-6"><a href="spectral.html#cb146-6" aria-hidden="true" tabindex="-1"></a>p.mtm.ens <span class="ot">&lt;-</span> <span class="fu">plotSpectraEns</span>(<span class="at">spec.ens =</span> mtm.ens.spec, <span class="at">cl.df =</span> ar1.df, <span class="at">x.lims =</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">150</span>), <span class="at">y.lims =</span> <span class="fu">c</span>(<span class="fl">1e-5</span>,<span class="fl">1e-1</span>),</span>
+<span id="cb146-7"><a href="spectral.html#cb146-7" aria-hidden="true" tabindex="-1"></a>                            <span class="at">color.line=</span><span class="st">&#39;darkorange&#39;</span>,</span>
+<span id="cb146-8"><a href="spectral.html#cb146-8" aria-hidden="true" tabindex="-1"></a>                            <span class="at">color.low=</span><span class="st">&#39;darkorange2&#39;</span>,</span>
+<span id="cb146-9"><a href="spectral.html#cb146-9" aria-hidden="true" tabindex="-1"></a>                            <span class="at">color.high=</span><span class="st">&#39;coral4&#39;</span>,<span class="at">color.cl =</span> <span class="st">&#39;white&#39;</span>) <span class="sc">+</span></span>
+<span id="cb146-10"><a href="spectral.html#cb146-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;IODP 846 age ensemble, MTM&quot;</span>) <span class="sc">+</span> <span class="fu">theme_hc</span>(<span class="at">style =</span> <span class="st">&quot;darkunica&quot;</span>) <span class="sc">+</span></span>
+<span id="cb146-11"><a href="spectral.html#cb146-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.ticks.x =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">&quot;gray&quot;</span>))</span>
+<span id="cb146-12"><a href="spectral.html#cb146-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb146-13"><a href="spectral.html#cb146-13" aria-hidden="true" tabindex="-1"></a><span class="co"># label periodicities of interest</span></span>
+<span id="cb146-14"><a href="spectral.html#cb146-14" aria-hidden="true" tabindex="-1"></a>p.mtm.ens <span class="ot">&lt;-</span> <span class="fu">periodAnnotate</span>(p.mtm.ens, <span class="at">periods =</span> <span class="fu">c</span>(<span class="dv">19</span>,<span class="dv">23</span>,<span class="dv">41</span>,<span class="dv">100</span>), <span class="at">y.lims =</span><span class="fu">c</span>(<span class="fl">0.01</span>,<span class="fl">0.05</span>))</span>
+<span id="cb146-15"><a href="spectral.html#cb146-15" aria-hidden="true" tabindex="-1"></a><span class="fu">show</span>(p.mtm.ens)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/ensemble-mode-MTM2-1.png" width="672" /></p>
+<p>To this we can add the periods identified as significant owing to MTM’s harmonic ratio test. geoChronR deals with it by computing at each frequency the fraction of ensemble members that exhibit a significant peak. One simple criterion for gauging the level of support for such peaks given age uncertainties is to pick out those periodicities that are identified as significant more than 50% of the time.</p>
+<div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb147-1"><a href="spectral.html#cb147-1" aria-hidden="true" tabindex="-1"></a>per <span class="ot">=</span> <span class="dv">1</span><span class="sc">/</span>cl.df<span class="sc">$</span>freq</span>
+<span id="cb147-2"><a href="spectral.html#cb147-2" aria-hidden="true" tabindex="-1"></a>sig_per <span class="ot">=</span>  <span class="fu">which</span>(mtm.ens.spec<span class="sc">$</span>sig.freq<span class="sc">&gt;</span><span class="fl">0.5</span>)</span>
+<span id="cb147-3"><a href="spectral.html#cb147-3" aria-hidden="true" tabindex="-1"></a>p.mtm.ens <span class="ot">&lt;-</span> <span class="fu">periodAnnotate</span>(p.mtm.ens, <span class="at">periods =</span> per[sig_per],<span class="at">color =</span> <span class="st">&quot;chartreuse&quot;</span>,<span class="at">y.lims =</span> <span class="fu">c</span>(<span class="fl">1e-5</span>,<span class="fl">5e-4</span>))</span>
+<span id="cb147-4"><a href="spectral.html#cb147-4" aria-hidden="true" tabindex="-1"></a><span class="fu">show</span>(p.mtm.ens)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/MTM-ensemble-1.png" width="672" /></p>
+<p>One could of course, impose a more stringent criterion (e.g. 80%, 90%, etc). To do that, specify <code>which(mtm.ens.spec$sig.freq&gt;0.8)</code> or <code>which(mtm.ens.spec$sig.freq&gt;0.9)</code>. That relatively close peaks appear significant may be an artifact of neglecting the multiple hypothesis problem (cf Vaughan et al, 2011).</p>
+<p>So what do we find? Consistent with previous investigations (e.g. <a href="https://npg.copernicus.org/articles/16/43/2009/">Mudelsee et al 2009</a>), the effect of age uncertainties is felt more at high frequencies, with the effect of broadening peaks, or lumping them together. Again, the peaks that rise above the power-law background are the ~100kyr and ~40kyr peaks, which is not surprising. There is significant energy around the precessional peaks, but it is rather spread out, and hard to tie to particular harmonics. No doubt a record with higher-resolution and/or tighter chronology would show sharper precessional peaks.</p>
+<p>Do we get the same answer in REDFIT? Let’s find out.</p>
+<div class="sourceCode" id="cb148"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb148-1"><a href="spectral.html#cb148-1" aria-hidden="true" tabindex="-1"></a>spec.redfit.ens <span class="ot">&lt;-</span> <span class="fu">computeSpectraEns</span>(time,values,<span class="at">max.ens =</span> <span class="dv">1000</span>, <span class="at">method =</span> <span class="st">&#39;redfit&#39;</span>)</span>
+<span id="cb148-2"><a href="spectral.html#cb148-2" aria-hidden="true" tabindex="-1"></a>cl.ens.df     <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="st">&quot;freq&quot;</span> <span class="ot">=</span> spec.redfit.ens<span class="sc">$</span>freq, <span class="st">&quot;pwr95&quot;</span> <span class="ot">=</span> spec.redfit.ens<span class="sc">$</span>power.CL) <span class="co"># store confidence limits</span></span>
+<span id="cb148-3"><a href="spectral.html#cb148-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cl.ens.df)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">&quot;95% CL&quot;</span></span></code></pre></div>
+<p>again, it took a bit of time. let’s plot the result:</p>
+<div class="sourceCode" id="cb149"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb149-1"><a href="spectral.html#cb149-1" aria-hidden="true" tabindex="-1"></a>p.redfit.ens <span class="ot">&lt;-</span> <span class="fu">plotSpectraEns</span>(<span class="at">spec.ens =</span> spec.redfit.ens,</span>
+<span id="cb149-2"><a href="spectral.html#cb149-2" aria-hidden="true" tabindex="-1"></a>                               <span class="at">cl.df =</span> cl.ens.df,</span>
+<span id="cb149-3"><a href="spectral.html#cb149-3" aria-hidden="true" tabindex="-1"></a>                               <span class="at">x.lims =</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">150</span>),</span>
+<span id="cb149-4"><a href="spectral.html#cb149-4" aria-hidden="true" tabindex="-1"></a>                               <span class="at">color.line=</span><span class="st">&#39;darkorange&#39;</span>,</span>
+<span id="cb149-5"><a href="spectral.html#cb149-5" aria-hidden="true" tabindex="-1"></a>                               <span class="at">color.low=</span><span class="st">&#39;darkorange2&#39;</span>,</span>
+<span id="cb149-6"><a href="spectral.html#cb149-6" aria-hidden="true" tabindex="-1"></a>                               <span class="at">color.high=</span><span class="st">&#39;coral4&#39;</span>,</span>
+<span id="cb149-7"><a href="spectral.html#cb149-7" aria-hidden="true" tabindex="-1"></a>                               <span class="at">color.cl =</span> <span class="st">&#39;white&#39;</span>) <span class="sc">+</span></span>
+<span id="cb149-8"><a href="spectral.html#cb149-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;IODP 846 age ensemble, redfit&quot;</span>) <span class="sc">+</span></span>
+<span id="cb149-9"><a href="spectral.html#cb149-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_hc</span>(<span class="at">style =</span> <span class="st">&quot;darkunica&quot;</span>) <span class="sc">+</span></span>
+<span id="cb149-10"><a href="spectral.html#cb149-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.ticks.x =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">&quot;gray&quot;</span>))</span>
+<span id="cb149-11"><a href="spectral.html#cb149-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb149-12"><a href="spectral.html#cb149-12" aria-hidden="true" tabindex="-1"></a><span class="co"># label periodicities of interest</span></span>
+<span id="cb149-13"><a href="spectral.html#cb149-13" aria-hidden="true" tabindex="-1"></a>p.redfit.ens <span class="ot">&lt;-</span> <span class="fu">periodAnnotate</span>(p.redfit.ens, <span class="at">periods =</span> <span class="fu">c</span>(<span class="dv">19</span>,<span class="dv">23</span>,<span class="dv">41</span>,<span class="dv">100</span>), <span class="at">y.lims =</span><span class="fu">c</span>(<span class="fl">0.01</span>,<span class="dv">500</span>))</span>
+<span id="cb149-14"><a href="spectral.html#cb149-14" aria-hidden="true" tabindex="-1"></a><span class="fu">show</span>(p.redfit.ens)</span></code></pre></div>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/ensemble-mode-REDFIT2-1.png" width="672" /></p>
+<p>The result is quite a bit smoother here, perhaps because of the choice of parameters.</p>
+</div>
+<div id="conclusion" class="section level2" number="8.2">
+<h2><span class="header-section-number">8.2</span> Conclusion</h2>
+<p>There are several takeaways from this example:</p>
+<ol style="list-style-type: decimal">
+<li>geoChronR implements 4 different spectral methods, with different features and assumptions. This allows users to explore whether results obtained with one method are robust to these choices.<br />
+</li>
+<li>The methods are enabled for single age models, as well as age ensembles.</li>
+<li>The choice of null hypothesis is always highly consequential, and should be made with care.</li>
+<li>Hunting for astronomical (or other) frequencies in paleoclimate timeseries takes extreme care, and cannot be answered in one function call. In this particular example where the data are nearly evenly spaced, and interpolation has a negligible impact, the best choice is MTM for two reasons: (1) because it is optimal, in the sense that it minimizes spectral leakage, and (2) because the implementation used here (derived from <em>astrochron</em>) allows to flexibly apply different tests of significance. Not such luxury is afforded by the other methods at present.</li>
+<li>There is no one-size-fits-all method that will solve your exact problem, but it might get you started on asking relevant questions. Readers are invited to consider <a href="https://doi.org/10.1029/2011PA002195">Vaughan et al, 2011</a> and the work of Stephen Meyers on this topic:</li>
+</ol>
+<ul>
+<li><a href="https://doi.org/10.1029/2012PA002307">Meyers, 2012</a></li>
+<li><a href="https://agupubs.onlinelibrary.wiley.com/doi/full/10.1002/2015PA002850">Meyers, 2015</a></li>
+<li><a href="www.pnas.org/cgi/doi/10.1073/pnas.1717689115">Meyers &amp; Malinverno 2018</a></li>
+</ul>
+
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div class="csl-entry">
+Albada, S. J. van, and P. A. Robinson. 2007. <span>“Transformation of Arbitrary Distributions to the Normal Distribution with Application to {EEG} Test–Retest Reliability.”</span> <em>Journal of Neuroscience Methods</em> 161 (2): 205–11. <a href="https://doi.org/10.1016/j.jneumeth.2006.11.004">https://doi.org/10.1016/j.jneumeth.2006.11.004</a>.
+</div>
+<div class="csl-entry">
+Benjamini, Yoav, and Yosef Hochberg. 1995. <span>“Controlling the False Discovery Rate: A Practical and Powerful Approach to Multiple Testing.”</span> <em>Journal of the Royal Statistical Society. Series B (Methodological)</em> 57 (1): 289–300. <a href="https://doi.org/10.2307/2346101">https://doi.org/10.2307/2346101</a>.
+</div>
+<div class="csl-entry">
+Blaauw, M., and J. A. Christen. 2011. <span>“Flexible Paleoclimate Age-Depth Models Using an Autoregressive Gamma Process.”</span> <em>Bayesian Analysis</em> 6 (3): 457–74.
+</div>
+<div class="csl-entry">
+Blaauw, Maarten, J. Andres Christen, and Marco A. Aquino L. 2020. <em>Rbacon: Age-Depth Modelling Using Bayesian Statistics</em>. <a href="https://CRAN.R-project.org/package=rbacon">https://CRAN.R-project.org/package=rbacon</a>.
+</div>
+<div class="csl-entry">
+Boldt, Brandon R., Darrell S. Kaufman, Nicholas P. McKay, and Jason P. Briner. 2015. <span>“Holocene Summer Temperature Reconstruction from Sedimentary Chlorophyll Content, with Treatment of Age Uncertainties, Kurupa Lake, Arctic Alaska.”</span> <em>The Holocene</em>, January. <a href="https://doi.org/10.1177/0959683614565929">https://doi.org/10.1177/0959683614565929</a>.
+</div>
+<div class="csl-entry">
+Bronk Ramsey, Christopher. 1995. <span>“Radiocarbon Calibration and Analysis of Stratigraphy: The OxCal Program.”</span> <em>Radiocarbon</em> 37 (2): 425–30.
+</div>
+<div class="csl-entry">
+———. 2008. <span>“Deposition Models for Chronological Records.”</span> <em>Quaternary Science Reviews</em> 27 (1-2): 42–60.
+</div>
+<div class="csl-entry">
+Bronk Ramsey, Christopher, Michael Dee, Sharen Lee, Takeshi Nakagawa, and Richard A Staff. 2010. <span>“Developments in the Calibration and Modeling of Radiocarbon Dates.”</span> <em>Radiocarbon</em> 52 (3): 953–61.
+</div>
+<div class="csl-entry">
+Comboul, M., J. Emile-Geay, M. Evans, N. Mirnateghi, K. M. Cobb, and D. M. Thompson. 2014. <span>“A Probabilistic Model of Chronological Errors in Layer-Counted Climate Proxies: Applications to Annually Banded Coral Archives.”</span> Journal Article. <em>Climate of the Past</em> 10: 825–41. <a href="https://doi.org/10.5194/cp-10-825-2014">https://doi.org/10.5194/cp-10-825-2014</a>.
+</div>
+<div class="csl-entry">
+Dawdy, DR, and NC Matalas. 1964. <em>Statistical and Probability Analysis of Hydrologic Data, Part III: Analysis of Variance, Covariance and Time Series</em>. McGraw-Hill.
+</div>
+<div class="csl-entry">
+Dee, S., J. Emile-Geay, M. N. Evans, A. Allam, E. J. Steig, and D. M. Thompson. 2015. <span>“<span class="nocase">PRYSM: An open-source framework for PRoxY System Modeling, with applications to oxygen-isotope systems</span>.”</span> <em>Journal of Advances in Modeling Earth Systems</em> 7 (3): 1220–47.
+</div>
+<div class="csl-entry">
+DeLong, Kristine L., Terrence M. Quinn, Frederick W. Taylor, Chuan-Chou Shen, and Ke Lin. 2013. <span>“Improving Coral-Base Paleoclimate Reconstructions by Replicating 350 Years of Coral Sr/Ca Variations.”</span> <em>Palaeogeography, Palaeoclimatology, Palaeoecology</em> 373: 6–24. <a href="https://doi.org/10.1016/j.palaeo.2012.08.019">https://doi.org/10.1016/j.palaeo.2012.08.019</a>.
+</div>
+<div class="csl-entry">
+Ebisuzaki, Wesley. 1997. <span>“A Method to Estimate the Statistical Significance of a Correlation When the Data Are Serially Correlated.”</span> <em>Journal of Climate</em> 10 (9): 2147–53. <a href="https://doi.org/10.1175/1520-0442(1997)010&lt;2147:AMTETS&gt;2.0.CO;2">https://doi.org/10.1175/1520-0442(1997)010&lt;2147:AMTETS&gt;2.0.CO;2</a>.
+</div>
+<div class="csl-entry">
+Emile-Geay, J., and M. Tingley. 2016. <span>“Inferring Climate Variability from Nonlinear Proxies: Application to Palaeo-ENSO Studies.”</span> <em>Climate of the Past</em> 12 (1): 31–50. <a href="https://doi.org/10.5194/cp-12-31-2016">https://doi.org/10.5194/cp-12-31-2016</a>.
+</div>
+<div class="csl-entry">
+Ghil, M., R. M. Allen, M. D. Dettinger, K. Ide, D. Kondrashov, M. E. Mann, A Robertson, et al. 2002. <span>“Advanced Spectral Methods for Climatic Time Series.”</span> <em>Rev. Geophys.</em> 40 (1): 1003–52.
+</div>
+<div class="csl-entry">
+Haslett, John, and Andrew Parnell. 2008. <span>“A Simple Monotone Process with Application to Radiocarbon-Dated Depth Chronologies.”</span> <em>Journal of the Royal Statistical Society: Series C (Applied Statistics)</em> 57 (4): 399–418. <a href="https://doi.org/10.1111/j.1467-9876.2008.00623.x">https://doi.org/10.1111/j.1467-9876.2008.00623.x</a>.
+</div>
+<div class="csl-entry">
+Hu, Jun, Julien Emile-Geay, and Judson Partin. 2017. <span>“Correlation-Based Interpretations of Paleoclimate Data – Where Statistics Meet Past Climates.”</span> <em>Earth and Planetary Science Letters</em> 459 (February): 362–71. <a href="https://doi.org/10.1016/j.epsl.2016.11.048">https://doi.org/10.1016/j.epsl.2016.11.048</a>.
+</div>
+<div class="csl-entry">
+Martin, Hinz, Clemens Schmid, Daniel Knitter, and Carolin Tietze. 2018. <em>oxcAAR: Interface to ’OxCal’ Radiocarbon Calibration</em>. <a href="https://CRAN.R-project.org/package=oxcAAR">https://CRAN.R-project.org/package=oxcAAR</a>.
+</div>
+<div class="csl-entry">
+McKay, Nicholas P, Julien Emile-Geay, and Deborah Khider. 2021. <span>“geoChronR–an r Package to Model, Analyze, and Visualize Age-Uncertain Data.”</span> <em>Geochronology</em> 3 (1): 149–69.
+</div>
+<div class="csl-entry">
+Park, Joseph, Cameron Smith, George Sugihara, and Ethan Deyle. 2020. <em>rEDM: Empirical Dynamic Modeling (’EDM’)</em>. <a href="https://CRAN.R-project.org/package=rEDM">https://CRAN.R-project.org/package=rEDM</a>.
+</div>
+<div class="csl-entry">
+Parnell, AC, J Haslett, JRM Allen, CE Buck, and B Huntley. 2008. <span>“A Flexible Approach to Assessing Synchroneity of Past Events Using Bayesian Reconstructions of Sedimentation History.”</span> <em>Quaternary Science Reviews</em> 27 (19-20): 1872–85.
+</div>
+<div class="csl-entry">
+Parnell, Andrew C., Caitlin E. Buck, and Thinh K. Doan. 2011. <span>“A Review of Statistical Chronology Models for High-Resolution, Proxy-Based Holocene Palaeoenvironmental Reconstruction.”</span> <em>Quaternary Science Reviews</em> 30 (21–22): 2948–60. <a href="https://doi.org/10.1016/j.quascirev.2011.07.024">https://doi.org/10.1016/j.quascirev.2011.07.024</a>.
+</div>
+<div class="csl-entry">
+Trachsel, Mathias, and Richard J Telford. 2017. <span>“All Age–Depth Models Are Wrong, but Are Getting Better.”</span> <em>The Holocene</em> 27 (6): 860–69. <a href="https://doi.org/10.1177/0959683616675939">https://doi.org/10.1177/0959683616675939</a>.
+</div>
+<div class="csl-entry">
+Ventura, Valérie, Christopher J. Paciorek, and James S. Risbey. 2004. <span>“<span class="nocase">Controlling the Proportion of Falsely Rejected Hypotheses when Conducting Multiple Tests with Climatological Data</span>.”</span> <em>Journal of Climate</em> 17 (22): 4343–56. <a href="https://doi.org/10.1175/3199.1">https://doi.org/10.1175/3199.1</a>.
+</div>
+<div class="csl-entry">
+Wang, Yong-Jin, Hai Cheng, R Lawrence Edwards, ZS An, JY Wu, C-C Shen, and Jeffrey A Dorale. 2001. <span>“A High-Resolution Absolute-Dated Late Pleistocene Monsoon Record from Hulu Cave, China.”</span> <em>Science</em> 294 (5550): 2345–48.
+</div>
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="regression-and-calibration-in-time.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["Time-uncertain-data-analysis-in-R.pdf"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

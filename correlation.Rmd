@@ -20,8 +20,8 @@ library(egg)
 
 ## First look
 
-LiPD files for the Hulu Cave speleothem $\delta^{18}$O and the GISP2 ice core $\delta^{18}$O records are available at x and y. 
-These LiPD files already include age ensembles, so you don't need to create new age models. Use the skills you learned in Chapters \@ref(data) and @\ref(agemodelling) to take a first look at the data. 
+LiPD files for the [Hulu Cave speleothem]("http://lipdverse.org/geoChronR-examples/Hulucave.Wang.2001-ens.lpd") $\delta^{18}$O and the [GISP2 ice core]("http://lipdverse.org/geoChronR-examples/GISP2.Alley.2000-ens.lpd") $\delta^{18}$O records are available at following the hyperlinks. 
+These LiPD files already include age ensembles, so you don't need to create new age models. Use the skills you learned in Chapters \@ref(data) and \@ref(agemodelling) to take a first look at the data. 
 
 :::: {.blackbox data-latex=""}
 ::: {.exercise #correlationFirstLook}
@@ -40,7 +40,7 @@ Create a figure that that uses ensemble timeseries plots to compares the Hulu Ca
 </details> 
 <details>
   <summary>Hint #4</summary>
-  Use plotEnsTimeseriesRibbons() and/or plotEnsTimeseriesLines() to create plots that span a common interval
+  Use plotTimeseriesEnsRibbons() and/or plotTimeseriesEnsLines() to create plots that span a common interval
 </details> 
 <details>
   <summary>Hint #5</summary>
@@ -51,8 +51,8 @@ Create a figure that that uses ensemble timeseries plots to compares the Hulu Ca
 
 
 ```{r getCorData,echo=FALSE,results='hide',message=FALSE,warning=FALSE,cache=TRUE}
-hulu <- readLipd("~/Dropbox/Hulucave.Wang.2001-ens.lpd")
-gisp2 <- readLipd("~/Dropbox/GISP2.Alley.2000-ens.lpd")
+hulu <- readLipd("http://lipdverse.org/geoChronR-examples/Hulucave.Wang.2001-ens.lpd")
+gisp2 <- readLipd("http://lipdverse.org/geoChronR-examples/GISP2.Alley.2000-ens.lpd")
 
 hulu <- mapAgeEnsembleToPaleoData(hulu,age.var = "ageEnsemble")
 gisp2 <- mapAgeEnsembleToPaleoData(gisp2,chron.depth.var = NULL,paleo.depth.var = NULL)

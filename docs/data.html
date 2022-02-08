@@ -257,14 +257,14 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="7.4.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-output-1"><i class="fa fa-check"></i><b>7.4.1</b> And plot the output</a></li>
 </ul></li>
-<li class="chapter" data-level="7.5" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#chapter-project-3"><i class="fa fa-check"></i><b>7.5</b> Chapter project</a>
-<ul>
-<li class="chapter" data-level="7.5.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#lomb-scargle-periodogram"><i class="fa fa-check"></i><b>7.5.1</b> Lomb-Scargle periodogram</a></li>
-<li class="chapter" data-level="7.5.2" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#multi-taper-method"><i class="fa fa-check"></i><b>7.5.2</b> Multi-taper Method</a></li>
-<li class="chapter" data-level="7.5.3" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#weighted-wavelet-z-transform-nuspectral"><i class="fa fa-check"></i><b>7.5.3</b> Weighted Wavelet Z-transform (<em>nuspectral</em>)</a></li>
+<li class="chapter" data-level="7.5" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#chapter-project-3"><i class="fa fa-check"></i><b>7.5</b> Chapter project</a></li>
 </ul></li>
-<li class="chapter" data-level="7.6" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#time-uncertain-spectral-analysis"><i class="fa fa-check"></i><b>7.6</b> Time-uncertain spectral analysis</a></li>
-<li class="chapter" data-level="7.7" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#conclusion"><i class="fa fa-check"></i><b>7.7</b> Conclusion</a></li>
+<li class="chapter" data-level="8" data-path="spectral.html"><a href="spectral.html"><i class="fa fa-check"></i><b>8</b> Spectral Analysis</a>
+<ul>
+<li class="chapter" data-level="8.0.1" data-path="spectral.html"><a href="spectral.html#multi-taper-method"><i class="fa fa-check"></i><b>8.0.1</b> Multi-taper Method</a></li>
+<li class="chapter" data-level="8.0.2" data-path="spectral.html"><a href="spectral.html#weighted-wavelet-z-transform-nuspectral"><i class="fa fa-check"></i><b>8.0.2</b> Weighted Wavelet Z-transform (<em>nuspectral</em>)</a></li>
+<li class="chapter" data-level="8.1" data-path="spectral.html"><a href="spectral.html#time-uncertain-spectral-analysis"><i class="fa fa-check"></i><b>8.1</b> Time-uncertain spectral analysis</a></li>
+<li class="chapter" data-level="8.2" data-path="spectral.html"><a href="spectral.html#conclusion"><i class="fa fa-check"></i><b>8.2</b> Conclusion</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -338,14 +338,14 @@ and select the file interactively.
 ## [1] &quot;Found it! Moving on...&quot;
 ## [1] &quot;Found it! Moving on...&quot;
 ## [1] &quot;Found it! Moving on...&quot;</code></pre>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="data.html#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(summary_plot)</span></code></pre></div>
 <pre><code>## TableGrob (4 x 4) &quot;arrange&quot;: 4 grobs
-##   z     cells    name                   grob
-## 1 1 (1-1,1-2) arrange gTree[GRID.gTree.8340]
-## 2 2 (1-2,3-4) arrange         gtable[layout]
-## 3 3 (2-4,1-2) arrange         gtable[layout]
-## 4 4 (3-4,3-4) arrange         gtable[layout]</code></pre>
+##   z     cells    name                    grob
+## 1 1 (1-1,1-2) arrange gTree[GRID.gTree.12335]
+## 2 2 (1-2,3-4) arrange          gtable[layout]
+## 3 3 (2-4,1-2) arrange          gtable[layout]
+## 4 4 (3-4,3-4) arrange          gtable[layout]</code></pre>
 <p>But most of the time, you’ll just run it in interactive mode and select what you want.</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="data.html#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plotSummary</span>(lipd)</span></code></pre></div>
 <p>One of the components of <code>plotSummary()</code> is a site map, which is created with the function <code>mapLipd()</code>.</p>
@@ -411,14 +411,14 @@ and select the file interactively.
 <p>If you load multiple files, it will create an object called a “multi-lipd,” which is just a list of lipd objects. And we can use some of the same functions.</p>
 <p>For example, let’s make a map of our multi-lipd object:</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="data.html#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mapLipd</span>(eur,<span class="at">projection =</span> <span class="st">&quot;mollweide&quot;</span>,<span class="at">global =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-38-1.png" width="672" />
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-14-1.png" width="672" />
 These multi-lipd objects are convenient for getting a lot of data into R, but trying to work with the data inside can get pretty tricky pretty fast. When working with multiple datasets, you’ll almost always want to create a timeseries (TS) object, or formally a “lipd-ts” object. You can do that using the ‘extractTs()’ function or ’as.lipdTs()` from the lipdR package.</p>
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="data.html#cb24-1" aria-hidden="true" tabindex="-1"></a>TS <span class="ot">&lt;-</span> <span class="fu">extractTs</span>(eur)</span>
 <span id="cb24-2"><a href="data.html#cb24-2" aria-hidden="true" tabindex="-1"></a>TS <span class="ot">&lt;-</span> <span class="fu">as.lipdTs</span>(eur)</span></code></pre></div>
 <p>The LiPD-TS object is a “flattened” version of the dataset, it’s much less hierarchical and each entry corresponds to a column in a table. By default, <code>extractTs()</code> will get all the variables in measurementTables in paleoData objects, but you can also get variables from other tables and from the chronData objects by changing the options. See <code>?extractTs</code> for details.</p>
 <p>Now we can use the TS version of plotSummary to summarize the whole collection of data.</p>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="data.html#cb25-1" aria-hidden="true" tabindex="-1"></a>summ <span class="ot">&lt;-</span> <span class="fu">plotSummaryTs</span>(TS,<span class="at">age.var =</span> <span class="st">&quot;year&quot;</span>)</span></code></pre></div>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-40-1.png" width="672" />
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-16-1.png" width="672" />
 Let’s take a deeper look at the options:</p>
 <div class="blackbox">
 <div class="exercise">
@@ -441,7 +441,7 @@ Let’s take a deeper look at the options:</p>
 <p>Let’s take a look at the result!</p>
 <div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="data.html#cb28-1" aria-hidden="true" tabindex="-1"></a>nTS <span class="ot">&lt;-</span> <span class="fu">as.lipdTs</span>(filtered.tib) <span class="co">#convert it back (for now)</span></span>
 <span id="cb28-2"><a href="data.html#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plotSummaryTs</span>(nTS,<span class="at">age.var =</span> <span class="st">&quot;year&quot;</span>,<span class="at">f =</span> .<span class="dv">1</span>)</span></code></pre></div>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-43-1.png" width="672" /></p>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
 <pre><code>## TableGrob (5 x 3) &quot;arrange&quot;: 2 grobs
 ##   z     cells    name           grob
 ## 1 1 (1-3,1-3) arrange gtable[layout]

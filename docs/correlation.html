@@ -257,14 +257,14 @@ div.csl-indent {
 <ul>
 <li class="chapter" data-level="7.4.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#and-plot-the-output-1"><i class="fa fa-check"></i><b>7.4.1</b> And plot the output</a></li>
 </ul></li>
-<li class="chapter" data-level="7.5" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#chapter-project-3"><i class="fa fa-check"></i><b>7.5</b> Chapter project</a>
-<ul>
-<li class="chapter" data-level="7.5.1" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#lomb-scargle-periodogram"><i class="fa fa-check"></i><b>7.5.1</b> Lomb-Scargle periodogram</a></li>
-<li class="chapter" data-level="7.5.2" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#multi-taper-method"><i class="fa fa-check"></i><b>7.5.2</b> Multi-taper Method</a></li>
-<li class="chapter" data-level="7.5.3" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#weighted-wavelet-z-transform-nuspectral"><i class="fa fa-check"></i><b>7.5.3</b> Weighted Wavelet Z-transform (<em>nuspectral</em>)</a></li>
+<li class="chapter" data-level="7.5" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#chapter-project-3"><i class="fa fa-check"></i><b>7.5</b> Chapter project</a></li>
 </ul></li>
-<li class="chapter" data-level="7.6" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#time-uncertain-spectral-analysis"><i class="fa fa-check"></i><b>7.6</b> Time-uncertain spectral analysis</a></li>
-<li class="chapter" data-level="7.7" data-path="regression-and-calibration-in-time.html"><a href="regression-and-calibration-in-time.html#conclusion"><i class="fa fa-check"></i><b>7.7</b> Conclusion</a></li>
+<li class="chapter" data-level="8" data-path="spectral.html"><a href="spectral.html"><i class="fa fa-check"></i><b>8</b> Spectral Analysis</a>
+<ul>
+<li class="chapter" data-level="8.0.1" data-path="spectral.html"><a href="spectral.html#multi-taper-method"><i class="fa fa-check"></i><b>8.0.1</b> Multi-taper Method</a></li>
+<li class="chapter" data-level="8.0.2" data-path="spectral.html"><a href="spectral.html#weighted-wavelet-z-transform-nuspectral"><i class="fa fa-check"></i><b>8.0.2</b> Weighted Wavelet Z-transform (<em>nuspectral</em>)</a></li>
+<li class="chapter" data-level="8.1" data-path="spectral.html"><a href="spectral.html#time-uncertain-spectral-analysis"><i class="fa fa-check"></i><b>8.1</b> Time-uncertain spectral analysis</a></li>
+<li class="chapter" data-level="8.2" data-path="spectral.html"><a href="spectral.html#conclusion"><i class="fa fa-check"></i><b>8.2</b> Conclusion</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -303,8 +303,8 @@ Nevertheless, this is a good example of how age uncertainty can affect apparent 
 <span id="cb76-5"><a href="correlation.html#cb76-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(egg)</span></code></pre></div>
 <div id="first-look" class="section level2" number="5.1">
 <h2><span class="header-section-number">5.1</span> First look</h2>
-<p>LiPD files for the Hulu Cave speleothem <span class="math inline">\(\delta^{18}\)</span>O and the GISP2 ice core <span class="math inline">\(\delta^{18}\)</span>O records are available at x and y.
-These LiPD files already include age ensembles, so you don’t need to create new age models. Use the skills you learned in Chapters <a href="data.html#data">3</a> and @(agemodelling) to take a first look at the data.</p>
+<p>LiPD files for the <a href="%22http://lipdverse.org/geoChronR-examples/Hulucave.Wang.2001-ens.lpd%22">Hulu Cave speleothem</a> <span class="math inline">\(\delta^{18}\)</span>O and the <a href="%22http://lipdverse.org/geoChronR-examples/GISP2.Alley.2000-ens.lpd%22">GISP2 ice core</a> <span class="math inline">\(\delta^{18}\)</span>O records are available at following the hyperlinks.
+These LiPD files already include age ensembles, so you don’t need to create new age models. Use the skills you learned in Chapters <a href="data.html#data">3</a> and <a href="agemodelling.html#agemodelling">4</a> to take a first look at the data.</p>
 <div class="blackbox">
 <div class="exercise">
 <span id="exr:correlationFirstLook" class="exercise"><strong>Exercise 5.1  </strong></span>Create a figure that that uses ensemble timeseries plots to compares the Hulu Cave GISP2 ice core records.
@@ -330,7 +330,7 @@ Use selectData() to pull out the age ensembles and d18O values of interest
 <summary>
 Hint #4
 </summary>
-Use plotEnsTimeseriesRibbons() and/or plotEnsTimeseriesLines() to create plots that span a common interval
+Use plotTimeseriesEnsRibbons() and/or plotTimeseriesEnsLines() to create plots that span a common interval
 </details>
 <details>
 <summary>
@@ -442,7 +442,7 @@ If percentiles are provided to corEns, and they are by default, the function wil
 <span id="cb80-3"><a href="correlation.html#cb80-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">use.fdr =</span> <span class="cn">FALSE</span>)<span class="sc">+</span><span class="fu">ggtitle</span>(<span class="st">&quot;Distribution of correlation coefficients&quot;</span>)</span>
 <span id="cb80-4"><a href="correlation.html#cb80-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb80-5"><a href="correlation.html#cb80-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(raw)</span></code></pre></div>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-64-1.png" width="576" /></p>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-40-1.png" width="576" /></p>
 <div class="blackbox">
 <div class="exercise">
 <p><span id="exr:plotCorEns" class="exercise"><strong>Exercise 5.3  </strong></span>Explore the plotting options for plotCorEns.</p>
@@ -494,7 +494,7 @@ Let’s plot the results of the isopersistent test again, but turn the <code>use
 <span id="cb81-5"><a href="correlation.html#cb81-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">use.fdr =</span> <span class="cn">TRUE</span>)<span class="sc">+</span><span class="fu">ggtitle</span>(<span class="st">&quot;Isopersistent significance testing with FDR&quot;</span>)</span>
 <span id="cb81-6"><a href="correlation.html#cb81-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb81-7"><a href="correlation.html#cb81-7" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(isoPersistentFdr)</span></code></pre></div>
-<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-66-1.png" width="576" /></p>
+<p><img src="Time-uncertain-data-analysis-in-R_files/figure-html/unnamed-chunk-42-1.png" width="576" /></p>
 <p>Now we see how accounting for FDR can further reduce our significance levels. In this case many of the significant correlations are expected due to test multiplicity (shown in the green bars in the plot above). This represents the randomness that we’re sampling by repeating the correlation across 1000 ensemble members. After accounting for this, only 33.6% of the ensemble members are significant.</p>
 <p>Note that accounting for False Discovery Rate is a separate process than deriving p-values, and can be applied to any of the significance.options in geoChronR.</p>
 </div>
