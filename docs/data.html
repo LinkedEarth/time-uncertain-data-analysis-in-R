@@ -331,7 +331,7 @@ and select the file interactively.
 </details>
 </div>
 </div>
-<p>Once you have a LiPD object loaded in R, there are a few things you can do. First, if you want a quick and dirty visualization of what’s inside the dataset, use <code>plotLipd()</code>.</p>
+<p>Once you have a LiPD object loaded in R, there are a few things you can do. First, if you want a quick and dirty visualization of what’s inside the dataset, use <code>plotSummary()</code>.</p>
 <p>If you know what the variables are you want to plot beforehand, you can specify them like this:</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="data.html#cb13-1" aria-hidden="true" tabindex="-1"></a>summary_plot <span class="ot">&lt;-</span> <span class="fu">plotSummary</span>(L,<span class="at">paleo.data.var =</span> <span class="st">&quot;temperature&quot;</span>,<span class="at">chron.age.var =</span> <span class="st">&quot;age&quot;</span>,<span class="at">chron.depth.var =</span> <span class="st">&quot;depthMid&quot;</span>,<span class="at">chron.age.14c.var =</span> <span class="cn">NULL</span>)</span></code></pre></div>
 <pre><code>## [1] &quot;Found it! Moving on...&quot;
@@ -342,7 +342,7 @@ and select the file interactively.
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="data.html#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(summary_plot)</span></code></pre></div>
 <pre><code>## TableGrob (4 x 4) &quot;arrange&quot;: 4 grobs
 ##   z     cells    name                    grob
-## 1 1 (1-1,1-2) arrange gTree[GRID.gTree.12335]
+## 1 1 (1-1,1-2) arrange gTree[GRID.gTree.16261]
 ## 2 2 (1-2,3-4) arrange          gtable[layout]
 ## 3 3 (2-4,1-2) arrange          gtable[layout]
 ## 4 4 (3-4,3-4) arrange          gtable[layout]</code></pre>

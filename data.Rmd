@@ -58,7 +58,7 @@ and select the file interactively.
 
 
 
-Once you have a LiPD object loaded in R, there are a few things you can do. First, if you want a quick and dirty visualization of what's inside the dataset, use `plotLipd()`.
+Once you have a LiPD object loaded in R, there are a few things you can do. First, if you want a quick and dirty visualization of what's inside the dataset, use `plotSummary()`.
 
 If you know what the variables are you want to plot beforehand, you can specify them like this:
 ```{r}
