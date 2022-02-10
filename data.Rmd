@@ -139,7 +139,7 @@ Let's take a deeper look at the options:
 
 :::: {.blackbox data-latex=""}
 ::: {.exercise #plotSummaryTs}
-Explore the options in plotSummary. Create a new version that colors the dots and availability plot by PAGES 2k Region (the variable name is geo_pages2kRegion)
+Explore the options in plotSummaryTs. Create a new version that colors the dots and availability plot by PAGES 2k Region (the variable name is geo_pages2kRegion)
 :::
 ::::
 

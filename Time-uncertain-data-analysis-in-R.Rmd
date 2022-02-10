@@ -1,0 +1,1923 @@
+--- 
+title: "Time-uncertain data analysis in R"
+author: "Nick McKay"
+date: "Last updated: `r Sys.Date()`"
+site: bookdown::bookdown_site
+documentclass: book
+bibliography: [book.bib, packages.bib, geochronr.bib]
+biblio-style: apalike
+link-citations: yes
+github-repo: linkedearth/time-uncertain-data-analysis-in-R
+description: "This book covers time-uncertain data analysis in R, primarily relying on the geoChronR package"
+---
+
+# Welcome!
+
+<br>
+
+Quantifying age uncertainties is a critical component of the paleosciences (paleoclimatology, paleoecology, paleontology), and one that has become commonplace in these fields this century. However, propagating these uncertainties through subsequent analysis and assessing their impact on the conclusions of a study remains rare.  This book describes the theory and practice of time-uncertain data analysis in R, largely relying on the geoChronR package. geoChronR is an integrated framework that allows scientists to generate state-of-the-art age models for their records, create time-uncertain ensembles of their data, analyze those ensembles with a number of commonly-used techniques, and visualize their results in an intuitive way. 
+
+A peer-reviewed paper describing geoChronR was published in March 2021 in Geochronology, [check it out here](https://doi.org/10.5194/gchron-3-149-2021)
+
+This book, geoChronR, and other [LinkedEarth](http://linked.earth) tools are under steady development, and rely on input from and contributions from the community. If you have suggestions, requests, or would like to contribute to development, we'd love to get you more involved!
+
+
+<br>
+
+
+
+<!--chapter:end:index.Rmd-->
+
+# Installing the software you need {#installation}
+
+You need [R (>=3.6)](https://cran.r-project.org/) and we strongly recommend [RStudio as an IDE](https://www.rstudio.com/products/rstudio/download/). 
+
+If you're not sure which version of R you're running, try 
+
+```{r}
+R.version
+```
+
+If that gives you an error, you likely have an older version, but this should work.
+
+```{r}
+sessionInfo()
+```
+
+
+## Installing lipdR
+
+The `lipdR` package is your gateway to working with LiPD data. To install `lipdR`, you'll need the remotes package if you don't already have it.
+
+```{r, echo=TRUE, eval=FALSE}
+install.packages("remotes")
+remotes::install_github("nickmckay/lipdR")
+```
+
+
+## Installing geoChronR
+
+Finally, you can install geoChronR using a similar command:
+```{r, echo=TRUE, eval=FALSE}
+remotes::install_github("nickmckay/GeoChronR")
+```
+
+
+This should also install all the dependencies you need. geoChronR is built on top of a large collection of other packages, which means it can take a while to install, but also it means that changes to those packages sometimes causes errors in geoChronR. If you get an error during installation, [please report it here]("http://github.com/nickmckay/GeoChronR/issues/"), and we'll fix it as soon as possible. 
+
+
+
+
+
+
+
+<!--chapter:end:installation.Rmd-->
+
+# Data in geoChronR {#data}
+
+geoChronR was designed for data structured in the [LiPD format](http://lipd.net). 
+Actually, much of the LiPD framework was developed to accommodate the needs of geoChronR, so by far, you'll find it easiest to work with data in the structured, metadata-rich LiPD format. 
+All of the examples and exercises in this book will use LiPD datasets. 
+If you have data you want to analyze in geoChronR, the best and easiest way to get those data into the LiPD format is at the [LiPD playground](http://lipd.net/playground).
+It takes some time to learn the structure, and some time to annotate your data, but it will save you time down the road. 
+If you **really** don't want to lipdify your data, we are working on ways to take advantage of geoChronR tools with simpler data structures. 
+This will mean more work in geoChronR, since you'll have to specify a lot information that would normally be included in a LiPD file, but there are times when this makes sense. 
+Once this functionality is operable, we'll add a module demonstrating how this works. 
+
+## Loading a LiPD file
+
+
+Now you can load the lipdR library, and load some data. 
+
+```{r}
+library(lipdR)
+library(geoChronR)
+```
+
+```{r}
+L <- readLipd("https://lipdverse.org/Temp12k/current_version/GEOFAR_KF16_MgCa.Repschlager.2016.lpd")
+```
+
+You can load a LiPD file from the web, as shown above, or locally on your computer. If you leave the input blank (e.g. `L <- readLipd()`), you can interactively choose a file on your computer. 
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #LoadingLipdData}
+
+Explore [the Temp12k collection on lipdverse.org](https://lipdverse.org/Temp12k/current_version), and load a file into R using lipdR with two different approaches: a) directly using the url as above, and b) download the file to your computer, and load it interactively. 
+<details>
+  <summary>Click for hint for \@ref(exr:LoadingLipdData)a</summary>
+   We'll use [this dataset](https://lipdverse.org/Temp12k/current_version/HeshangCave.Wang.2018.html).
+   
+   a. First we'll get it directly from the web like this:
+   
+```{r, echo=TRUE, eval=TRUE, class.source = "blackboxcode"}
+    lipd <- readLipd("https://lipdverse.org/Temp12k/current_version/HeshangCave.Wang.2018.lpd")
+```
+
+note that the extension is ".lpd" not ".html"
+</details> 
+
+<details>
+  <summary>Click for hint for \@ref(exr:LoadingLipdData)b</summary>
+   b. This time, just go to [the dataset](https://lipdverse.org/Temp12k/current_version/HeshangCave.Wang.2018.html) and download the data to your computer, then run 
+
+```{r, echo=TRUE, eval=FALSE, class.source = "blackboxcode"}
+    lipd <- readLipd()
+```
+
+and select the file interactively. 
+</details> 
+:::
+::::
+
+
+
+
+Once you have a LiPD object loaded in R, there are a few things you can do. First, if you want a quick and dirty visualization of what's inside the dataset, use `plotSummary()`.
+
+If you know what the variables are you want to plot beforehand, you can specify them like this:
+```{r}
+summary_plot <- plotSummary(L,paleo.data.var = "temperature",chron.age.var = "age",chron.depth.var = "depthMid",chron.age.14c.var = NULL)
+
+print(summary_plot)
+```
+
+But most of the time, you'll just run it in interactive mode and select what you want. 
+```{r,eval=FALSE}
+plotSummary(lipd)
+```
+
+One of the components of `plotSummary()` is a site map, which is created with the function `mapLipd()`.
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #mapLipd}
+Check out the documentation for mapLipd() (type ?mapLipd), and tinker with the options to produce different types of maps. 
+:::
+::::
+
+### Extract a variable from a LiPD object {#selectData}
+
+In geoChronR, it is often useful to extract one or two variables from a LiPD object and then use them for subsequent analysis and visualization. The key function for this is `selectData()`. Typically, you'll use it interactive mode to find the variable your looking for, either in the paleoData or chronData sections of the LiPD file. 
+
+```{r, eval = FALSE}
+#grab the calibrated temperature record
+temp <- selectData(L,paleo.or.chron = "paleoData")
+
+#grab the original dates from the chronData
+c14 <- selectData(L,paleo.or.chron = "chronData")
+```
+
+If there's a lot of variables in the file, and you kinda know what you're looking for, you can add a `var.name` guess and it will narrow it down to options that seem likely, or select one automatically if it's close. 
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #selectData}
+Enter "d18o" as the var.name in selectData() and see how it narrows down your options.
+:::
+::::
+
+Of course, you can also specify all of the options in `selectData()`, and then get exactly what you want non interactively. This includes data from model ensembleTables or summaryTables, in addition to the measurementTables you use more frequently. For example:
+
+```{r}
+mgCa  <- selectData(L,var.name = "mg/ca",paleo.or.chron = "paleoData",table.type = "meas",meas.table.num = 1)
+```
+
+## Loading multiple LiPD datasets
+In addition to loading single files, `readLipd()` can also load a whole directory, or a url that points to a zip file full of files.
+
+```{r}
+eur <- readLipd("https://lipdverse.org/geoChronR-examples/euro/Euro2k.zip")
+```
+If you load multiple files, it will create an object called a "multi-lipd", which is just a list of lipd objects. And we can use some of the same functions. 
+
+For example, let's make a map of our multi-lipd object:
+
+```{r}
+mapLipd(eur,projection = "mollweide",global = TRUE)
+```
+These multi-lipd objects are convenient for getting a lot of data into R, but trying to work with the data inside can get pretty tricky pretty fast. When working with multiple datasets, you'll almost always want to create a timeseries (TS) object, or formally a "lipd-ts" object. You can do that using the 'extractTs()' function or 'as.lipdTs()` from the lipdR package.
+
+
+```{r}
+TS <- extractTs(eur)
+TS <- as.lipdTs(eur)
+```
+
+
+The LiPD-TS object is a "flattened" version of the dataset, it's much less hierarchical and each entry corresponds to a column in a table. By default, `extractTs()` will get all the variables in measurementTables in paleoData objects, but you can also get variables from other tables and from the chronData objects by changing the options. See `?extractTs` for details. 
+
+
+Now we can use the TS version of plotSummary to summarize the whole collection of data. 
+```{r}
+summ <- plotSummaryTs(TS,age.var = "year")
+```
+Let's take a deeper look at the options:
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #plotSummaryTs}
+Explore the options in plotSummary. Create a new version that colors the dots and availability plot by PAGES 2k Region (the variable name is geo_pages2kRegion)
+:::
+::::
+
+Although LiPD-TS objects are more convenient to work with, they're still list-based and difficult to explore visually. If you're used to working in the [tidyverse](http://tidyverse.org) framework, you'll likely find it useful to convert the data into a tibble (a type of data.frame). In lipdR, this is a "lipd-ts-tibble" object, but it's also just a tibble, so it unlocks many, many options in RStudio and tidyverse. 
+
+To do so, use the `ts2tibble()` or `as.lipdTsTibble()` functions to create tibble. 
+
+
+```{r}
+ts.tib <- ts2tibble(TS)
+```
+
+
+If you're in RStudio, you can now explore the contents of the object grapically. This produces a large tibble, so it's still a little unwieldy. Importantly, some of the columns are nested (depth, age, year, paleoData_values), so all of the timeseries data are included in each row, for each timeseries. You can learn more about [nested tibbles here](https://tidyr.tidyverse.org/articles/nest.html).
+
+As the tidyverse has grown, we've increasingly moved our lipdR and geoChronR workflows into this model. Take a look at how this unlocks some pretty efficient workflows.
+
+### Filtering
+
+It's often the case that the a collection of LiPD files includes far more data than we actually need. Let's use `dplyr` to get just the data we need. Let's say that we only want variables that are European tree ring data that were used in Pages2k. You can explore the variables in the data.frame, and the values in each field, and then compose an expression:
+
+```{r}
+library(dplyr)
+filtered.tib <- ts.tib %>% 
+   filter(between(geo_latitude,30,80) & between(geo_longitude,-30,60)) %>% #restrict the coordinates to just Europe
+   filter(archiveType == "tree") %>% 
+   filter(paleoData_useInGlobalTemperatureAnalysis == TRUE)
+```
+
+
+Let's take a look at the result!
+
+
+```{r}
+nTS <- as.lipdTs(filtered.tib) #convert it back (for now)
+plotSummaryTs(nTS,age.var = "year",f = .1)
+```
+
+Great, it looks like our filtering worked! It looks like most of the data go back about 1000 years, but a few records are much longer. Next, we'd like to restrict our analysis to just 1000 - 2000 AD. This is possible in a nested tibble, but it's often useful to have a longer version, one where every row in the data.frame corresponds to a single year-value pair, rather than a whole timeseries. This is the purpose of lipd-ts-tibble-long objects, the final lipd object type. This is useful if you want easy access to all the data in one large tibble.
+
+We can convert our data to this structure using `tidyTs()` or, you guessed it, `as.lipdTsTibbleLong()`
+
+```{r}
+longTib <- as.lipdTsTibbleLong(filtered.tib) %>% 
+   dplyr::filter(between(year,1000,2000))
+```
+
+Take a look at our new tibble, we restricted the time range, but it still has 11,350 rows! As you can imagine, loading in a few hundred LiPD datasets and converting them into lipd-ts-tibble-long objects will result in tibbles of several million rows, which might cause your computer problems!
+
+Let's take a quick look at these filtered data. The `plotTimeseriesStack()` function lets you make a quick version of the classic paleoclimate stack plots. Check out [this tutorial](https://nickmckay.github.io/GeoChronR/articles/PlotTimeseriesStack.html) for a deep dive.
+
+Here we'll just plot our data, and color it by the proxy type. 
+
+```{r data-stackplot,fig.height=15}
+plotTimeseriesStack(longTib,color.var = "paleoData_proxy")
+```
+
+And there it is! Not too bad, but I don't love that default colorscheme with only 3 values. 
+
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #plotTimeseriesStack}
+Explore the options in plotTimeseriesStack. Create a new version that:
+
+a. Has better colors!
+b. Changes the line thickness. 
+c. What does invert.var do?
+d. Replot this, but only showing the MXD data. 
+:::
+::::
+
+
+
+
+
+
+<!--chapter:end:data.Rmd-->
+
+# Age modelling in geoChronR {#agemodelling}
+
+geoChronR quantifies the uncertainties due to time uncertainty by taking advantage of ensembles of plausible age histories for one or more datasets.
+This means that often an early step in the geoChronR workflow is generating age ensembles. 
+Most modern age modelling approaches quantify uncertainties using methods that rely on ensembles, however preserving, extracting, and storing those uncertainties for subsequent analysis can be challenging. 
+geoChronR helps with this!
+In this chapter, we'll go through the workflow of generating age models with four methods that are integrated into geoChronR
+<!-- add note about importing age models from other approaches -->
+
+```{r}
+library(lipdR)
+library(geoChronR)
+library(ggplot2)
+library(magrittr)
+
+tana <- readLipd("https://lipdverse.org/Temp12k/1_0_2/TanaLake.Loomis.2015.lpd")
+```
+
+
+## Bacon
+
+The Bayesian ACcumulatiON (Bacon) algorithm  [@Blaauw2011BACON] is one of the most broadly used age-modelling techniques, and was designed to take advantage of prior knowledge about the distribution and autocorrelation structure of sedimentation rates in a sequence to better quantify uncertainty between dated levels.
+Bacon divides a sediment sequence into a parameterized number of equally-thick segments; most models use dozens to hundreds of these segments.
+Bacon then models sediment deposition, with uniform accumulation within each segment, as an autoregressive gamma process, where both the amount of autocorrelation and the shape of the gamma distribution are given prior estimates.
+The algorithm employs an adaptive Markov Chain Monte Carlo algorithm that allows for Bayesian learning to update these variables given the age-depth constraints, and converge on a distribution of age estimates for each segment in the model.
+Bacon has two key parameters: the shape of the accumulation prior, and the segment length, which can interact in complicated ways [@trachsel2017].
+In our experience, the segment length parameter has the greatest impact on the ultimate shape and amount of uncertainty simulated by Bacon, as larger segments result in increased flexibility of the age-depth curve, and increased uncertainty between dated levels.
+Bacon is written in C++ and R, with an R interface.
+More recently, the authors released an R package "rbacon" [@baconPackage], which geoChronR leverages to provide access to the algorithm.
+Bacon will optionally return a thinned subset of the stabilized MCMC accumulation rate ensemble members, which geoChronR uses to form age ensemble members for subsequent analysis.
+
+
+```{r runBacon,message=FALSE,results='hide',cache=TRUE,fig.show='hide',}
+tana <- runBacon(tana,
+                 lab.id.var = 'LabID', 
+                 age.14c.var = 'age14C',
+                 age.14c.uncertainty.var = 'age14CUnc', 
+                 age.var = 'age', 
+                 age.uncertainty.var = '1SD', 
+                 depth.var = 'depth', 
+                 reservoir.age.14c.var = NULL, 
+                 reservoir.age.14c.uncertainty.var = NULL, 
+                 rejected.ages.var = NULL,
+                 accept.suggestions = TRUE)
+```
+Great! If all went well Bacon ran, and geoChronR grabbed the ensembles for future use. What kind of future use? Well, let's start with plotting. 
+
+
+
+The `plotChronEns()` function is great for making, quick, but pretty nice, figures to show an age model ensemble. It has a lot of options for customization (check out `?plotChronEns`). Lastly, what it returns is a ggplot2 object, meaning that you can further customize it! Let's see how it goes!
+
+```{r}
+plotChronEns(tana) + ggtitle("Tana Lake - default Bacon model")
+```
+That was easy! But you'll have to explore the options to fully customize your figure. 
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #exploreplotChronEns}
+Explore the parameter choices in plotChronEns. Can you a) change the confidence interval colors and b) quantiles? c) Change the type of distribution plotted for the dates d) and their color and transparency? e) what does truncate.dist do?
+:::
+::::
+
+## BChron
+
+BChron [@bchron;@parnell2008flexible] uses a similar approach, using a continuous Markov monotone stochastic process coupled to a piecewise linear deposition model.
+This simplicity allows semi-analytical solutions that make BChron computationally efficient. BChron was originally intended to model radiocarbon-based age-depth models in lake sedimentary cores of primarily Holocene age, but its design allows broader applications.
+In particular, modeling accumulation as additive independent gamma increments is appealing for the representation of hiatuses, particularly for speleothem records, where accumulation rate can vary quite abruptly between quiescent intervals of near-constant accumulation [@Parnell_QSR2011;@PRYSM;@Hu_epsl17].
+The downside of this assumption is that BChron is known to exaggerate age uncertainties in cases where sedimentation varies smoothly [@trachsel2017].
+
+Bchron has several key parameters, which allow a user to encode their specific knowledge about their data.
+In particular, the `outlierProbs` parameter is useful in giving less weight to chronological tie points that may be considered outliers, either because they create a reversal in the stratigraphic sequence, or because they were flagged during analysis (e.g. contamination).
+This is extremely useful for radiocarbon-based chronologies where the top age may not be accurately measured for modern samples.
+The `thetaMhSd`, `psiMhSd`, and `muMhSd` parameters control the Metropolis-Hastings standard deviation for the age parameters and Compound Poisson-Gamma scale and mean respectively, which influence the width of the ensemble between age control tie points.
+geoChronR uses the same default values as the official Bchron package, and we recommend that users only change them if they have good cause for doing so.
+
+
+```{r runBchron, cache=TRUE, results = 'hide',cache=TRUE}
+tana <- runBchron(tana,
+                 iter = 10000,
+                 model.num = 2,
+                 lab.id.var = 'LabID', 
+                 age.14c.var = 'age14C',
+                 age.14c.uncertainty.var = 'age14CUnc', 
+                 age.var = 'age', 
+                 age.uncertainty.var = '1SD', 
+                 depth.var = 'depth', 
+                 reservoir.age.14c.var = NULL, 
+                 reservoir.age.14c.uncertainty.var = NULL, 
+                 rejected.ages.var = NULL)
+```
+```{r}
+plotChronEns(tana,model.num = 2,truncate.dist = .0001) + ggtitle("Tana Lake - default Bchron model")
+```
+
+## OxCal
+
+The OxCal software package has a long history and extensive tools for the statistical treatment of radiocarbon and other geochronological data [@BronkRamsey95].
+In @ramsey2008deposition, age-depth modelling was introduced with three options for modelling depositional processes that are typically useful for sedimentary sequences: uniform, varve, and Poisson deposition models, labeled U-sequence, V-sequence and P-sequence, respectively.
+The Poisson-based model is the most broadly applicable for sedimentary, or other accumulation-based archives (e.g. speleothems), and although any sequence type can be used in geoChronR, most users should use a P-sequence, which is the default.
+Analogously to segment length parameter in Bacon, the *k* parameter (called `eventsPerUnitLength` in geoChronR), controls how many events are simulated per unit of depth, and has a strong impact on the flexibility of the model, as well as the amplitude of the resulting uncertainty.
+As the number of events increases, the flexibility of the model, and the uncertainties, decrease.
+@trachsel2017 found that this parameter has a large impact on the accuracy of the model, more so than the choices made in Bacon or Bchron.
+Fortunately, @bronkramsey2010 made it possible for *k* to be treated as a variable, and the model will estimate the most likely values of *k* given a prior estimate and the data. The downside of this flexibility is that this calculation can greatly increase the convergence time of the model.
+Oxcal is written in C++, with an interface in R [@oxcAAR].
+Oxcal does not typically calculate posterior ensembles for a depth sequence, but can optionally output MCMC posteriors at specified levels in the sequence.
+geoChronR uses this feature to extract ensemble members for subsequent analysis.
+
+
+```{r runOxcal,cache=TRUE}
+tana <- runOxcal(tana,model.num = 3,
+                 lab.id.var = 'LabID', 
+                 age.14c.var = 'age14C',
+                 age.14c.uncertainty.var = 'age14CUnc', 
+                 age.var = 'age', 
+                 age.uncertainty.var = '1SD', 
+                 depth.var = 'depth', 
+                 reservoir.age.14c.var = NULL, 
+                 reservoir.age.14c.uncertainty.var = NULL, 
+                 rejected.ages.var = NULL,
+                 events.per.unit.length = .05,
+                 depth.interval = 20)
+```
+```{r}
+plotChronEns(tana,model.num = 3,truncate.dist = .0001) + ggtitle("Tana Lake - Oxcal model")
+```
+
+### Let's compare these models. 
+First, lets use `selectData()` to pull the depth and ageEnsemble variables for each model. The `selectData()` function is introduced in section \ref{#selectData} .
+
+
+```{r,warning=FALSE,results = 'hide',message = FALSE}
+ensBacon <- selectData(tana,
+                       var.name = "ageEnsemble",
+                       paleo.or.chron = "chronData",
+                       model.num = 1,
+                       table.type = "ensemble")
+
+depthBacon <- selectData(tana,
+                       var.name = "depth",
+                       paleo.or.chron = "chronData",
+                       model.num = 1,
+                       table.type = "ensemble")
+
+ensBchron <- selectData(tana,
+                       var.name = "ageEnsemble",
+                       paleo.or.chron = "chronData",
+                       model.num = 2,
+                       table.type = "ensemble")
+
+depthBchron <- selectData(tana,
+                       var.name = "depth",
+                       paleo.or.chron = "chronData",
+                       model.num = 2,
+                       table.type = "ensemble")
+
+ensOxcal <- selectData(tana,
+                       var.name = "ageEnsemble",
+                       paleo.or.chron = "chronData",
+                       model.num = 3,
+                       table.type = "ensemble")
+
+depthOxcal <- selectData(tana,
+                       var.name = "depth",
+                       paleo.or.chron = "chronData",
+                       model.num = 3,
+                       table.type = "ensemble")
+
+```
+
+
+Now that we have all the data extracted, we can use the `plotTimeseriesEnsRibbons()` function to plot each of the modeled age-depth relationships and their uncertainties. We will use the `magrittr` "pipe" function `%>%` to pass the output of one plot into the next to build up a complex figure. We'll also use different colors and transparencies so we can distinguish the different models.  
+
+```{r,message=FALSE}
+plotTimeseriesEnsRibbons(X = ensBacon,Y = depthBacon) %>% 
+  plotTimeseriesEnsRibbons(X = ensBchron,Y = depthBchron,
+                           alp = .7,
+                           color.high = "DarkGreen",
+                           color.line = "Green") %>% 
+plotTimeseriesEnsRibbons(X = ensOxcal,Y = depthOxcal,
+                         alp = .7,
+                         color.high = "DarkBlue",
+                         color.line = "Blue") %>% 
+  plotModelDistributions(tana,add.to.plot = .) + #here we use the ggplot +
+  scale_y_reverse()
+```
+All geoChronR plotting functions return ggplot2 objects, so we can modify the scale by adding a layer using `+` using the ggplot2 model. 
+
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #compareChronModels}
+Where do the models agree? Where do they differ? Do you think one is better than the others?
+
+<details>
+  <summary>After you've answered, click for next step</summary>
+   The OxCal model is considerably more flexible than the Bacon model, which leaves outliers off the main trend. If you wanted to make the OxCal model less flexible, which parameter(s) would you change? Alternatively, if you wanted to make the Bacon model more flexible, which parameter(s) would you change in the Bacon model?  
+   
+   Try making a change to parameters in either Bacon or OxCal to make the models more similar (note, Bacon runs much faster, so I'd probably try that one first)
+   
+   Finally, how should you decide whether a more or less flexible model is better?
+</details> 
+:::
+::::
+
+
+
+### Creating a multimodel ensemble
+
+Sometimes, there are good reason to believe that because of it's design, or underlying assumptions, one model may be superior to the others, in which case you should choose that model. However, frequently, it's unclear which model to choose, or to objectively pick on model over another. In this case, you might want to create a multimodel ensemble that incorporates model structural uncertainty into your uncertainty structure. This is pretty straightforward in geoChronR.
+
+Here, we'll create a fourth model that combines these three into a "Grand Ensemble" using `createMultiModelEnsemble`
+
+```{r}
+tana <- createMultiModelEnsemble(tana,
+                                 models.to.combine = 1:3,
+                                 depth.interval =10,
+                                 n.ens = 1000)
+```
+:::: {.blackbox data-latex=""}
+::: {.exercise #plotGrandEnsemble}
+Use plotChronEns() and plotModelDistributions() to visualize your multi-model age model.  
+<details>
+<summary>Hint #1</summary>
+  First plot the chronEns, then use the "add.to.plot" parameter to add in the distributions.
+</details> 
+<details>
+  <summary>Hint #2</summary>
+  Something with this structure is what you're looking for
+```{r,eval = FALSE}
+plotChronEns() %>% plotModelDistributions()
+```
+</details> 
+</details> 
+:::
+::::
+
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #exploreMultiModelEnsemble}
+Now that you've got plotting working, try changing the choices made in createMultiModelEnsemble. Specifically, what is the impact of changing, depth.interval, n.ens, or depth.sequence? Use the documentation for help!
+:::
+::::
+
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #plotAllFour}
+Add your final multi model ensemble to the figure that showed the three original age models above. Does it look like a combination of the three?
+:::
+::::
+
+
+### Mapping the age ensemble to the paleoData measurements
+
+Great, our LiPD file now has an age ensemble (actually 4 age ensembles!) that we can use in subsequent analysis. We could write out our LiPD file right now using `lipdR::writeLipd(tana)`, for future work, or share with a colleague, and when we load it back in, all of our ensembles will be there, ready to go!
+
+But for now, let's think about the next step in our analysis. We want to look at our paleoenvironmental data in the context of the age uncertainties. So let's take a look at the paleoData!
+
+```{r}
+#First, create a tibble from the paleoata
+paleo <- extractTs(tana) %>% ts2tibble()
+
+#Now you can explore that much more easily - here are all the variable names in all the measurementTables in the paleoData.
+paleo$paleoData_variableName
+```
+ It looks like depth in this dataset is "Composite_depth", and the median age vector is here, but the age ensemble is not! Why not? Well, the ensemble chronology in a model may or may not have values corresponding to the paleoclimatic or paleoenvironmental measurements in paleoData. Each of our models have different depth scales, and they're all different than our paleoclimate data. So we need to "map" the model ensemble values to a measurement table in paleoData, so we can estimate the age uncertainty on each value. To do this we use the `mapAgeEnsembleToPaleoData()` function.
+
+
+```{r , results = 'hide'}
+tana <- mapAgeEnsembleToPaleoData(tana,
+                                  age.var = "ageEnsemble",
+                                  model.num = 4,
+                                  paleo.depth.var = "Composite_depth", 
+                                  paleo.meas.table.num = 1)
+```
+Now let's look at the paleoData again:
+
+```{r}
+paleo <- extractTs(tana) %>% ts2tibble()
+
+paleo$paleoData_variableName
+```
+
+Great, now we have an ageEnsemble variable in our paleoData (and our tibble!)
+
+
+### Creating a timeseries plot as a spaghetti plot of lines
+
+Let's visualize the reconstructed temperature with age uncertainties. 
+
+First, we'll use `selectData()` again to get our mapped ensemble and temperature data:
+```{r}
+tana.ae <- selectData(tana,var.name = "ageEnsemble",meas.table.num = 1)
+tana.temp <- selectData(tana,var.name = "temperature",meas.table.num = 1)
+```
+
+OK, we're ready to plot it. There are a few ways to visualize ensemble data. The simplest is to just plot multiple instances of the line. Here we will just plot the temperature data against 50 random ensemble members.   
+```{r,results = 'hide',warning = FALSE,message = FALSE}
+tana.ts.plot <-  plotTimeseriesEnsLines(X = tana.ae,Y = tana.temp,alp = 0.05,n.ens.plot = 50,color = "blue")
+print(tana.ts.plot)
+```
+
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #plotTimeseriesEnsLines}
+plotTimeseriesEnsLines() has options that control the output. Take a look at the documentation, and then change the following parameters, and understand how that affects the output:
+
+  a. alp
+  b. color (What does "Blues" or "Set2" do? How does it work)
+  c. n.ens.plot
+  d. Change the limits of the plot to only show the Holocene (~12,000-0 yr BP)
+  <details>
+  <summary>Hint</summary>
+  To change the limits, you'll use the xlim() or scale_x_reverse() functions from ggplot2
+  </details> 
+:::
+::::
+
+
+
+
+### Creating a timeseries plot with a ribbon confidence intervals
+
+We can also plot this as a ribbon plot of quantiles
+
+```{r,results = 'hide',warning=FALSE,message = FALSE}
+tana.ribbon.plot <- plotTimeseriesEnsRibbons(X = tana.ae,Y = tana.temp)
+print(tana.ribbon.plot)
+```
+
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #plotTimeseriesEnsLines2}
+plotTimeseriesEnsRibbons () has many more options that control the output. Take a look at the documentation for that function, and then change the following parameters, and understand how that affects the output:
+
+  a. probs
+  b. color.high
+  c. n.bins
+  d. export.quantiles
+  e. limit.outliers.x
+:::
+::::
+
+### Combining the two kinds of timeseries plots
+
+Each of these approaches to age-uncertain timeseries visualization is valuable - ribbons show case the probability distributions of the data through time, given the ensembles, but tend to smooth out real variability recorded by the data. Plotting an ensemble of lines highlights this variability, but gets messy with many lines, or doesn't showcase the true range of uncertainty with a few lines. 
+
+At different times, either approach can be right, but our favorite, standard approach is to do both, using the `add.to.plot` option we used above. 
+
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #ribbonsAndLines}
+Use plotTimeseriesEnsRibbons(), plotTimeseriesEnsLines(), and the "add.to.plot" parameter to create a figure that shows the uncertainty ribbons in the background, and a with 5 ensemble members to highlight the variability of the data. 
+<details>
+  <summary>Hint</summary>
+  Something with this structure is what you're looking for
+```{r,eval = FALSE}
+plotTimeseriesEnsRibbons() %>% plotTimeseriesEnsLines()
+```
+</details> 
+:::
+::::
+
+
+## Banded Age Modelling
+Thus far, we've explored methods to derive, transfer, and visualize age models derived from age-depth observations (mostly radiocarbon data). geoChronR also includes another type of age modelling algorithm, that estimates uncertainties based on miscounting rates in layer-counted archives. Consequently, BAM does not require, or even consider, depth in its uncertainty quantification. Although BAM is intended for layer-counted archives, like corals or varves, it can be useful as a rough approximation of age-uncertainty in non-banded timeseries, where the original geochronologic data needed to create a proper age model are not available. We'll explore this with Tana Lake dataset and see how it compares. 
+
+
+@BAM is a probabilistic model of age errors in layer-counted chronologies.
+The model allows a flexible parametric representation of such errors (either as Poisson or Bernoulli processes), and separately considers the possibility of double-counting or missing a band.
+The model is parameterized in terms of the error rates associated with each event, which are intuitive parameters to geoscientists, and may be estimated via replication [@DeLong_Paleo3_2013].
+In cases where such rates can be estimated from the data alone, an optimization principle may be used to identify a more likely age model when a high-frequency common signal can be used as a clock [@BAM].
+As of now, BAM does not consider uncertainties about such parameters, representing a weakness of the method.
+BAM was coded in MATLAB, Python and R, and it is this latter version that geoChronR uses.
+
+
+```{r}
+tana <- runBam(tana,
+               paleo.meas.table.num = 1,
+               n.ens = 1000,
+               model.num = 5,
+               make.new = TRUE,
+               ens.table.number = 1,
+               model = list(name = "poisson",
+                            param = 0.05, 
+                            resize = 0, 
+                            ns = 1000))
+```
+
+
+```{r}
+tana.ye <- selectData(tana,var.name = "yearEnsemble",meas.table.num = 1)
+tana.ae.bam <- convertAD2BP(tana.ye)
+
+tana.ribbon.plot.bam <- plotTimeseriesEnsRibbons(X = tana.ae.bam,Y = tana.temp)
+
+#we can compare this to the original age model supplied by the paper (which used the Heegaard et al., 2005 model, so a whole other approach)
+
+tana.orig.age <- selectData(tana,var.name = "age",meas.table.num = 1)
+
+tana.ribbon.plot.bam <- tana.ribbon.plot.bam +
+  geom_line(aes(x = tana.orig.age$values, y = tana.temp$values),color = "red")
+
+tana.ribbon.plot.bam
+
+```
+
+```{r}
+library(egg)
+ggarrange(plots = list(tana.ribbon.plot + xlim(c(15000,0)) + ggtitle("Temperature on Multimodel age model"),
+                            tana.ribbon.plot.bam + xlim(c(15000,0)) + ggtitle("Temperature on BAM")),
+               nrow = 2)
+
+
+```
+
+
+## Chapter project
+
+This chapter covers a range of age modelling approaches, how to implement them in geoChronR, how to propagate the uncertainties to data of interest, and visualization of all of the above. Now it's time to test what you've learned!
+
+In addition to a temperature reconstruction, the Tana Lake dataset includes \delta$^{18}$O from leaf waxes. The data are measured on a different samples at different resolution, and so are stored in a different measurement table. So your project is: 
+
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #ageModelProject}
+Using tools learned in this chapter, create ensemble timeseries figures for \delta$^{18}$O leaf wax from Tana Lake using, Bacon, Bchron, OxCal and BAM. Arrange these four figures vertically into a 4 panel figure with constant x-axes to allow comparison. How does the choice of age modelling algorithm impact the record? Which parts of the dataset are most vulnerable to age uncertainties?
+<details>
+  <summary>Hint</summary>
+Create plots for each model separately, and save them as variables. Then use ggarrange to combine them. 
+</details> 
+:::
+::::
+
+
+<!--chapter:end:ageModelling.Rmd-->
+
+# Correlation {#correlation}
+
+Correlation is perhaps the most commonly used statistical tool in the paleogeosciences. This makes sense, because we often see similar patterns between datasets, but want to know whether the apparent relationship is robust, or could be spurious. And of course, age uncertainty can have immense impacts on correlation.
+
+In this chapter, we'll explore the time-uncertain correlation tools in geoChronR by walking through a classic comparison in paleoclimatology, the relationship between $\delta^{18}$O variability in Greenland ice cores and Asian speleothems. 
+On multi-millennial timescales, the two datasets display such similar features that the well-dated Hulu Cave record, and other similar records from China and Greenland, have been used to argue for atmospheric teleconnections between the regions and support the independent chronology of GISP2 [@hulu2001].
+Here, we revisit this relation quantitatively, using ensemble age models and the `corEns` function, to calculate the impact of age uncertainty on the correlation between these two iconic datasets.
+<!-- Because these datasets are not normally distributed, we use Spearman's Rank correlation to avoid the assumption of linearity. -->
+<!-- Kendall's Tau method, or using Pearson correlation after gaussianizing the input (the geoChronR default), are also reasonable options that in most cases, including this one, produce comparable results. -->
+It's worth noting at this point that there is a long and detailed discussion in the literature discussing this relationship, and any correlation approach to address this question ignores aspects of the science, and ignores ancillary evidence that may support a mechanistic relationship between two timeseries.
+Nevertheless, this is a good example of how age uncertainty can affect apparent alignment between two datasets.
+
+```{r setup,message=FALSE,warning=FALSE,results='hide'}
+library(lipdR)
+library(geoChronR)
+library(ggplot2)
+library(magrittr)
+library(egg)
+```
+
+## First look
+
+LiPD files for the [Hulu Cave speleothem]("https://lipdverse.org/geoChronR-examples/Hulucave.Wang.2001-ens.lpd") $\delta^{18}$O and the [GISP2 ice core]("https://lipdverse.org/geoChronR-examples/GISP2.Alley.2000-ens.lpd") $\delta^{18}$O records are available at following the hyperlinks. 
+These LiPD files already include age ensembles, so you don't need to create new age models. Use the skills you learned in Chapters \@ref(data) and \@ref(agemodelling) to take a first look at the data. 
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #correlationFirstLook}
+Create a figure that that uses ensemble timeseries plots to compares the Hulu Cave GISP2 ice core records.
+<details>
+<summary>Hint #1</summary>
+  Use readLipd() to load the data from the lipdverse
+</details> 
+<details>
+  <summary>Hint #2</summary>
+  Use mapAgeEnsembleToPaleoData(), and note that there is no depth data in the GISP2 dataset.
+</details> 
+<details>
+  <summary>Hint #3</summary>
+  Use selectData() to pull out the age ensembles and d18O values of interest
+</details> 
+<details>
+  <summary>Hint #4</summary>
+  Use plotTimeseriesEnsRibbons() and/or plotTimeseriesEnsLines() to create plots that span a common interval
+</details> 
+<details>
+  <summary>Hint #5</summary>
+  Use the egg package and ggarrange to stack the plots to allow easy comparison.
+</details> 
+:::
+::::
+
+
+```{r getCorData,echo=FALSE,results='hide',message=FALSE,warning=FALSE,cache=TRUE}
+hulu <- readLipd("http://lipdverse.org/geoChronR-examples/Hulucave.Wang.2001-ens.lpd")
+gisp2 <- readLipd("http://lipdverse.org/geoChronR-examples/GISP2.Alley.2000-ens.lpd")
+
+hulu <- mapAgeEnsembleToPaleoData(hulu,age.var = "ageEnsemble")
+gisp2 <- mapAgeEnsembleToPaleoData(gisp2,chron.depth.var = NULL,paleo.depth.var = NULL)
+
+
+hulu.ae <- selectData(hulu,var.name = "ageEnsemble")
+hulu.d18O <- selectData(hulu,var.name = "d18O")
+gisp2.d18O <- selectData(gisp2,var.name = "temp")
+gisp2.ae <- selectData(gisp2,var.name = "ageEnsemble")
+
+#plotTimeseriesEnsLines(X = hulu.ae,Y = hulu.d18O)
+#plotTimeseriesEnsLines(X = gisp2.ae,Y = gisp2.d18O)
+
+
+```
+
+
+Great! There's no replacement for actually looking at the data, and lipdR and geoChronR make it possible to do this in just a few lines of code. If you found that exercise difficult, spend some time reviewing Chapters \@ref(data) and \@ref(agemodelling).
+
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #correlationThoughts}
+Now that you've made the overview figure, does it look like there might be a relationship between these datasets? Would you expect the a positive, negative, or zero correlation?
+:::
+::::
+
+
+## How to correlate responsibly {#correlateResponsibly}
+Before we jump into the details of how to conduct time-uncertain correlation in R, let's review some of the key assumptions, methods and choices. The rest of this section is an excerpt from our [geoChronR paper in Geochronology](https://gchron.copernicus.org/articles/3/149/2021/) [@geochronrPaper].
+
+### Correlation
+
+Correlation is the most common measure of a relationship between two variables $X$ and $Y$.
+Its computation is fast, lending itself to ensemble analysis, with a handful of pretreatment and significance considerations that are relevant for ensembles of paleoenvironmental and geoscientific data.
+geoChronR implements three methods for correlation analysis: Pearson's product-moment, Spearman's rank and Kendall's tau.
+Pearson correlation is the most common correlation statistic, but assumes normally-distributed data.
+This assumption is commonly not met in paleoenvironmental or geoscientific datasets, but can be can be overcome by mapping both datasets to a standard normal distribution prior to analysis [@vanAlbada2007,@JEG_Tingley_CP2016].
+Alternatively, the Spearman and Kendall correlation methods are rank-based, and do not require normally distributed input data, and are useful alternatives in many applications.
+
+### Binning
+
+All correlation analyses for timeseries are built on the assumption the datasets can be aligned on a common timeline.
+Age-uncertain data violate this assumption.
+We overcome this by treating each ensemble member from one or more age uncertain timeseries as valid for that iteration, then "bin" each of the timeseries into coeval intervals.
+The "binning" procedure in geoChronR sets up an interval, which is typical evenly spaced, over which the data are averaged. Generally, this intentionally degrades the median resolution of the timeseries, for example, a timeseries with 37-year median spacing could be reasonably "binned" into 100- or 200-year bins.
+The binning procedure is repeated for each ensemble member, meaning that between different ensembles, different observations will be placed in different bins.
+
+### Autocorrelation
+
+Following binning, the correlation is calculated and recorded for each ensemble member.  The standard way to assess correlation significance is using a Student's T-test, which assumes normality and independence. Although geoChronR can overcome the normality requirement, as discussed above, paleoenvironmental timeseries are often highly autocorrelated, and not serially independent, leading to spurious assessments of significance [@Hu_epsl17].
+geoChronR addresses this potential bias using three approaches:
+
+1. The simplest approach is to adjust the test's sample size to reflect the reduction in degrees of freedom due to autocorrelation. Following @dawdy1964statistical, the effective number of degrees of freedom is $\nu = n \frac{1-\phi_{1,X}\phi_{1,X}}{1+\phi_{1,X}\phi_{1,X}}$, where $n$ is the sample size (here, the number of bins) and where \(\phi_{1,X}, \phi_{1,X}\) are the lag-1 autocorrelation of two
+time series \(X\), \(Y\), respectively. This approach is called ``effective-n'' in geoChronR. It is an extremely simple approach, with no added computations by virtue of being a parametric test using a known distribution ($t$ distribution).
+A downside is that the correction is approximate, and can substantially reduce the degrees of freedom [@Hu_epsl17], to less than 1 in cases of high autocorrelation, which is common in paleoenvironmental timeseries.
+This may result in overly conservative assessment of significance, so this option is therefore not recommended.
+
+
+2. A parametric alternative is to generate surrogates, or random synthetic timeseries, that emulate the persistence characteristics of the series.
+This "isopersistent" test generates $M$ (say, 500) simulations from an autoregressive process of order 1 (AR(1)), which has been fitted to the data.
+These random timeseries are then used to obtain the null distribution, and compute p-values, which therefore measure the probability that a correlation as high as the one observed ($r_o$) could have arisen from correlating $X$ or $Y$ with AR(1) series with identical persistence characteristics as the observations.
+This approach is particularly suited if an AR model is a sensible approximation to the data, as is often the case [@Ghil02].
+However, it may be overly permissive or overly conservative in some situations.
+
+3. A non-parametric alternative is the approach of @Ebisuzaki_JClim97, which generates surrogates by scrambling the phases of $X$ and $Y$, thus preserving their power spectrum.
+To generate these "isospectral" surrogates, geoChronR uses the `make_surrogate_data` function from the rEDM package [@rEDM].
+This method makes the fewest assumptions as to the structure of the series, and its computational cost is moderate, making it the default in geoChronR.
+
+
+<!-- Each of these approaches has strengths and weaknesses.  -->
+<!-- The effective sample size approach is fast, and provides reasonable results for weakly to  moderately autocorrelated timeseries, but can be overly conservative for highly autocorrelated data.  -->
+<!-- This also makes the least stable of the methods to changes in bin size.  -->
+<!-- Isopersistence.... Ebisuzaki.... , which is why we consider the most broadly applicable, and is the default choice in geoChronR. -->
+
+### Test multiplicity
+
+In addition to the impact of autocorrelation on this analysis, repeating the test over multiple ensemble members raises the issue of test multiplicity  [@Ventura2004], also known as the "look elsewhere effect".
+To overcome this problem, we control for this false discovery rate (FDR) using the simple approach of @BenjaminiHochberg95, coded in R by @Ventura2004.
+FDR explicitly controls for spurious discoveries arising from repeatedly carrying out the same test.
+At a 5% level, one would expect a 1000 member ensemble to contain 50 spurious "discoveries" -- instances of the null hypothesis (here "no correlation") being rejected.
+FDR takes this effect into account to minimize the risk of identifying such spurious correlations merely on account of repeated testing.
+In effect, it filters the set of "significant" results identified by each hypothesis test (effective-N, isopersistent, or isospectral).
+
+## The corEns() function
+
+Now that you've thoroughly reviewed the theory, lets make it run in geoChronR! *I know that not everyone thoroughly reviewed the theory. That's ok, but it's worth reflecting on these choices, because you won't fully understand your results unless you understand these details. The default choices in geoChronR will not be right for every application.*
+
+Let's take another look at the the two timeseries over the period of overlap.
+To calculate age uncertain correlation let use geoChronR's `corEns` function. 
+I'm going to run this with 1000 ensemble members, but you may want to run it with only 200 ensemble members for now, since we have multiple significance testing options turned on and it can be a little slow.
+
+```{r corEns, results='hide',warning = FALSE, message = FALSE,cache = TRUE}
+corout <- corEns(time.1 = gisp2.ae,
+                 values.1 = gisp2.d18O,
+                 time.2 = hulu.ae,
+                 values.2 = hulu.d18O,
+                 bin.step = 200,
+                 max.ens = 1000,
+                 isopersistent  = TRUE,
+                 isospectral = TRUE,
+                 gaussianize = TRUE)
+```
+
+Hopefully, some of those options look familiar (see \@ref(correlateResponsibly) if they don't). There are a lot of choice that go into time uncertain correlation, meaning that there are a lot of parameters available for the `corEns` function (check out the help at `?corEns`).
+
+Some of the key ones to pay attention to are:
+
+*    **bin.step** This variable sets the size of the bins that the data will be averaged into to align before correlation. Smaller bins will focus allow examination of shorter timescales, and increase the the sample size, but also increase the number of empty bins, and tend to increase autocorrelation. The right bin size varies depends on the distribution of resolutions in your datasets. 
+
+*    **isopersistent** and **isospectral** These need to be set to TRUE if you want to calculate null significance models for significance testing with these methods. On the other hand, turning it off will speed up calculation if you don't need it. Typically, you would only want to use one method (isospectral is the default), but it's possible to calculate both to facilitate easy comparison, which we do here. 
+
+*    **gaussianize** You'll find the gaussianize option throughout geoChronR, and it's typically the default option. `gaussianize` will transform the data into a Gaussian distribution, recognizing that many of the methods and/or their significance testing assume that the input data are normally distributed. This options ensures that this is the case. 
+
+`corEns` returns a list that has the key correlation and significance results for all the selected methods.
+If percentiles are provided to corEns, and they are by default, the function will output a data.frame that summarizes the output. 
+```{r}
+corout$cor.stats
+```
+
+
+## Plotting the ensemble correlation results
+
+This gives us a first order sense of the results, but let's use the `plotCorEns` function to dig in deeper.
+
+
+```{r,warning=FALSE,message=FALSE,fig.width=6, fig.height=4}
+raw <- plotCorEns(corout,
+           significance.option = "raw",
+           use.fdr = FALSE)+ggtitle("Distribution of correlation coefficients")
+
+print(raw)
+```
+
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #plotCorEns}
+Explore the plotting options for plotCorEns.
+
+a. Change the color scheme
+b. Move the legend
+c. Move the labels
+d. Change which quantiles are plotted (this one is tricky)
+:::
+::::
+
+
+### Significance testing options
+
+In this figure we see the distribution of correlation coefficients, and their significance.
+Note that we chose "significance.option = 'raw'", so in green we see the distribution of significant correlations as determined by a standard T-test, without any consideration of autocorrelation.
+In this case, we observe that `r round(100*sum(corout$cor.df$pRaw <= 0.05)/nrow(corout$cor.df),1)`% of the correlations are significant. 
+Of course we know this is a very simplistic approach, and that with many paleoclimate datasets we must consider the impact of temporal autocorrelation, which can readily cause spurious correlations. 
+geoChronR addresses this point using three approaches, as discussed above in detail, and summarized here:
+
+1. The simplest approach ("eff-n") is to adjust the test's sample size to reflect the reduction in degrees of freedom due to autocorrelation. 
+
+2. Alternatively, the "isopersistent" option will generate surrogates, or random synthetic timeseries, that emulate the persistence characteristics of the series, and use those to estiamte significance. 
+
+3. The final option, "isospectral" also generates surrogates to estimate significance, but does so by scrambling the spectral phases of the two datasets, thus preserving their power spectrum while destroying the correlated signal. 
+
+Let's take a look at each of these three options. 
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #significanceOptions}
+Create three more versions of the correlation ensemble histogram, so that you have the original and one for all three options for accounting for autocorrelation. Label them, and combine them into a single plot. 
+
+Which option shows the biggest reduction in significant correlations? Which is the most similar to the unadjusted distribution? 
+:::
+::::
+
+
+```{r,warning=FALSE,message=FALSE,fig.width=6, fig.height=4,echo=FALSE,eval=FALSE}
+effN <- plotCorEns(corout,
+           legend.position =c(.85,.8),
+           f.sig.lab.position = c(.85,.6),
+           significance.option = "eff-n",
+           use.fdr = FALSE)+ggtitle("Effective-N significance testing")
+
+isoPersistent <- plotCorEns(corout,
+           legend.position =c(.85,.8),
+           f.sig.lab.position = c(.85,.6),
+           significance.option = "isopersistent",
+           use.fdr = FALSE)+ggtitle("Isopersistent significance testing")
+
+
+isoSpectral <- plotCorEns(corout,
+           legend.position =c(.85,.8),
+           f.sig.lab.position = c(.85,.6),
+           significance.option = "isospectral",
+           use.fdr = FALSE)+ggtitle("Isospectral significance testing")
+
+egg::ggarrange(plots=list(raw,effN,isoPersistent,isoSpectral),nrow = 2)
+```
+
+If you put your plot together properly, you now see the dramatic effect of accounting for serial autocorrelation in our significance testing. Using the "effective-N" method drops the percentage of significant correlations (at the 0.05 level) to 0. However when autocorrelation is large, this approach dramatically reduces the effective degrees of freedom and has been shown to be overly conservative in many cases. So let's take a look at the surrogate-based approaches. 
+
+Using the "isopersistent" approach, where we simulate thousands of synthetic correlations with the same autocorrelation characteristics as the real data, and see how frequently we observe r-values at the observed levels, gives a much less conservative result. 
+
+In the isospectral test, only a few of the ensembles members are significant. 
+This approach often serves as a compromise between the more conservative effective-N approach and the more liberal isopersistent approach.
+The isospectral method also makes the fewest assumptions as to the structure of the series, and its computational cost is moderate, and so it is the default in geoChronR.
+
+### False-discovery rate testing
+
+Although taking advantage of the age ensembles allows us to propagate the impacts of age uncertainty, it introduces another statistical problem on our hands. In addition to the impact of autocorrelation on this analysis, repeating the test over multiple ensemble members raises the issue of test multiplicity  [@Ventura2004], or the "look elsewhere effect".
+
+At a 5% significance level, one would expect a 1000 member ensemble to contain 50 spurious "discoveries" -- instances of the null hypothesis, here "no correlation" being rejected.
+To overcome this problem, we control for this false discovery rate (FDR) using the simple approach of @BenjaminiHochberg95, coded in R by @Ventura2004.
+FDR takes this effect into account to minimize the risk of identifying such spurious correlations merely on account of repeated testing.
+In effect, it filters the set of "significant" results identified by each hypothesis test (effective-N, isopersistent, or isospectral).
+Let's plot the results of the isopersistent test again, but turn the `use.fdr` option to `TRUE`.
+
+
+```{r,warning=FALSE,message=FALSE,fig.width=6, fig.height=4}
+isoPersistentFdr <- plotCorEns(corout,
+           legend.position =c(.85,.8),
+           f.sig.lab.position = c(.85,.6),
+           significance.option = "isopersistent",
+           use.fdr = TRUE)+ggtitle("Isopersistent significance testing with FDR")
+
+print(isoPersistentFdr)
+```
+
+Now we see how accounting for FDR can further reduce our significance levels. In this case many of the significant correlations are expected due to test multiplicity (shown in the green bars in the plot above). This represents the randomness that we're sampling by repeating the correlation across 1000 ensemble members. After accounting for this, only `r round(100*corout$cor.fdr.stats$pIsopersistentFDR,1)`% of the ensemble members are significant. 
+
+Note that accounting for False Discovery Rate is a separate process than deriving p-values, and can be applied to any of the significance.options in geoChronR.
+
+## Judging the overall significance of an age-uncertain correlation
+
+So, with all of the methods, only a small subset of the correlations are significant, so it's probably fair to say to that this is not a significant correlation after accounting for age uncertainty. 
+But this begs the question, what fraction of the correlation ensemble needs to be significant to consider an age-uncertain relation significant?
+There is no hard and fast theoretical justification for what fraction of ensemble correlation results should be expected to pass such a significance test, and so evaluating the significance of age uncertain correlation remains somewhat subjective.
+Indeed, two truly correlated timeseries, when afflicted with age uncertainty, will commonly return some fraction of insignificant results when random ensemble members are correlated against each other.
+The frequency of these "false negatives" depends on the structure of the age uncertainties and the timeseries, and will vary to some extent by random chance. 
+One way to get a sense of the vulnerability of a timeseries to false negatives is to perform an age-uncertain correlation of a dataset with itself.
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #selfCor}
+Calculate the correlation ensemble where you correlate the Hulu Cave $\delta^{18}$O record with itself, and plot a histogram of the results. Use the isospectral method to quantify significance, while accounting for FDR. 
+
+Repeat this exercise with the GISP2 $\delta^{18}$O record. 
+
+Make a combined plot, with the axes aligned. 
+
+What fraction of significant correlations do you get with this approach for each record? Does one dataset have higher self-correlations that the other? Explore the data to think what might cause this?
+:::
+::::
+
+```{r,warning=FALSE,message=FALSE,fig.width=6, fig.height=4,results='hide',echo = FALSE, eval = FALSE}
+coroutGisp <- corEns(gisp2.ae,gisp2.d18O,gisp2.ae,gisp2.d18O,bin.step = 200,max.ens = 500)
+corPlotGisp <- plotCorEns(coroutGisp,
+                          legend.position = c(0.1, 0.8),
+                          significance.option = "isospectral")+ggtitle(NULL) + xlim(c(.6,1))
+
+coroutHulu <- corEns(hulu.ae,hulu.d18O,hulu.ae,hulu.d18O,bin.step = 200,max.ens = 500)
+corPlotHulu <- plotCorEns(coroutHulu,
+                          legend.position = c(0.1, 0.8),
+                          significance.option = "isospectral")+ggtitle(NULL)+ xlim(c(.6,1))
+
+egg::ggarrange(plots = list(corPlotGisp,corPlotHulu),nrow = 2)
+
+```
+
+## Chapter Project
+
+Generally, age uncertainties obscure relationships between records, while in rare cases creating the appearance of spurious correlations.  It is appropriate to think of ensemble correlation as a tool to explore the age-uncertain correlation characteristics between timeseries, rather than a binary answer to the question "Are these two datasets significantly correlated?".
+
+So for your chapter project, we'll explore one more parameter that will have significant impacts on your result. 
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #corProject}
+OK, let's go through the whole exercise of comparing two time-uncertain series. This time, we're going to look on a shorter timescale, just the past 2000 years. Your project is to conduct an age-uncertain correlation of two ice core d18O records, from the Renland and Crete ice cores. LiPD data with age ensembles are available for [Renland](https://lipdverse.org/geoChronR-examples/arc2k/Arc-Renland.Vinther.2008.lpd) and [Crete](https://lipdverse.org/geoChronR-examples/arc2k/Arc-Crete.Vinther.2010.lpd). You'll need to go through the whole process explored in this chapter, but once you've produced an age uncertain correlation, explore the impact of changing the bin.step over a range of reasonable choices. How do larger (and smaller) bins affect the correlation, and the significance of the result? Defend the choice that you think is most reasonable.
+:::
+::::
+
+
+```{r,echo=FALSE,warning=FALSE,eval=FALSE}
+renland <- readLipd("https://lipdverse.org/geoChronR-examples/arc2k/Arc-Renland.Vinther.2008.lpd") %>% 
+  mapAgeEnsembleToPaleoData(strict.search = TRUE,
+                            age.var = "ageEnsemble",
+                            chron.depth.var = NULL )
+
+re.ae <- selectData(renland,"ageEnsemble")
+re.d18O <- selectData(renland,"d18O")
+
+
+crete <- readLipd("https://lipdverse.org/geoChronR-examples/arc2k/Arc-Crete.Vinther.2010.lpd") %>% 
+  mapAgeEnsembleToPaleoData(strict.search = TRUE,
+                            age.var = "ageEnsemble",
+                            chron.depth.var = NULL )
+cr.ae <- selectData(crete,"ageEnsemble")
+cr.d18O <- selectData(crete,"d18O")
+
+re <- plotTimeseriesEnsRibbons(X = re.ae,Y = re.d18O) + xlim(c(550,1950))
+cr <- plotTimeseriesEnsRibbons(X = cr.ae,Y = cr.d18O)+ xlim(c(550,1950))
+
+egg::ggarrange(plots = list(re,cr),nrow = 2)
+
+
+co <- corEns(re.ae,re.d18O,
+             cr.ae,cr.d18O,
+             bin.step = 10,
+             max.ens = 1000,
+             gaussianize = FALSE,
+             isopersistent = FALSE)
+
+plotCorEns(co,use.fdr = TRUE)
+
+```
+
+
+
+
+
+
+<!--chapter:end:correlation.Rmd-->
+
+# Principal Components Analysis {#pca}
+
+As always, let's start by loading the packages we need. 
+  
+```{r, results = 'hide', warning = FALSE, message= FALSE }
+library(lipdR)
+library(geoChronR)
+library(magrittr)
+library(dplyr)
+library(purrr)
+library(ggplot2)
+```
+  
+This vignette showcases the ability to perform principal component analysis (PCA, also known as empirical orthogonal function (EOF) analysis. Data are from the [PalMod](pa) compilation. We'll just load a subset of it here, but the rest is available on the LiPDverse()    
+
+```{r indianOceanData,cache=TRUE}
+  FD <- lipdR::readLipd("http://lipdverse.org/geoChronR-examples/PalMod-IndianOcean/PalMod-IndianOcean.zip") 
+```
+
+## Let's explore these data!
+### Make a map
+First, let's take a quick look at where these records are located. geoChronR's `mapLipd` function can create quick maps:
+
+```{r,results="hide",fig.keep="all"}
+mapLipd(FD,map.type = "line",f = 0.1)
+```
+
+### Grab the age ensembles for each record. 
+Now we need to map the age ensembles to paleo for all of these datasets. We'll use purrr::map for this, but you could also do it with sapply(). In this case we're going to specify that all of the age ensembles are named "ageEnsemble", and the chron and paleo depth variables. Fortunately, the naming is consistent across PalMod, making this straightforward.
+```{r mapIOD,results="hide",message=FALSE}
+FD2 = purrr::map(FD,
+                 mapAgeEnsembleToPaleoData,
+                 strict.search = TRUE,
+                 paleo.depth.var = "depth_merged",
+                 chron.depth.var = "depth",
+                 age.var = "ageEnsemble" )
+```
+
+
+### Plot some summary statistics
+
+In this analysis, we're interested in spatiotemporal patterns in the Indian Ocean during the Last Deglaciation. Not all of these records cover that time interval, so let's take a look at the temporal coverage. 
+
+```{r}
+indTib <- FD2 %>% extractTs() %>% ts2tibble() #create a lipd-timeseries-tibble
+
+#use purrr to extract the minimum and maximum ages for each record
+minAge <- map_dbl(indTib$age,min,na.rm = TRUE)
+maxAge <- map_dbl(indTib$age,max,na.rm = TRUE)
+
+#plot the distributions of the ages.
+ggplot()+ geom_histogram(aes(x = minAge,fill = "Min age")) + 
+  geom_histogram(aes(x = maxAge,fill = "Max age"),alpha = 0.5) +
+  scale_fill_manual("",values = c("red","black")) +
+  xlab("Age")
+                   
+```
+OK, so it looks like the ages range from 0 to about 150. But what are the units on those?
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #units}
+Explore the LiPD data to determine the units on the ages, and update your histogram appropriately. 
+:::
+::::
+
+
+### Plot the data
+Let's start by making a stack plot of the surface temperature data in this dataset, to see what we're working with.
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #timeseriesPlot}
+Create a "stack plot" of the Surface Temperature data, ignoring age uncertainty for now. 
+
+<details> 
+<summary>Hint #1</summary>
+  First you'll need to create a lipd-ts-tibble-long object
+</details> 
+<details>
+  <summary>Hint #2</summary>
+Then filter it to just the variable of interest
+</details> 
+<details>
+  <summary>Hint #3</summary>
+Then use plotStack() to plot it up
+</details> 
+:::
+::::
+
+## Filter the data
+OK, there's a lot of data that span a lot of time here. Since we're interested in the deglaciation, we need to find which datasets span the range from at least 10,000 to 30,000 years ago, and that have enough data in that range to be useful. 
+
+There are a few ways to go about this. Here's one that uses `purrr`. Feel free to try a different solution here too!
+
+```{r, warning=FALSE}
+indTs <- extractTs(FD2) #create a lipd-timeseries
+
+# create some variables for screening
+startYear <- 10
+endYear <- 30
+
+#write a function to determine if the dataset has enough values within the target time frame
+nGoodVals <- function(x,startYear,endYear){
+  agesWithValues <- x$age[is.finite(x$paleoData_values)]
+  gv <- which(agesWithValues >= startYear & agesWithValues <= endYear)
+  return(length(gv))
+}
+
+#write a function to determine how much coverage the data has within that target frame
+span <- function(x,startYear,endYear){
+  agesWithValues <- x$age[is.finite(x$paleoData_values)]
+  agesWithValues <- agesWithValues[agesWithValues >= startYear & agesWithValues <= endYear]
+  sout <- abs(diff(range(agesWithValues,na.rm = TRUE)))
+  return(sout)
+}
+
+#use purrr to run those functions over each item in the list
+nValsInRange <- map_dbl(indTs,nGoodVals,startYear,endYear)
+span <- map_dbl(indTs,span,startYear,endYear)
+```
+
+Now we can see for each of these timeseries how many values are between 10 and 30 ka, and how much time range that span corresponds to. We now filter our TS object down to something closer to what we're looking for, and then select on the variable we're looking for, in this, "surface.temp"
+
+```{r}
+#use our indices from above to select only the good timeseries
+TS.filtered <- indTs[nValsInRange > 20 & span > 15] %>% 
+  filterTs("paleoData_variableName == surface.temp") #and then select our variable of interest
+```
+This is the first time we've seen the `filterTs()` function. It's part of the `lipdR` library, and enables *simple* filtering on lipd-ts objects. It's a weaker version of `dplyr::filter()`, and for complex queries you're much better off converting to a tibble and using dplyr. But for simple operations on lipd-ts objects, it works well enough. 
+
+### Plot the data again (#plotAgain)
+
+At this point, we should get our eyes on the data again. Let's make a timeseries plot of the existing data. 
+```{r}
+#convert the lipd-ts object to a lipd-ts-tibble
+tsTib <- ts2tibble(TS.filtered) 
+
+#convert the lipd-ts-tibble object to a lipd-ts-tibble-long
+tp <- tidyTs(tsTib,age.var = "age") 
+
+#filter it only to our time range
+tp <- tp %>% 
+  filter(between(age,10,30))
+
+#and make a timeseries stack plot
+plotTimeseriesStack(tp,time.var = "age")
+```
+
+OK, it looks like our filtering worked as expected. We now have a lipd-timeseries object that contains only the timeseries we want to include in our PCA, and the age ensembles are included. We're ready to move forward with ensemble PCA!
+
+One thing you should notice, is that several of these temperature reconstructions come from the same site. Having multiple, semi-independent records from a single site is relatively common, and something we should consider more down the road.
+
+To conduct PCA, we need to put all of these data onto a common timescale. We will use binning to do this, although there are also other approaches. We also want to repeat the binning across our different ensemble members, recognizing that age uncertainty affects the bins! binTs will bin all the data in the TS from 10 ka to 23 ka into 5 year bins. 
+
+```{r binTS1,results="hide",cache=TRUE}
+binned.TS <- binTs(TS.filtered,bin.vec = seq(10,30,by=.5),time.var = "ageEnsemble")
+```
+
+We're now ready to calculate the PCA!
+
+## Calculate an ensemble PCA
+
+Calculate PCA, using a covariance matrix, randomly selecting ensemble members in each iteration:
+```{r pcaEns1,results="hide",warning=FALSE,cache = TRUE}
+pcout <- pcaEns(binned.TS,pca.type = "cov")
+```
+
+That was easy (because of all the work we did beforehand). But before we look at the results let's take a look at a scree plot to get a sense of how many significant components we should expect. 
+
+```{r}
+plotScreeEns(pcout)
+```
+
+
+It looks like the first two components, shown in black with gray uncertainty shading, stand out above the null model (in red), but the third and beyond look marginal to insignficant. Let's focus on the first two components.
+
+### Plot the ensemble PCA results
+
+Now let's visualize the results. The `plotPcaEns` function will create multiple diagnostic figures of the results, and stitch them together. 
+
+```{r}
+plotPCA <-  plotPcaEns(pcout,
+                       TS = TS.filtered,
+                       map.type = "line",
+                       f=.1,
+                       legend.position = c(0.5,.6),
+                       which.pcs = 1:2,
+                       which.leg = 2)
+```
+
+Nice! A summary plot that combines the major features is produced, but all of the components, are included in the "plotPCA" list that was exported. 
+
+For comparison with other datasets it can be useful to export quantile timeseries shown in the figures. `plotTimeseriesEnsRibbons()` can optionally be used to export the data rather than plotting them. The following will export the PC1 timeseries:
+
+```{r}
+quantileData <- plotTimeseriesEnsRibbons(X = pcout$age,Y = pcout$PCs[,1,],export.quantiles = TRUE)
+
+print(quantileData)
+```
+
+
+### Data weighting
+
+As mentioned in /@ref(plotAgain), we might want to consider the fact that multiple records are coming from the same sites. This could make some sites more influential than others in the PCA. One way to account for this is by "weighting" the analysis. Here we'll rerun the analysis, weighting each record by $1/n$, where n is the number of records at each site.
+
+```{r}
+#use pullTsVariable to pull a variable out of a lipd-ts object
+sitenames <- pullTsVariable(TS.filtered,"geo_siteName")
+
+#use purrr to weight by 1/n
+weights <- purrr::map_dbl(sitenames,~ 1/sum(.x == sitenames))
+
+names(weights) <- sitenames
+weights
+```
+
+Now let's rerun the PCA, using the weights
+
+```{r,results="hide",warning=FALSE,cache = TRUE}
+pcoutWeighted <- pcaEns(binned.TS,pca.type = "cov",weights = weights)
+```
+
+and check out the screeplot
+
+```{r}
+plotScreeEns(pcoutWeighted)
+```
+
+and PCA results again:
+
+```{r}
+plotPCA <-  plotPcaEns(pcoutWeighted,
+                       TS = TS.filtered,
+                       map.type = "line",
+                       f=.1,
+                       legend.position = c(0.5,.6),
+                       which.pcs = 1:2,
+                       which.leg = 2)
+```
+
+In this case, the results are pretty similar. But weighting your PCA input data is a good tool to have in your tool belt.
+
+## Ensemble PCA using a correlation matrix.
+Let's repeat much of this analysis, but this time let's take a look at the data underlying the surface temperature reconstructions, $\delta^{18}O$ and Mg/Ca data.
+
+First, look at the variable names represented in our dataset. This is easiest with our tibble 
+```{r}
+tib.filtered <- indTs[nValsInRange > 20 & span > 15] %>% ts2tibble()
+
+table(tib.filtered$paleoData_variableName)
+```
+
+OK. Let's filter the timeseries again, this time pulling all the $\delta^{18}O$ and Mg/Ca data.
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #d18OMgCafilter}
+Write code to filter tib.filtered to only includes the planktonic d18O and $\delta^{18}O$ and Mg/Ca data.
+:::
+::::
+
+```{r,results="hide",eval = TRUE,echo = FALSE}
+newTS <- tib.filtered %>% 
+  filter(paleoData_variableName == "planktonic.d18O" | paleoData_variableName == "planktonic.MgCa") %>% 
+  as.lipdTs()
+```
+
+Great. It's pretty easy to filter the data if you're used to dplyr, and if you're not, it's not too hard to learn. Now let's take a look at the data. 
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #d18OMgCaPlotstack}
+Create a plotStack visualizing these data. Color the timeseries by variable name. 
+:::
+::::
+
+Take a look at your plot, note the units, and the scale of the variability. Since we're now dealing with variables in different units, we cannot use a covariance matrix.
+```{r binTs2,results="hide",eval = TRUE,echo = FALSE, cache = TRUE}
+binned.TS2 <- binTs(newTS,bin.vec = seq(10,30,by=.5),time.var = "ageEnsemble")
+```
+
+And calculate the ensemble PCA, this time using a covariance matrix. By using a covariance matrix, we'll allow records that have larger variability in $\delta^{18}O$ to influence the PCA more, and those that have little variability will have little impact. This may or may not be a good idea, but it's an important option to consider when possible. 
+
+```{r pcaEns2,results="hide",warning = FALSE}
+pcout2 <- pcaEns(binned.TS2,pca.type = "corr")
+```
+
+Once again, let's take a look at the scree plot:
+
+```{r,fig.width = 4,fig.height = 4}
+plotScreeEns(pcout2)
+```
+
+Once again, the first PC dominates the variability. All of the subsequent PCs are non signficant, but let's include the second third PC in our plot this time as well. 
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #d18OMgCaPlotPca}
+Create a PCA plot showing the output of your data. This time let's explore the options. 
+
+
+1. Show the first 3 PCs
+2. Select a different map background
+3. Change the shapes
+4. Change the color scale. 
+:::
+::::
+
+```{r,fig.width = 8,fig.height = 6,warning = FALSE,echo=FALSE,eval=FALSE}
+plotPCA2 <-  plotPcaEns(pcout2,
+                        TS = newTS,
+                        which.pcs = 1:3,  
+                        map.type = "stamen",
+                        dot.size = 7,
+                        shape.by.archive = FALSE,
+                        high.color = "purple",
+                        low.color = "green",
+                        f=.2)
+```
+
+Again, the scree plot tells us that only the first EOF pattern is worth interpreting, so let's interpret it!
+
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #interpret}
+1. Is the timeseries more or less what you expected? How does it compare from what we got from the surface temperature data?
+2. The spatial pattern show high positive and high negative values? How does this compare with our previous analysis? What might be the origin of this pattern?
+:::
+::::
+
+## Chapter project
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #pcaProject}
+For your chapter project for PCA, we're going to take a bigger picture look at planktonic $\delta^{18}O$. Specifically, I'd like you to conduct time-uncertain PCA on global planktonic $\delta^{18}O$ data that span from 130ka up to the present. I've prepared a subset of the compilation that has at least 100 observations between 130 ka and the present, and that spans at least 100 kyr during that interval, which is a great start. [That subset is here](https://lipdverse.org/geoChronR-examples/Palmod-Global-d18O/Palmod-Global-d18O.zip). You'll have to make some decisions along the way. Go ahead and make your choices, just have a good reason for each choice you make!  
+:::
+::::
+
+
+
+<!--chapter:end:pca.Rmd-->
+
+# Regression and Calibration-in-time
+
+In this chapter, we will replicate the analysis of [@Boldt2015], performing age-uncertain calibration-in-time on a chlorophyll reflectance record from northern Alaska, using geoChronR.
+
+The challenge of age-uncertain calibration-in-time is that age uncertainty affects both the calibration model (the relation between the proxy data and instrumental data) and the reconstruction (the timing of events in the reconstruction). geoChronR simplifies handling these issues. 
+
+
+Let's start by loading the packages we'll need. 
+
+```{r, results = FALSE, warning = FALSE, message= FALSE }
+library(lipdR) #to read and write LiPD files
+library(geoChronR) #of course
+library(readr) #to load in the instrumental data we need
+library(ggplot2) #for plotting
+``` 
+
+## Load the LiPD file
+OK, we'll begin by loading in the Kurupa Lake record from [@Boldt2015].
+```{r}
+K <- lipdR::readLipd("http://lipdverse.org/geoChronR-examples/Kurupa.Boldt.2015.lpd")
+```
+
+### Check out the contents
+```{r}
+sp <- plotSummary(K,paleo.data.var = "RABD",summary.font.size = 6)
+print(sp)
+```
+
+
+## Create an age model
+
+```{r KurupaBacon,results="hide",fig.show='hide',message=FALSE,warning=FALSE,cache=TRUE}
+K <- runBacon(K,
+              lab.id.var = 'labID', 
+              age.14c.var = 'age14C', 
+              age.14c.uncertainty.var = 'age14CUncertainty',
+              age.var = 'age', 
+              age.uncertainty.var = 'ageUncertainty', 
+              depth.var = 'depth', 
+              reservoir.age.14c.var = NULL, 
+              reservoir.age.14c.uncertainty.var = NULL, 
+              rejected.ages.var = NULL,
+              bacon.acc.mean = 10,
+              bacon.thick = 7,
+              ask = FALSE,
+              bacon.dir = "~/Cores",
+              suggest = FALSE,
+              close.connection = FALSE)
+```
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #reg-ex-1}
+In this chapter, the exercises will have conduct the analysis in a parallel universe, where you make different, but reasonable choices and see what happens. 
+
+First, create the best age model you can using either Bchron or Oxcal.
+:::
+::::
+
+
+### And plot the ensemble output
+
+```{r}
+plotChron(K,age.var = "ageEnsemble",dist.scale = 0.2)
+```
+
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #reg-ex-2}
+Plot your model. How does it compare to the Bacon model?
+:::
+::::
+
+## Prepare the data
+### Map the age ensemble to the paleodata table
+This is to get ensemble age estimates for each depth in the paleoData measurement table
+
+```{r}
+K <- mapAgeEnsembleToPaleoData(K,age.var = "ageEnsemble")
+```
+
+
+### Select the paleodata age ensemble, and RABD data that we'd like to regress and calibrate
+
+```{r}
+kae <-  selectData(K,"ageEnsemble")
+rabd <- selectData(K,"RABD")
+```
+
+
+### Now load in the instrumental data
+```{r}
+kurupa.instrumental <- readr::read_csv("http://lipdverse.org/geoChronR-examples/KurupaInstrumental.csv")
+```
+
+### Check age/time units before proceeding
+
+```{r}
+kae$units
+```
+
+yep, we need to convert the units from BP to AD
+
+```{r}
+kae <- convertBP2AD(kae)
+```
+
+### Create a "variable list" for the instrumental data
+
+```{r}
+kyear <- list()
+kyear$values <- kurupa.instrumental[,1]
+kyear$variableName <- "year"
+kyear$units <- "AD"
+
+kinst <- list()
+kinst$values <- kurupa.instrumental[,2]
+kinst$variableName <- "Temperature"
+kinst$units <- "deg (C)"
+```
+
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #reg-ex-3}
+Repeat all of this prep work, including mapping the age uncertainties and extracting the variables. 
+:::
+::::
+
+### Calculate an ensemble correlation between the RABD and local summer temperature data
+```{r,results="hide",warning=FALSE}
+corout <- corEns(kae,rabd,kyear,kinst,bin.step=2,percentiles = c(.05,.5,.95 ))
+```
+
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #reg-ex-4}
+Calculate the correlation ensemble, but you decide to use 5-year bins instead of 2-year bins.
+:::
+::::
+
+### And plot the output
+Note that here we use the "Effective-N" significance option as we mimic the Boldt et al. (2015) paper.
+```{r}
+plotCorEns(corout,significance.option = "eff-n")
+```
+
+Mixed results. But encouraging enough to move forward.
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #reg-ex-5}
+After reading Chapter \@ref(corr), you know that the isospectral method is usually more reliable. Use that instead.
+:::
+::::
+
+## Perform ensemble regression
+OK, you've convinced yourself that you want to use RABD to model temperature back through time. We can do this simply (perhaps naively) with regression, and lets do it with age uncertainty, both in the building of the model, and the reconstructing
+```{r,results="hide",fig.keep="all"}
+regout <- regressEns(time.x = kae,
+                    values.x = rabd,
+                    time.y =kyear,
+                    values.y =kinst,
+                    bin.step=3,
+                    gaussianize = FALSE,
+                    recon.bin.vec = seq(-4010,2010,by=20))
+```
+
+
+:::: {.blackbox data-latex=""}
+::: {.exercise #reg-ex-6}
+Again, use 5-year time steps, and also gaussianize to avoid the potential impact of skewed data
+:::
+::::
+
+### And plot the output
+
+```{r}
+regPlots <- plotRegressEns(regout,alp = 0.01,font.size = 8)
+```
+
+This result is consistent with that produced by Boldt et al., (2015), and was much simpler to produce with geoChronR.
+
+## Chapter project
+:::: {.blackbox data-latex=""}
+::: {.exercise #reg-ex-7}
+Plot your results. How did making different, reasonable (perhaps even better?) choices affect the final outcome of the regression?
+:::
+::::
+
+<!--chapter:end:regression.Rmd-->
+
+# Spectral Analysis {#spectral}
+
+In this notebook we demonstrate how to use the spectral analysis features of GeoChronR using the "ODP846" record described in:
+
+  - Mix, A. C., J. Le, and N. J. Shackleton (1995a), Benthic foraminiferal stable isotope stratigraphy from Site 846: 0–1.8 Ma, Proc. Ocean Drill. Program Sci. Results, 138, 839–847.
+  - Shackleton, N. J. (1995), New data on the evolution of Pliocene climate variability, in Paleoclimate and Evolution, With Emphasis on Human Origins, edited by E. S. Vrba et al., pp. 242-248, Yale Univ. Press, New Haven, CT.
+
+The data were aligned to the Benthic Stack of [Lisiecki & Raymo (2005)](https://agupubs.onlinelibrary.wiley.com/doi/abs/10.1029/2004PA001071) using the [HMM-Match](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1002/2014PA002713) algorithm [(Khider et al, 2017)](https://agupubs.onlinelibrary.wiley.com/doi/abs/10.1002/2016PA003057).  The latter is a probabilistic method that generates an ensemble of 1000 possible age models compatible with the chronostratigraphic constraints.
+
+We first remotely load the data using the LiPD utilities. Depending on your connectivity, this may take a minute as the file is fairly large (2.6Mb).
+
+```{r load data, message=FALSE, results = 'hide', warning = FALSE}
+library(lipdR) # to load the file
+library(geoChronR) # to analyze it
+library(ggthemes) # to define plotting theme
+library(ggplot2)  # to plot
+
+I <- readLipd("http://lipdverse.org/geoChronR-examples/ODP846.Lawrence.2006.lpd")
+```
+
+Now let us take a first look at the median age model:
+
+
+```{r, message=FALSE, results = 'hide', warning = FALSE}
+d18O =  I$chronData[[1]]$model[[1]]$summaryTable[[1]]$d180$values
+t.med <- I$chronData[[1]]$model[[1]]$summaryTable[[1]]$median$values
+L <- geoChronR::mapAgeEnsembleToPaleoData(I,paleo.meas.table.num = 1,age.var = "age")
+age = geoChronR::selectData(L,"ageEnsemble",meas.table.num = 1)
+temp = geoChronR::selectData(L,"temp muller",meas.table.num = 1)
+plotTimeseriesEnsRibbons(ggplot(),X=age,Y=temp,color.low="orchid",color.high="darkorange3",color.line="orange",line.width=0.5,alp=0.3) + scale_x_reverse() + theme_hc(style = "darkunica")
+```
+
+
+
+This paleoclimate record features:
+
+- a long-term cooling trend ($\delta^{18}\mathrm{O}$ gets more positive over time) characteristic of late Neogene and Quaternary.
+- some quasi-periodic oscillations (the legendary [Pleistocene Ice Ages](https://www.ncdc.noaa.gov/abrupt-climate-change/Glacial-Interglacial%20Cycles))
+- nonstationary behavior, related to the well-known mid-Pleistocene transition from a "41k world" to a "100k world" somewhere around 0.8 Ma [(Paillard, 2001)](https://agupubs.onlinelibrary.wiley.com/doi/pdf/10.1029/2000RG000091).
+
+To keep things simple and lower computational cost, let's focus on the last million years, and use the median age model. Now, a standard assumption of spectral analysis is that data are evenly spaced in time. In real-world paleo timeseries this is seldom the case. Let's look at the distribution of time increments in this particular core, as contrained by this tuned age model:
+
+```{r, message=FALSE, results = 'hide', warning = FALSE}
+age.median = matrixStats::rowQuantiles(age$values,probs = 0.5)
+temp.median = matrixStats::rowQuantiles(as.matrix(temp$values),probs = 0.5)
+t <-age.median[age.median < 1000]
+X <- temp.median[age.median < 1000]
+X <- X - mean(X)
+#dfs = dplyr::filter(df,t<=1000)
+dt = diff(t)
+ggplot() + xlim(c(0,10)) +
+  geom_histogram(aes(x=dt,y = ..density..), bins = 25, ,alpha = 0.8, fill = "orange") + ggtitle("Distribution of time intervals") + theme_hc(style = "darkunica") + xlab(expression(Delta*"t"))
+```
+
+We see that over the past 1 Ma, the time increments ($\Delta t$) are sharply peaked around 2 ka, but they range from 0 to about 7.5 ka. For now, let us assume that the time axis, albeit uneven, is well-known (no uncertainty).
+## Time-certain spectral analysis
+From this point there are two ways to proceed: 1) use methods that explictly deal with unevenly-spaced data, or 2) interpolate to a regular grid and apply standard methods.
+In the first case, we could use the *Lomb-Scargle periodogram* or rather its version tailored for paleoclimate data, [REDFIT](https://www.nonlin-processes-geophys.net/16/43/2009/). In the second case, we can interpolate and use a method tailored to evenly-spaced data.
+
+<!-- ### Lomb-Scargle periodogram -->
+<!-- This is a very standard method implemented in many packages. For a review, see [VanderPlas (2018)](https://iopscience.iop.org/article/10.3847/1538-4365/aab766/meta). There are several ways to implement Lomb-Scargle. geoChronR does this via the [lomb](https://www.rdocumentation.org/packages/lomb) package. -->
+
+<!-- To establish significance, we have a few choices. We re-use Stephen Meyer's excellent [astrochron](https://www.rdocumentation.org/packages/astrochron) package for this purpose, as it implements the methods described in [Meyers, (2012)](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2012PA002307).  Several nulls could be chosen here, and we focus first on a power-law, characteristic of many paleoclimate records (e.g. [Zhu et al, 2019](https://www.pnas.org/content/116/18/8728.short)). -->
+
+
+```{r lomb-scargle, message=FALSE, results = 'hide', warning = FALSE,eval=FALSE,echo = FALSE}
+spec.ls <- computeSpectraEns(t,X,method = 'lomb-scargle')
+ls.df <- data.frame("freq" = spec.ls$freqs, "pwr" = spec.ls$power)
+# estimate significance against a power-law fit
+f.low <-  1e-3; f.high <- 0.1
+plaw.ls <-  astrochron::pwrLawFit(ls.df, dof = 2, flow = f.low, fhigh = f.high, output = 1, genplot = F)
+
+cl.df <- data.frame(plaw.ls[,union(1,c(5:7))]) # extract confidence limits
+# rename columns to be less silly
+names(cl.df)[1] <- "freq"
+names(cl.df)[2] <- "90% CL"
+names(cl.df)[3] <- "95% CL"
+names(cl.df)[4] <- "99% CL"
+
+# plot this
+pticks = c(10, 20, 50, 100, 200, 500, 1000)
+prange = c(10,1000)
+yl = c(0.01,1000)
+p.ls <- plotSpectrum(ls.df,cl.df,x.lims = prange,x.ticks = pticks, y.lims = yl,
+                     color.line='orange', color.cl='white') +
+  ggtitle("IODP 846 d18O, Lomb-Scargle periodogram") +
+  theme_hc(style = "darkunica") + theme(axis.ticks.x = element_line(color = "gray"))
+
+# label periodicities of interest
+p.ls <- periodAnnotate(p.ls, periods = c(19,23,41,100), y.lims =c(0.01,100))
+show(p.ls)
+```
+
+<!-- It is clearly seen that the data contain significant energy (peaks) near, but not exactly at, the famed Milankovitch periodicities (100, 41, 23, and 19 kyr).  These periodicities (particularly the eccentricity (100kyr) and obliquity (40kyr)) rise above the various power law nulls, but we see hints of higher power at high-frequencies. We shall soon see that this is an artifact of the Lomb-Scargle methods, which does not use any tapers and therefore displays high variance (in this context, spurious peaks). Other methods smooth out that noise.    -->
+
+[REDFIT](https://boris.unibe.ch/id/eprint/38577) smooths the spectra via application of Welch’s Overlapped Segment Averaging, which by default uses 3 segments that overlap by about 50%. geoChronR uses its [dplR](https://cran.r-project.org/package=dplR) implementation, which differs slightly from the published algorithm (see `?dplR::redfit` for details).
+
+```{r REDFIT, message=FALSE, results = 'hide', warning = FALSE}
+spec.redfit <- computeSpectraEns(t,X,method = 'redfit')
+redfit.df <- data.frame("freq" = spec.redfit$freq, "pwr" = spec.redfit$power)
+cl.df <- data.frame("freq" = spec.redfit$freq, "95% CL" = spec.redfit$power.CL)
+names(cl.df)[2] <- "95% CL"
+
+# plot this
+pticks = c(10, 20, 50, 100, 200, 500, 1000)
+prange = c(10,1000)
+yl = c(0.01,1000)
+p.ls <- plotSpectrum(redfit.df,cl.df,x.lims=prange,x.ticks = pticks, y.lims = yl,
+                     color.line='orange', color.cl='white') +
+  ggtitle("IODP 846 d18O, REDFIT estimation") +
+  theme_hc(style = "darkunica") + theme(axis.ticks.x = element_line(color = "gray"))
+
+# label periodicities of interest
+p.ls <- periodAnnotate(p.ls, periods = c(19,23,41,100), y.lims =c(0.01,100))
+show(p.ls)
+```
+
+Now, this clearly  is smoother, perhaps a little too much. One could play with `n50`, the size of the window, or `iwin`, its shape, to reduce the smoothing. There are still peaks near the Milankovitch periodicities, but in many cases they do not stand out (cf 41 kyr).
+
+
+### Multi-taper Method
+The Lomb-Scargle periodogram is a decent way to deal with unevenly-spaced timeseries, but it is still a periodogram, which has several problems. In particular, it is inconsistent: the variance of each estimate goes to infinity as the number of observations increases. A much better estimator is Thomson's Multi-Taper Method [Thomson, 1982](https://doi.org/10.1109/PROC.1982.12433), which is [consistent](https://en.wikipedia.org/wiki/Consistent_estimator) (the more data you have, the better you know the spectrum, as it should be). Formally, MTM optimizes the classic bias-variance tradeoff inherent to all statistical inference. It does so by minimizing leakage outside of a frequency band with half-bandwidth equal to $pf_R$, where $f_R=1/(N \Delta t)$ is the Rayleigh frequency, $\Delta t$ is the sampling interval, $N$ the number of measurements, and $p$ is the so-called time-bandwidth product. $p$ can only take a finite number of values, all multiples of 1/2 between 2 and 4. A larger $p$ means lower variance (i.e. less uncertainty about the power), but broader peaks (i.e. a lower spectral resolution), synonymous with more uncertainty about the exact location of the harmonic. So while MTM might not distinguish between closely-spaced harmonics, it is much less likely to identify spurious peaks, especially at high frequencies.  In addition, a battery of formal tests have been devised with MTM, allowing under reasonably broad assumptions to ascertain the significance of spectral peaks. We show how to use this "harmonic F-test" below.
+
+A notable downside of MTM is that it only handles evenly-spaced data. Small potatoes! As we saw above, the data are not that far from evenly-spaced, so let's interpolate and see what we get. Conveniently, both the interpolation routine and MTM are available within the [astrochron](https://www.rdocumentation.org/packages/astrochron) package.
+
+```{r interpolation, message=FALSE, results = 'hide', warning = FALSE}
+library(astrochron)
+dfs = data.frame(time=t,temp=X)
+dti = 2.5  # interpolation interval, corresponding to the mode of the \Delta t distribution
+dfe = linterp(dfs,dt=dti)
+tbw = 2  #time-bandwidth product for the analysis; we use the minimum allowed to limit smoothing.
+```
+Most of the `astrochron` routines produce a diagnostic graphical output, which you can silence by turning the `genplot` flag to `FALSE`. However, it is instructive to take a peak at the top-left panel and see where the interpolation has made a difference. We see that the black line closely espouses the red measurements for most of the timeseries, reassuring us that this process did not introduce spurious excursions or oscillations.
+
+Now let's compute the spectrum using MTM on the equally-spaced data stored in `dfe`.
+We continue to manually label Milankovitch frequencies (in orange) and label in green (technically, "chartreuse") the periodicities identified as significant by the test. Here, we start with the default option of a test against an AR(1) background.
+
+```{r MTM, message=FALSE, results = 'hide', warning = FALSE}
+spec.mtm <- computeSpectraEns(dfe$time,dfe$temp,method = 'mtm', tbw=tbw) # tbw is the time-bandwidth product, p in the above
+sig.freq <- astrochron::mtm(dfe,tbw=tbw, padfac=5,ar1=TRUE,genplot = F,output=2, verbose = F, detrend=T)
+mtm.df <- data.frame("freq" = spec.mtm$freqs, "pwr" = spec.mtm$power)
+
+# plot this
+prange = c(5,1000)
+
+p.mtm <- plotSpectrum(mtm.df,x.lims=prange,x.ticks = pticks, y.lims = c(1e-6,10), color.line='orange') +
+  ggtitle("IODP 846 d18O, Multi-taper method, AR(1) null") + xlab("Period (ky)") +
+  theme_hc(style = "darkunica") + theme(axis.ticks.x = element_line(color = "gray"))
+
+# label periodicities of interest
+p.mtm <- periodAnnotate(p.mtm, periods = c(19,23,41,100), y.lims = c(1e-6,1))
+p.mtm <- periodAnnotate(p.mtm, periods = 1/sig.freq$Frequency,color = "chartreuse",y.lims = c(1e-6,.1))
+show(p.mtm)
+```
+
+You may notice a few differences to the Lomb-Scargle periodogram. First, the high frequency part is much smoother, getting rid of a lot of high-frequency noise. There is also a clear power law behavior from periods of 5 to 100 ky, which in this log-log plotting convention manifests as a linear decrease. *Astrochron* implements several tests to detect harmonic (sinusoidal) components. Like all tests, they are heavily dependent on a null hypothesis. By default, *astrochron::mtm()* assumes that we test against an AR(1) model. Using the option `output = 2`, it will export the frequencies identified as "significant" by this procedure. In this case, it roughly identifies the Milankovitch frequencies we expected to find, plus many others. What should we make of that? The 100ka cycle is now labeled as 90 ka, though given the peak's width, one should not be foolish enough to consider them distinct. There is also evidence that this peak may be the result of ice ages clustering every 2 to 3 obliquity cycles (81 or 123 ka), averaging around 100 over the pleistocene [Huybers & Wunsch (2005)](https://www.nature.com/articles/nature03401). Bottom line: with such spectral resolution, 94 and 100 are one and the same, and may really be a mixture of 80 and 120.  Overall, this test identifies 8 periodicities as significant, compared to the 4 we'd expect.
+
+It's helpful to take a step back and contemplate our null hypothesis of AR(1) background, and the real possibility that without adjustments, we might be underestimating the lag-1 autocorrelation, hence making the test too lenient. There are alternatives to that in *Astrochron*, using either the robust method of [Mann & Lees (1996)](https://link.springer.com/article/10.1007/BF00142586) or a less error-prone version by the author [Meyers, (2012)](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2012PA002307), called LOWSPEC. You might want to experiment with that.
+
+Another factor to play with is the padding factor (`padfac`). In a nutshell, padding helps  increase the spectral resolution at little to no cost (see [here](https://dsp.stackexchange.com/questions/741/why-should-i-zero-pad-a-signal-before-taking-the-fourier-transform) for an informal account). You should also try and see what happens when it varies. (note: we used the *Astrochron* default values here)
+
+Most important of all is the choice of null [(Vaughan et al, 2011)](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2011PA002195). Past work has shown that the continuum of climate variability is well described by power laws [Huybers & Curry (2006)](https://www.nature.com/articles/nature04745), so this should be a far better null against which to test the emergence of spectral peaks. Never fear! *Astrochron* has an app for that:
+
+```{r, message=FALSE, results = 'hide', warning = FALSE}
+mtmPL.df <- computeSpectraEns(t,X,method = 'mtm', tbw=tbw, mtm_null = 'power_law') # tbw is the time-bandwidth product, p in the above
+sig.freqPL <- astrochron::mtmPL(dfe,tbw=tbw,padfac=5,genplot = F,output=2, verbose = F, flow=f.low, fhigh=f.high)
+mtm.df = mtmPL.df[c(1,2)]
+names(mtm.df)[1] <- "freq"
+names(mtm.df)[2] <- "pwr"
+
+cl.df <- data.frame(mtmPL.df$freqs,mtmPL.df$power.CL) # extract confidence limits
+# rename columns to be less silly
+names(cl.df)[1] <- "freq"
+#names(cl.df)[2] <- "90% CL"
+names(cl.df)[2] <- "95% CL"
+#names(cl.df)[4] <- "99% CL"
+
+
+# plot it
+p.mtmPL <- plotSpectrum(mtm.df,cl.df,x.lims = prange,x.ticks = pticks,
+                        y.lims = c(1e-6,10),color.line='orange', color.cl='white') +
+  ggtitle("IODP 846 d18O, Multi-taper method, power-law null") + xlab("Period (ky)") +
+  theme_hc(style = "darkunica") + theme(axis.ticks.x = element_line(color = "gray"))
+
+# label periodicities of interest
+p.mtmPL <- periodAnnotate(p.mtmPL, periods = c(19,23,41,100), y.lims = c(1e-6,1))
+p.mtmPL <- periodAnnotate(p.mtmPL, periods = 1/sig.freqPL$Frequency,color = "chartreuse",y.lims = c(1e-6,.1))
+show(p.mtmPL)
+```
+
+Sure enough, this gets rid of a few cycles, but many remain. A few regions of the spectrum poke above the 95% confidence limit, but one should not be so foolish as to identify every single periodicity in these ranges to be independent. This is related to the [multiple hypothesis problem](https://en.wikipedia.org/wiki/Multiple_comparisons_problem). However, as pointed out by [Meyers, (2012)](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2012PA002307), even that misses the point: sedimentary processes (and many processes in other proxy archives) tend to smooth out the signal over the depth axis (hence, over time), making comparisons at neighboring frequencies highly dependent. One solution is to use predictions made by a physical model about the frequency and relative amplitude of astronomical cycles [Meyers & Sageman, 2007](http://www.ajsonline.org/content/307/5/773). However this may not be applicable to all spectral detection problems. We thus refrain from implementing "cookie-cutter" solutions in GeoChronR, to force the user to think deeply about the null hypothesis and the most sensible way to test it.
+
+### Weighted Wavelet Z-transform (*nuspectral*)
+An interpolation-free alternative to MTM is the Weighted Wavelet Z-transform of [Foster, (1996)](http://adsabs.harvard.edu/cgi-bin/bib_query?1996AJ....112.1709F). The idea of spectral analysis is to decompose the signal on an orthogonal basis of sines and cosines. Data gaps cause this basis to lose its orthogonality, creating energy leakage. WWZ mitigates this problem using an inverse approach. Because it is wavelet based, it does not rely on interpolation or detrending. WWZ was adapted  by [Kirchner & Neal (2013)](https://www.pnas.org/content/110/30/12213.short), who employed basis rotations to mitigate the numerical instability that occurs in pathological cases with the original algorithm. A paleoclimate example of its use is given in [Zhu et al (2019)](https://www.pnas.org/content/116/18/8728.short)).
+
+The WWZ method has one adjustable parameter, a decay constant that balances the time resolution and frequency resolution of the wavelet analysis. The smaller this constant is, the sharper the peaks.
+
+We wanted to offer GeoChronR users a better alternative to Lom-Scargle, but the WWZ code is relatively complex. We thus chose to incoporate the *nuspectral* method of [Mathias et al (2004)](https://www.jstatsoft.org/article/view/v011i02) based on a similar idea. However, it is not equivalent to WWZ. The main difference has to do with the approximation of the mother wavelet by a cubic polynomial with compact support. This speeds up computation at the cost of much accuracy. [Mathias et al (2004)](https://www.jstatsoft.org/article/view/v011i02) also describe implementations of complex wavelets in C (a compiled language, faster with loops), but we were not able to obtain any sensible results with those. For now, it is incorporated into GeoChronR to encourage further development.
+
+Readers interested in a more robust implementation of WWZ may want to consider [pyleoclim](http://linkedearth.github.io/Pyleoclim_util/Introduction.html), a Python package.  This can be called in R via the [Reticulate](https://rstudio.github.io/reticulate/) package.
+
+## Time-uncertain spectral analysis
+Now let's consider age uncertainties.
+
+The GeoChronR approach to quantifying and propagating those uncertainties is to leverage the power of ensembles. Here we will illustrate this with MTM.  Let us repeat the previous analysis by looping over the 1,000 age realizations output by the tuning algorithm HMM-Match. That means computing 1000 spectra. We've already seen that *nuspectral* is too slow for an ensemble job, so let's leave it out. Also, since REDFIT is a tapered version of Lomb-Scargle, and comes with more features, let's focus here on comparing an REDFIT and MTM in ensemble mode.
+
+
+```{r ensemble-mode-MTM, message=FALSE, results = 'hide', warning = FALSE, cache = TRUE}
+time = age$values[age.median < 1000,]  # age ensemble for ~ last 1 Ma
+values = temp$values[age.median < 1000]
+mtm.ens.spec = computeSpectraEns(time,values,
+                                 max.ens = 1000,
+                                 method = 'mtm',
+                                 tbw=tbw, padfac=5,
+                                 mtm_null = 'AR(1)')
+```
+
+This took a few seconds with 1000 ensemble members, and the resulting output is close to 10 Mb. Not an issue for modern computers, but you can see why people weren't doing this in the 70's, even if they wanted to. Now, let's plot the result:
+
+```{r ensemble-mode-MTM2, message=FALSE, results = 'hide', warning = FALSE}
+ar1.df <- data.frame(mtm.ens.spec$freqs,mtm.ens.spec$power.CL)
+# rename columns to be less silly
+names(ar1.df)[1] <- "freq"
+names(ar1.df)[2] <- "95% CL"
+
+p.mtm.ens <- plotSpectraEns(spec.ens = mtm.ens.spec, cl.df = ar1.df, x.lims = c(10,150), y.lims = c(1e-5,1e-1),
+                            color.line='darkorange',
+                            color.low='darkorange2',
+                            color.high='coral4',color.cl = 'white') +
+  ggtitle("IODP 846 age ensemble, MTM") + theme_hc(style = "darkunica") +
+  theme(axis.ticks.x = element_line(color = "gray"))
+
+# label periodicities of interest
+p.mtm.ens <- periodAnnotate(p.mtm.ens, periods = c(19,23,41,100), y.lims =c(0.01,0.05))
+show(p.mtm.ens)
+```
+
+To this we can add the periods identified as significant owing to MTM's harmonic ratio test. geoChronR deals with it by computing at each frequency the fraction of ensemble members that exhibit a significant peak. One simple criterion for gauging the level of support for such peaks given age uncertainties is to pick out those periodicities that are identified as significant more than 50% of the time. 
+
+```{r MTM-ensemble, message=FALSE, results = 'hide', warning = FALSE}
+per = 1/cl.df$freq
+sig_per =  which(mtm.ens.spec$sig.freq>0.5)
+p.mtm.ens <- periodAnnotate(p.mtm.ens, periods = per[sig_per],color = "chartreuse",y.lims = c(1e-5,5e-4))
+show(p.mtm.ens)
+```
+
+One could of course, impose a more stringent criterion (e.g. 80%, 90%, etc). To do that, specify `which(mtm.ens.spec$sig.freq>0.8)` or `which(mtm.ens.spec$sig.freq>0.9)`. That relatively close peaks appear significant may be an artifact of neglecting the multiple hypothesis problem (cf Vaughan et al, 2011).
+
+So what do we find? Consistent with previous investigations (e.g. [Mudelsee et al 2009](https://npg.copernicus.org/articles/16/43/2009/)), the effect of age uncertainties is felt more at high frequencies, with the effect of broadening peaks, or lumping them together. Again, the peaks that rise above the power-law background are the ~100kyr and ~40kyr peaks, which is not surprising. There is significant energy around the precessional peaks, but it is rather spread out, and hard to tie to particular harmonics. No doubt a record with higher-resolution and/or tighter chronology would show sharper precessional peaks.
+
+Do we get the same answer in REDFIT? Let's find out.
+
+```{r ensemble-mode-REDFIT, message=FALSE, results = 'hide', warning = FALSE, cache=TRUE}
+spec.redfit.ens <- computeSpectraEns(time,values,max.ens = 1000, method = 'redfit')
+cl.ens.df     <- data.frame("freq" = spec.redfit.ens$freq, "pwr95" = spec.redfit.ens$power.CL) # store confidence limits
+names(cl.ens.df)[2] <- "95% CL"
+```
+
+again, it took a bit of time. let's plot the result:
+
+```{r ensemble-mode-REDFIT2, message=FALSE, results = 'hide', warning = FALSE}
+p.redfit.ens <- plotSpectraEns(spec.ens = spec.redfit.ens,
+                               cl.df = cl.ens.df,
+                               x.lims = c(10,150),
+                               color.line='darkorange',
+                               color.low='darkorange2',
+                               color.high='coral4',
+                               color.cl = 'white') +
+  ggtitle("IODP 846 age ensemble, redfit") +
+  theme_hc(style = "darkunica") +
+  theme(axis.ticks.x = element_line(color = "gray"))
+
+# label periodicities of interest
+p.redfit.ens <- periodAnnotate(p.redfit.ens, periods = c(19,23,41,100), y.lims =c(0.01,500))
+show(p.redfit.ens)
+```
+
+The result is quite a bit smoother here, perhaps because of the choice of parameters.
+
+
+## Conclusion
+There are several takeaways from this example:
+
+1. geoChronR implements 4 different spectral methods, with different features and assumptions. This allows users to explore whether results obtained with one method are robust to these choices.  
+2. The methods are enabled for single age models, as well as age ensembles.
+3. The choice of null hypothesis is always highly consequential, and should be made with care.
+4. Hunting for astronomical (or other) frequencies in paleoclimate timeseries takes extreme care, and cannot be answered in one function call. In this particular example where the data are nearly evenly spaced, and interpolation has a negligible impact, the best choice is MTM for two reasons: (1) because it is optimal, in the sense that it minimizes spectral leakage, and (2) because the implementation used here (derived from *astrochron*) allows to flexibly apply different tests of significance. Not such luxury is afforded by the other methods at present.
+5. There is no one-size-fits-all method that will solve your exact problem, but it might get you started on asking relevant questions. Readers are invited to consider [Vaughan et al, 2011](https://doi.org/10.1029/2011PA002195) and the work of Stephen Meyers on this topic:
+- [Meyers, 2012](https://doi.org/10.1029/2012PA002307)
+- [Meyers, 2015](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1002/2015PA002850)
+- [Meyers & Malinverno 2018](www.pnas.org/cgi/doi/10.1073/pnas.1717689115)
+
+<!--chapter:end:spectral.Rmd-->
+

@@ -20,7 +20,7 @@ library(egg)
 
 ## First look
 
-LiPD files for the [Hulu Cave speleothem]("http://lipdverse.org/geoChronR-examples/Hulucave.Wang.2001-ens.lpd") $\delta^{18}$O and the [GISP2 ice core]("http://lipdverse.org/geoChronR-examples/GISP2.Alley.2000-ens.lpd") $\delta^{18}$O records are available at following the hyperlinks. 
+LiPD files for the [Hulu Cave speleothem]("https://lipdverse.org/geoChronR-examples/Hulucave.Wang.2001-ens.lpd") $\delta^{18}$O and the [GISP2 ice core]("https://lipdverse.org/geoChronR-examples/GISP2.Alley.2000-ens.lpd") $\delta^{18}$O records are available at following the hyperlinks. 
 These LiPD files already include age ensembles, so you don't need to create new age models. Use the skills you learned in Chapters \@ref(data) and \@ref(agemodelling) to take a first look at the data. 
 
 :::: {.blackbox data-latex=""}
@@ -54,8 +54,10 @@ Create a figure that that uses ensemble timeseries plots to compares the Hulu Ca
 hulu <- readLipd("http://lipdverse.org/geoChronR-examples/Hulucave.Wang.2001-ens.lpd")
 gisp2 <- readLipd("http://lipdverse.org/geoChronR-examples/GISP2.Alley.2000-ens.lpd")
 
+gisp2$paleoData[[1]]$measurementTable[[1]]$year <- NULL
+
 hulu <- mapAgeEnsembleToPaleoData(hulu,age.var = "ageEnsemble")
-gisp2 <- mapAgeEnsembleToPaleoData(gisp2,chron.depth.var = NULL,paleo.depth.var = NULL)
+gisp2 <- mapAgeEnsembleToPaleoData(gisp2,age.var = "ageEnsemble",chron.depth.var = NULL,paleo.depth.var = NULL)
 
 
 hulu.ae <- selectData(hulu,var.name = "ageEnsemble")
@@ -63,8 +65,8 @@ hulu.d18O <- selectData(hulu,var.name = "d18O")
 gisp2.d18O <- selectData(gisp2,var.name = "temp")
 gisp2.ae <- selectData(gisp2,var.name = "ageEnsemble")
 
-#plotTimeseriesEnsLines(X = hulu.ae,Y = hulu.d18O)
-#plotTimeseriesEnsLines(X = gisp2.ae,Y = gisp2.d18O)
+plotTimeseriesEnsLines(X = hulu.ae,Y = hulu.d18O)
+plotTimeseriesEnsLines(X = gisp2.ae,Y = gisp2.d18O)
 
 
 ```
@@ -162,7 +164,7 @@ Some of the key ones to pay attention to are:
 
 *    **bin.step** This variable sets the size of the bins that the data will be averaged into to align before correlation. Smaller bins will focus allow examination of shorter timescales, and increase the the sample size, but also increase the number of empty bins, and tend to increase autocorrelation. The right bin size varies depends on the distribution of resolutions in your datasets. 
 
-*    **isopersistent** and **isospectral** These need to be set to TRUE if you want to calculate null significance models for significance testing with these methods. On the other hand, turning it off will speed up calculation if you don't need it. 
+*    **isopersistent** and **isospectral** These need to be set to TRUE if you want to calculate null significance models for significance testing with these methods. On the other hand, turning it off will speed up calculation if you don't need it. Typically, you would only want to use one method (isospectral is the default), but it's possible to calculate both to facilitate easy comparison, which we do here. 
 
 *    **gaussianize** You'll find the gaussianize option throughout geoChronR, and it's typically the default option. `gaussianize` will transform the data into a Gaussian distribution, recognizing that many of the methods and/or their significance testing assume that the input data are normally distributed. This options ensures that this is the case. 
 
@@ -331,7 +333,7 @@ OK, let's go through the whole exercise of comparing two time-uncertain series. 
 
 ```{r,echo=FALSE,warning=FALSE,eval=FALSE}
 renland <- readLipd("https://lipdverse.org/geoChronR-examples/arc2k/Arc-Renland.Vinther.2008.lpd") %>% 
-  mapAgeEnsembleToPaleoData(strict.search = TRUE,
+  mapAgeEnsembleToPaleoData(strict.search = TRUE,paleo.age.var = "year",
                             age.var = "ageEnsemble",
                             chron.depth.var = NULL )
 
@@ -340,7 +342,7 @@ re.d18O <- selectData(renland,"d18O")
 
 
 crete <- readLipd("https://lipdverse.org/geoChronR-examples/arc2k/Arc-Crete.Vinther.2010.lpd") %>% 
-  mapAgeEnsembleToPaleoData(strict.search = TRUE,
+  mapAgeEnsembleToPaleoData(strict.search = TRUE,paleo.age.var = "year",
                             age.var = "ageEnsemble",
                             chron.depth.var = NULL )
 cr.ae <- selectData(crete,"ageEnsemble")
@@ -354,10 +356,10 @@ egg::ggarrange(plots = list(re,cr),nrow = 2)
 
 co <- corEns(re.ae,re.d18O,
              cr.ae,cr.d18O,
-             bin.step = 10,
-             max.ens = 1000,
+             bin.step = 50,
+             max.ens = 200,
              gaussianize = FALSE,
-             isopersistent = FALSE)
+             isopersistent = TRUE)
 
 plotCorEns(co,use.fdr = TRUE)
 
